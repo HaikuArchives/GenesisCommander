@@ -1,0 +1,19 @@
+############################
+# Genesis Commander v0.42 Settings
+############################
+
+# General settings
+LANGUAGE = Magyar
+ASKONEXIT = true
+WINDOWLEFT = 100
+WINDOWTOP = 100
+WINDOWWIDTH = 600
+WINDOWHEIGHT = 400
+TERMINALWINDOW = Genesis Terminal Window
+
+# Left panel settings
+LEFTPANELPATH = /boot/home/Desktop
+
+# Right panel settings
+RIGHTPANELPATH = /boot/home
+

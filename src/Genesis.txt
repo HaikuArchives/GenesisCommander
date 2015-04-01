@@ -1,0 +1,139 @@
+Genesis TODO:
+
+- CustomListItem-et kellene csinalni, hogy legyen filesize meg minden				OK
+- SortItems hasznalata, hogy a konyvtarak elol legyenek						OK
+- Kijelolesek osszegzese a status sorban									OK
+- Aktiv panel kezelese MakeFocus-ban message-ek hasznalataval					OK
+- Enter hasznalata ha csak egy directory van kijelolve belep a konyvtarba			OK
+- Enter hasznalata ha csak egy fajl van kijelolve -> elinditja						OK
+- Space szamolja meg a konyvtar meretet								OK
+- Ha tul hosszu a file neve a panelen , akkor vagja le es ... a vegere				OK
+- Ha tul hosszu az m_PathStringView, akkor .... az elejere						OK
+- PgUp/PgDn normalis hasznalata										OK
+- Mindenfele path official lekerdezese									OK
+- Egergomb double-click is kivalasztas (enter) legyen							OK
+- Get Info ablak													OK
+- Enter a symlink-en ha directory, akkor menjen oda							OK
+- a CustomListItem-ben legyen path mezo is a kesobbi find ablak miatt				Nem kell
+- Disks a CD menuben												OK
+- Listaban a Symbolic Link a size-ban legyen kitoltve							Nem kell
+- GetDriveInfo ablak Gabokam otlete szerint								OK
+- Az Insert megis csak jeloljon ki										OK
+- MakeDir														OK
+v0.30 - First public test version
+
+- A Button es menuben levo MakeDir es View is menjen						OK
+- Alljon ra az uj konyvtarra											OK
+- A double-click ne point-ra, hanem item-re mukodjon							OK
+- A View ablakban legyen Find is
+- Delete funkcio egy fajlra											OK
+- Delete funkcio tobb kijelolt fajlra										OK
+- Nem letezo konyvtarba valo belepeskor goto root							OK
+- Invert selection befagy a bin konyvtarban								OK
+- Uj delete ablak sajat thread-el, pause es abort gombokkal						OK
+- 3 kattintas 2 double-click-nek felel meg									OK
+- A Panel Menu-ben legyen Show es Sort menupont							felig
+- A MakeDir ESC-re Cancel-t nyomjon									OK
+- A Copy ESC-re Cancel-t nyomjon										OK
+- A Delete ESC-re Abort-ot nyomjon										OK
+- A BTextControl-ok ne fogadjanak el Fx billentyuket							OK
+- Icon-ok megjelenitese												OK
+- A Get Info ablak is tudja az ESC-t										OK
+- A Parent-nak is legyen icon											OK
+- Ha nincs icon (/dev-ben levok) akkor valami '?' icon-t kapjon					OK
+- Ha showicon false akkor a regi meretben jeleniti meg az item-eket				OK
+- Show Icons mukodjon												OK
+- Legyen 'Help' menupont es benne about box								OK
+- A delete abort-nal kerdezze meg, hogy biztos-e							OK
+- A delete mindig nyisson ablakot										OK
+- Iras vedett fajlra jelezzen valamit										OK
+- Nem ures folderre is jelezzen valamit									OK
+- A Delete igazi multithread legyen es a file listabol torolje a torolt fajlokat			OK
+- A Copy igazi multithread legyen es a file listat valtoztassa (deselect)				OK
+- Delete utan a kijelolo csik jo helyen alljon								OK
+- Copy utan a destination panel-t olvassa ujra								OK
+- Delete-nel ha nem bir letorolni valamit, akkor csak a file nevet irja ki, ne az egeszet	OK
+- Copy tudjon konyvtarakat masolni										OK
+- Copy tudjon symlink-eket masolni										OK
+- Copy tud irni iras vedett lemezre... Ne tudjon!								OK
+- Szoljon ha betelt a cel lemez
+- Sajat maga ala ne tudjon masolni, mert vegtelen ciklusba kerul					OK
+- A Copy a fajlok NodeAttr info-it is masolja at								OK
+- Bug a double click-ben												OK
+- A Copy-ban legyen masodlagos statusbar is a fajloknak						OK
+- Add Files/Folders/Symlink a selection menube								OK
+- A Command line okosabb legyen										OK
+- A command line csak Enter-re futtassa a parancsot							OK
+- Ha masolas utan nem valtozott semmi, akkor ne olvassa ujra a cel panelt
+- Bizonyos file-oknak meg nem jo az ikonja (pl. sid)
+- A GetInfo ablak fejlece utaljon az info tipusara (file/folder/symlink)				OK
+- A Create link on Desktop mukodjon									OK
+- Rename funkcio (Ctrl + N)											OK
+- A Rename menjen a Shift+F6-on is										OK
+- Egy fajl masolasakor legyen 'as' BTextControl is							OK
+- A Reload utan a file selector lehetoleg ugyanott maradjon
+- Node monitoring 												OK
+- Node monitoring az egyes fajlokra is a panel-eken							OK
+- A mount-olt egysegek "koze" ne lehessen masolni							OK
+- Ha focus-ba kerult az egyik panel es nincs kijelolo csik, akkor a legelsot jelolje ki		OK
+- Move ablak implementalasa											OK
+- A B_ENTRY_MOVED kezelese legyen gyorsabb							OK
+- A move szoljon, hogy ha nem ugyanarra a volume-ra megy a mozgatas			OK
+- A Rename kozben is tudjon rendezni es ne csak a vegen						OK
+- Rossz az add all ...., mert menubol visszaterve mindig hozzaadja a parent-et is		OK
+v0.36
+
+- A move gyorsabb legyen, torolje egybol a lista elemeket						OK
+- A Delete ne csak a torlendo konyvtar nevet irja ki, hanem az epp torlendoet is		OK
+- Ikon az exe-nek													OK
+- A copy ne rendezze mindig ujra az egeszet, legyen AddSortedItem				OK
+v0.38
+
+- Command line meg okosabb legyen									OK
+- Valamilyen kereses a listaban (Seek)									OK
+- F8 - Delete BButton mashogy mukodik mint az F8 billentyu ha a parent-en all			OK
+- A lista aljan mar ne lehessen PageDown-t nyomni (+PageUp)					OK
+- Swap Panels													OK
+- Target = Source												OK
+v0.39
+
+v0.40 kimaradt
+
+- A PageUp/PageDown tenyleg csak egy oldalnyit ugorjon						OK
+- a '..'-nek ne engedjen Symbolic linket csinalni a Desktop-ra						OK
+- Valami szam tulcsordulas kezelese (CustomListItem.h) int -> uint64				OK
+- 0 byte es nem bytes												OK
+v.041
+
+- Language singleton class											OK
+- A Terminal ablaknak legyen sajat fejlece								OK
+- A Terminal ablak fejléce konfigurálható legyen								OK
+- F4 Edit-re a StyledEdit jöjjön be										OK
+- Mindenhol be legyen rakva a LANG/LANGS
+- Az Edit new file mukodjon
+- A Terminal ablakban a pwd az aktualis legyen (script letrehozasa + futtatasa + torlese)
+- Ha homokora kozben lemegy a pointer az ablakrol, akkor a muvelet utan is h-ora marad
+- At kellene nevezni a forras fajlokat (remove Genesis) es at is kellene nezni
+- SFV fajlok kezelese
+- MD5 fajlok kezelese
+- Az F3-as view ne legyen beepitett
+- A jelenlegi beepitett text viewer felfele tobbet scrolloz mint 1 sor
+- MIME type alapjan viewers konyvtarat letrehozni es oda viewer-eket
+- Viewer: default - ha nincs ilyen tipus (Hexa viewer)
+- Viewer: text
+- Viewer: html
+- Viewer: wave
+- Viewer: image
+- Kellene valami settings file is, valami XML formatumu						OK
+- Preferences ablak
+- Quit beallitas elmentese											OK
+- Kellene a Services-be egy olyan ablak ami a system path-okat megmutatja
+- A disk-eket lehessen unmount-olni
+- Jobb gombos menure Add-ons
+- Az ablak fejleceben ne legyen ott a verzioszam							OK
+- Esetleg az ablak fejleceben legyen kirva az aktualis panel utvonala
+- A bal es jobb gombok legyenek beallithatoak kulonbozo funkciokra				OK - félig
+- A Command Line-ban a fel le gombok rakjak vissza a fokuszt az aktualis panelra
+- Ha nincs Genesis_settings file, akkor legyen letrehozva a default beallitasokkal		OK
+- Settings-be Left es Right panel path									OK
+- Esetleg majd az ablak fejlec legyen beallithato {appname} {ver} {path}
