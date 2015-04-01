@@ -138,7 +138,7 @@ void GenesisGetInfoWindow::ExamineDirectory(const char* filename)
 	// Let's get its icon...
 	if (nodeinfo.InitCheck()==B_OK)
 	{
-		BBitmap	*iconimage = new BBitmap(BRect(0, 0, 31, 31), B_CMAP8); //B_CMAP8);
+		BBitmap	*iconimage = new BBitmap(BRect(0, 0, 31, 31), B_RGBA32); //B_RGBA32);
 		if (iconimage && nodeinfo.GetTrackerIcon(iconimage,B_LARGE_ICON)==B_OK)
 		{
 			m_IconView->SetViewBitmap(iconimage);
@@ -203,7 +203,7 @@ void GenesisGetInfoWindow::ExamineSymLink(const char* filename)
 	// Let's get its icon...
 	if (nodeinfo.InitCheck()==B_OK)
 	{
-		BBitmap	*iconimage = new BBitmap(BRect(0, 0, 31, 31), B_CMAP8); //B_CMAP8);
+		BBitmap	*iconimage = new BBitmap(BRect(0, 0, 31, 31), B_RGBA32); //B_RGBA32);
 		if (iconimage && nodeinfo.GetTrackerIcon(iconimage,B_LARGE_ICON)==B_OK)
 		{
 			m_IconView->SetViewBitmap(iconimage);
@@ -279,7 +279,7 @@ void GenesisGetInfoWindow::ExamineFile(const char* filename)
 	// Let's get its icon...
 	if (nodeinfo.InitCheck()==B_OK)
 	{
-		BBitmap	*iconimage = new BBitmap(BRect(0, 0, 31, 31), B_CMAP8); //B_CMAP8);
+		BBitmap	*iconimage = new BBitmap(BRect(0, 0, 31, 31), B_RGBA32); //B_RGBA32);
 		if (iconimage && nodeinfo.GetTrackerIcon(iconimage,B_LARGE_ICON)==B_OK)
 		{
 			m_IconView->SetViewBitmap(iconimage);
@@ -465,7 +465,7 @@ void GenesisGetDiskInfoWindow::ExamineDevice(BVolume *v)
 	// Let's get its icon...
 	if (v->InitCheck()==B_OK)
 	{
-		BBitmap	*iconimage = new BBitmap(BRect(0, 0, 31, 31), B_CMAP8); //B_CMAP8);
+		BBitmap	*iconimage = new BBitmap(BRect(0, 0, 31, 31), B_RGBA32); //B_RGBA32);
 		if (iconimage && v->GetIcon(iconimage,B_LARGE_ICON)==B_OK)
 		{
 			m_IconView->SetViewBitmap(iconimage);

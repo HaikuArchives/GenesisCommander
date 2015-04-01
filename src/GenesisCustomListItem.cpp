@@ -25,7 +25,7 @@ CustomListItem::CustomListItem(const char *filename, const char *filepath, int f
 	m_Type = filetype;
 	m_Handler = handler;
 	
-	m_IconImage = new BBitmap(BRect(0, 0, 15, 15), B_COLOR_8_BIT);
+	m_IconImage = new BBitmap(BRect(0, 0, 15, 15), B_RGBA32);
 	
 	m_RSelected = false;
 
