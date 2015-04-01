@@ -9,7 +9,7 @@
 #include <Directory.h>
 
 ////////////////////////////////////////////////////////////////////////
-GenesisMakeDirWindow::GenesisMakeDirWindow(const char* dirpath, BLooper* looper, BWindow *mainwindow = NULL) :
+GenesisMakeDirWindow::GenesisMakeDirWindow(const char* dirpath, BLooper* looper, BWindow *mainwindow) :
 	BWindow(BRect(0,0,320,100), "Create new folder", B_TITLED_WINDOW , B_WILL_DRAW)
 ////////////////////////////////////////////////////////////////////////
 {
