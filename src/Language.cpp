@@ -103,13 +103,13 @@ void Language::CreateDefaults()
 	AddEntry("QUIT", "Do you really want to quit?");
 	
 	text.SetTo("");
-	text << "Genesis Commander for Zeta/OpenBeOS/BeOS\n";
+	text << "Genesis Commander for Haiku\n";
 	text << "Version: <VER>\n";
 	text << "Build time: <DATE> - <TIME>\n\n";
 	text << "Programmed by: Zsolt Prievara\n\n";
 	text << "This program is a beta version and there is no\n";
 	text << "warranty. Use it only at your own risk!\n\n";
-	text << "Send bug reports to: genesis@webpages.hu\n";
+	text << "Send bug reports to: github.com/HaikuArchives/GenesisCommander/issues\n";
 	AddEntry("ABOUT", text.String());
 	
 	AddEntry("CD_PARENT", "Parent (..)");

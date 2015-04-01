@@ -50,7 +50,7 @@ BUTTON_F7 = F7 - MkDir
 BUTTON_F8 = F8 - Delete
 BUTTON_F10 = F10 - Quit
 
-ABOUT = Genesis Commander for Zeta/OpenBeOS/BeOS|Version: <VER>|Build time: <DATE> - <TIME>||Programmed by: Zsolt Prievara||This program is a beta version and there is no|warranty. Use it only at your own risk!||Send bug reports to: genesis@webpages.hu
+ABOUT = Genesis Commander for Haiku|Version: <VER>|Build time: <DATE> - <TIME>||Programmed by: Zsolt Prievara||This program is a beta version and there is no|warranty. Use it only at your own risk!||Send bug reports to: github.com/HaikuArchives/GenesisCommander/issues
 
 CD_PARENT = Parent (..)
 CD_ROOT = Root (/)

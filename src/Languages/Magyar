@@ -50,7 +50,7 @@ BUTTON_F7 = F7 - Új könyvtár
 BUTTON_F8 = F8 - Törlés
 BUTTON_F10 = F10 - Kilépés
 
-ABOUT = Genesis Commander Zeta/OpenBeOS/BeOS-hez|Verzió: <VER>|Fordítás ideje: <DATE> - <TIME>||Készítette: Prievara Zsolt||Ez egy béta verziójú program és nincs rá semmilyen garancia. Csak saját felelősségedre használd!||Az esetleges hibákról ide írhatsz: genesis@webpages.hu
+ABOUT = Genesis Commander Haiku|Verzió: <VER>|Fordítás ideje: <DATE> - <TIME>||Készítette: Prievara Zsolt||Ez egy béta verziójú program és nincs rá semmilyen garancia. Csak saját felelősségedre használd!||Az esetleges hibákról ide írhatsz: genesis@webpages.hu
 
 CD_PARENT = Szülőkönyvtár (..)
 CD_ROOT = Gyökérkönyvtár (/)
