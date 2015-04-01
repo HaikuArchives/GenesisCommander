@@ -35,7 +35,7 @@ Settings::~Settings()
 void Settings::SetDefaults()
 ////////////////////////////////////////////////////////////////////////
 {
-	SetAskOnExit(true);
+	SetAskOnExit(false);
 	SetLanguage("English");
 	SetWindowLeft(100);
 	SetWindowTop(100);
