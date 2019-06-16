@@ -55,6 +55,7 @@ class CustomListView : public BListView
 		void SetSelectionColor(uint8 red, uint8 green, uint8 blue);
 		uint64 GetCurrentTotalSize(void);
 		uint64 GetSelectedTotalSize(void);
+		CustomListItem *FindItemByFileNamePath(BString filePath, BString fileName);
 		CustomListItem *FindItemByNodeRef(node_ref noderef);
 		void AddSortedItem(CustomListItem *item);
 		int GetNumberOfVisibleItems(void);

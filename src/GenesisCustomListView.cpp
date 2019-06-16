@@ -429,6 +429,23 @@ void CustomListView::MouseDown(BPoint point)
 }
 
 ////////////////////////////////////////////////////////////////////////
+CustomListItem *CustomListView::FindItemByFileNamePath(BString filePath, BString fileName)
+////////////////////////////////////////////////////////////////////////
+{
+	CustomListItem *item;
+	int32 n = CountItems();
+
+	for (int32 i=0;i<n;i++)
+	{
+		item = (CustomListItem *)ItemAt(i);
+		if (item && item->m_FileName == fileName && item->m_FilePath == filePath)
+			return item;
+	}
+
+	return NULL;
+}
+
+////////////////////////////////////////////////////////////////////////
 CustomListItem *CustomListView::FindItemByNodeRef(node_ref noderef)
 ////////////////////////////////////////////////////////////////////////
 {

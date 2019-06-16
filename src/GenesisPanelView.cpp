@@ -499,22 +499,29 @@ void PanelView::RescanCreated(BEntry *entry)
 
 	BEntry parententry;
 	BPath path;
+	char name[B_FILE_NAME_LENGTH];
 
 	entry->GetParent(&parententry);
 	parententry.GetPath(&path);
 	if (strcmp(path.Path(),m_Path.String())!=0)
 		return;
 
-	SaveItemSelection();
+	entry->GetName(name);
 
-	AddDirectoryEntry(entry, true);		// true = Sorted Insert!
-//	m_CustomListView->DoSortList();
+	CustomListItem *item = m_CustomListView->FindItemByFileNamePath(BString(path.Path()), BString(name));
+	if (item == NULL)
+	{
+		SaveItemSelection();
 
-	LoadItemSelection();
+		AddDirectoryEntry(entry, true);		// true = Sorted Insert!
+//		m_CustomListView->DoSortList();
+
+		LoadItemSelection();
 	
-	m_CurrentTotalSize = m_CustomListView->GetCurrentTotalSize();
-//	if (item) m_CurrentTotalSize += item->m_FileSize;
-	SelectionChanged();
+		m_CurrentTotalSize = m_CustomListView->GetCurrentTotalSize();
+//		if (item) m_CurrentTotalSize += item->m_FileSize;
+		SelectionChanged();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
