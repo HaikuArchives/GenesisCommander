@@ -7,6 +7,7 @@
 #include <StringView.h>
 #include <Entry.h>
 #include <String.h>
+#include <StringList.h>
 #include <Node.h>		// for icon
 #include <NodeInfo.h>
 #include <Beep.h>
@@ -16,14 +17,11 @@
 #include <Directory.h>
 
 ////////////////////////////////////////////////////////////////////////
-GenesisGetInfoWindow::GenesisGetInfoWindow(const char* filename, BWindow *mainwindow) :
+GenesisGetInfoWindow::GenesisGetInfoWindow(const char *dir, BStringList *files, BWindow *mainwindow) :
 	BWindow(BRect(100,100,460,308), "File information...", B_TITLED_WINDOW , B_WILL_DRAW)
 ////////////////////////////////////////////////////////////////////////
 {
 	BRect rect;
-
-//	SetType(B_MODAL_WINDOW);
-//	SetFlags(B_NOT_RESIZABLE);
 
 	SetType(B_FLOATING_WINDOW);
 	SetFeel(B_MODAL_SUBSET_WINDOW_FEEL);
@@ -55,15 +53,15 @@ GenesisGetInfoWindow::GenesisGetInfoWindow(const char* filename, BWindow *mainwi
 	SetDefaultButton(OkButton);
 
 	// Icon Box
-	BBox *IconBox = new BBox(BRect(8,8,8+31+4,8+31+4),"iconbox",B_FOLLOW_NONE,B_WILL_DRAW,B_FANCY_BORDER);
-	m_View->AddChild(IconBox);
+	m_IconBox = new BBox(BRect(8,8,8+31+4,8+31+4),"iconbox",B_FOLLOW_NONE,B_WILL_DRAW,B_FANCY_BORDER);
+	m_View->AddChild(m_IconBox);
 
 	// Main view
-	rect = IconBox->Bounds();
+	rect = m_IconBox->Bounds();
 	rect.InsetBy(2,2);
 	m_IconView = new BView(rect, "iconview", B_FOLLOW_ALL, B_WILL_DRAW);
 	m_IconView->SetViewColor(180, 190, 200, 0);
-	IconBox->AddChild(m_IconView);	
+	m_IconBox->AddChild(m_IconView);	
 
 	rect = m_View->Bounds();
 	rect.left += 2;
@@ -75,30 +73,38 @@ GenesisGetInfoWindow::GenesisGetInfoWindow(const char* filename, BWindow *mainwi
 
 // -------------------------------------------------------------------------
 	
-	// File informations....
-	
-	BEntry entry(filename);
-	int entrytype;
+	if (files->CountStrings() == 1){
+		// File informations....
+		BString filename;
+		filename.SetToFormat("%s/%s", dir, files->StringAt(0).String());
 
-	// Let's get its type...
-	if (entry.IsDirectory()) entrytype = ET_DIRECTORY;
-	else if (entry.IsSymLink()) entrytype = ET_SYMLINK;
-	else entrytype = ET_FILE;
+		BEntry entry(filename);
+		int entrytype;
 
-	switch (entrytype)
-	{
-		case ET_DIRECTORY:
-			SetTitle("Folder information...");
-			ExamineDirectory(filename);
-			break;
-		case ET_SYMLINK:
-			SetTitle("Symbolic link information...");
-			ExamineSymLink(filename);
-			break;
-		case ET_FILE:
-			SetTitle("File information...");
-			ExamineFile(filename);
-			break;
+		// Let's get its type...
+		if (entry.IsDirectory()) entrytype = ET_DIRECTORY;
+		else if (entry.IsSymLink()) entrytype = ET_SYMLINK;
+		else entrytype = ET_FILE;
+
+		switch (entrytype)
+		{
+			case ET_DIRECTORY:
+				SetTitle("Folder information...");
+				ExamineDirectory(filename);
+				break;
+			case ET_SYMLINK:
+				SetTitle("Symbolic link information...");
+				ExamineSymLink(filename);
+				break;
+			case ET_FILE:
+				SetTitle("File information...");
+				ExamineFile(filename);
+				break;
+		}
+	}
+	else{
+		SetTitle("Files information...");
+		ExamineMultipleFiles(dir, files);	
 	}
 
 	AddCommonFilter(new EscapeFilter(this, new BMessage(BUTTON_MSG_OK)));
@@ -318,6 +324,76 @@ void GenesisGetInfoWindow::ExamineFile(const char* filename)
 	sv = new BStringView(BRect(8,100,390,114),"filesize",text.String());
 	sv->ResizeToPreferred();	
 	m_View->AddChild(sv);
+}
+
+////////////////////////////////////////////////////////////////////////
+void GenesisGetInfoWindow::ExamineMultipleFiles(const char *dir, const BStringList *filesList)
+////////////////////////////////////////////////////////////////////////
+{
+	BString filepath;
+	BEntry entry;
+	struct stat statbuf;
+
+	BStringView *sv;
+	BString text;
+
+	int files = 0;
+	int directories = 0;
+	int symlinks = 0;
+	off_t totalSize = 0;
+
+	for (int i = 0; i < filesList->CountStrings(); i++)
+	{
+		filepath.SetToFormat("%s/%s", dir, filesList->StringAt(i).String());
+		entry.SetTo(filepath.String());
+
+		if (entry.IsDirectory())
+			directories++;
+		else if (entry.IsSymLink())
+			symlinks++;
+		else
+		{
+			files++;
+			entry.GetStat(&statbuf);
+			totalSize += statbuf.st_size;
+		}
+		entry.Unset();
+	}
+	
+	m_IconBox->Hide();
+
+	// label
+	text.SetToFormat("%d files selected in %s", filesList->CountStrings(), dir);
+	sv = new BStringView(BRect(8,20,390,32),"label",text.String());
+	
+	sv->ResizeToPreferred();
+	m_View->AddChild(sv);
+
+	// file types
+	text.SetToFormat("Folders: %d", directories);
+	sv = new BStringView(BRect(8,60,390,74),"directories",text);
+	sv->ResizeToPreferred();
+	m_View->AddChild(sv);
+
+	text.SetToFormat("Plain files: %d", files);
+	sv = new BStringView(BRect(8,80,390,94),"regularf",text);
+	sv->ResizeToPreferred();
+	m_View->AddChild(sv);
+
+	text.SetToFormat("Symbolic links: %d", symlinks);
+	sv = new BStringView(BRect(8,100,390,114),"symlinks",text);
+	sv->ResizeToPreferred();
+	m_View->AddChild(sv);
+
+	// files size
+	if (files > 0)
+	{
+		text.SetTo("Files size: ");
+		text << totalSize << " bytes";
+		sv = new BStringView(BRect(8,140,390,154),"filesize",text.String());
+		sv->ResizeToPreferred();
+		m_View->AddChild(sv);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
