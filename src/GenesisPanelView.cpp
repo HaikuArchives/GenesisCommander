@@ -1548,34 +1548,31 @@ void PanelView::GetInfo(void)
 {
 	GenesisGetInfoWindow *infowindow;
 	GenesisGetDiskInfoWindow *diskinfowindow;
+	int selected = m_CustomListView->CountSelectedEntries(CT_WITHPARENT);
 
-	if (m_CustomListView->CountSelectedEntries(CT_WITHPARENT)==1)
+	if (selected < 1)
+		return;
+
+	CustomListItem *item = m_CustomListView->GetSelectedEntry(0);
+	if (selected == 1 && item->m_Type == FT_DISKITEM)
 	{
-		BString file;
-
-		CustomListItem *item = m_CustomListView->GetSelectedEntry(0);
-		if (item)
-		{
-			switch (item->m_Type)
-			{
-				case FT_FILE:
-				case FT_SYMLINKFILE:
-				case FT_SYMLINKDIR:
-				case FT_DIRECTORY:
-					file.SetTo(m_Path.String());
-					file+="/";
-					file+=item->m_FileName;
+		diskinfowindow = new GenesisGetDiskInfoWindow(item, Window());
+		diskinfowindow->Show();
+		return;
+	}
 	
-					infowindow = new GenesisGetInfoWindow(file.String(), Window());
-					infowindow->Show();
-					break;
-				case FT_DISKITEM:
-					diskinfowindow = new GenesisGetDiskInfoWindow(item, Window());
-					diskinfowindow->Show();
-					break;
-			}
+	BStringList files;
+	for (int i = 0; i < selected; i++)
+	{
+		CustomListItem *item = m_CustomListView->GetSelectedEntry(i);		
+		if (item && item->m_FileName)
+		{
+			files.Add(item->m_FileName);
 		}
 	}
+
+	infowindow = new GenesisGetInfoWindow(m_Path.String(), &files, Window());
+	infowindow->Show();
 }
 
 ////////////////////////////////////////////////////////////////////////

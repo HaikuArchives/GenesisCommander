@@ -2,10 +2,12 @@
 #define _GENESISGETINFOWINDOW_H_
 
 #include "GenesisCustomListItem.h"
+#include <Box.h>
 #include <Window.h>
 #include <Bitmap.h>
 #include <Volume.h>
 #include <Picture.h>
+#include <StringList.h>
 
 enum {
 	ET_DIRECTORY,
@@ -18,17 +20,19 @@ const uint32 BUTTON_MSG_OK	= 'BMOK';
 class GenesisGetInfoWindow : public BWindow
 {
 	public:
-		GenesisGetInfoWindow(const char* filename, BWindow *mainwindow = NULL);
+		GenesisGetInfoWindow(const char *dir, BStringList *files, BWindow *mainwindow = NULL);
 		~GenesisGetInfoWindow();
 
 		void ExamineDirectory(const char* filename);
 		void ExamineSymLink(const char* filename);
-		void ExamineFile(const char* filename);				
+		void ExamineFile(const char* filename);
+		void ExamineMultipleFiles(const char *dir, const BStringList *filesList);
 						
 		virtual void	MessageReceived(BMessage* message);
 
 		BView *m_IconView;
 		BView *m_View;
+		BBox *m_IconBox;
 };
 
 class PieView : public BView
