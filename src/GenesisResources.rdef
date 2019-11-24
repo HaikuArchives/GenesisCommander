@@ -4,13 +4,13 @@ resource app_flags B_MULTIPLE_LAUNCH;
 resource app_version {
 	major  = 0,
 	middle = 4,
-	minor  = 2,
+	minor  = 3,
 
 	variety = B_APPV_DEVELOPMENT,
 	internal = 0,
 
-	short_info = "0.42",
-	long_info =  "2002-2004 @ Zsolt Prievara"
+	short_info = "0.43",
+	long_info =  "2002-2004 @ Zsolt Prievara, 2019 Ondrej Čerman"
 };
 
 resource vector_icon {
