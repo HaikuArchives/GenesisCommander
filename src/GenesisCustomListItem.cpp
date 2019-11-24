@@ -305,5 +305,21 @@ void CustomListItem::DrawItem(BView *owner, BRect bounds, bool complete)
 	{
 		owner->SetDrawingMode(B_OP_OVER);
 		owner->DrawBitmap(m_IconImage,BPoint(2, bounds.top));
-	}		
+	}	
+}
+
+////////////////////////////////////////////////////////////////////////
+void CustomListItem::Update(BView *owner, const BFont *font)
+////////////////////////////////////////////////////////////////////////
+{
+	BListItem::Update(owner, font);
+	bool Setting_ShowIcon = ((CustomListView *)owner)->GetBoolSetting(SETTING_SHOWICON);
+	if (Setting_ShowIcon)
+	{
+		float iconheight = m_IconImage->Bounds().Height();
+		if (Height() < iconheight)
+		{
+			SetHeight(iconheight);
+		}
+	}
 }
