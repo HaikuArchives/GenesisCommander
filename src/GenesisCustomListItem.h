@@ -33,6 +33,7 @@ class CustomListItem : public BListItem
 		void AddIcon(unsigned char *data);
 
 		virtual void DrawItem(BView *owner,	BRect bounds, bool complete = false);
+		virtual void Update(BView *owner, const BFont *font);
 
 		BBitmap		*m_IconImage;
 		bool		m_RSelected;		// Selected flag for Rescan

@@ -752,7 +752,6 @@ void PanelView::ReadDirectory(const char *itemname)
 		if (m_Setting_ShowIcons)
 		{
 			item->AddIcon(m_ParentIcon);
-			item->SetHeight(15.0f);
 		}
 	}
 	
@@ -830,7 +829,6 @@ CustomListItem *PanelView::AddDirectoryEntry(BEntry *entry,  bool sorted)
 		{
 			if (!item->GetIcon(entry))
 				item->AddIcon(m_UnknownIcon);
-			item->SetHeight(15.0f);
 		}
 	}
 	else if (entry->IsSymLink())
@@ -853,7 +851,6 @@ CustomListItem *PanelView::AddDirectoryEntry(BEntry *entry,  bool sorted)
 				{
 					if (!item->GetIcon(&symlinkentry))
 						item->AddIcon(m_UnknownIcon);
-					item->SetHeight(15.0f);
 				}
 			}
 			else
@@ -868,7 +865,6 @@ CustomListItem *PanelView::AddDirectoryEntry(BEntry *entry,  bool sorted)
 				{
 					if (!item->GetIcon(&symlinkentry))
 						item->AddIcon(m_UnknownIcon);
-					item->SetHeight(15.0f);
 				}
 			}
 		}
@@ -884,7 +880,6 @@ CustomListItem *PanelView::AddDirectoryEntry(BEntry *entry,  bool sorted)
 			{					
 				if (!item->GetIcon(entry))
 					item->AddIcon(m_UnknownIcon);
-				item->SetHeight(15.0f);
 			}
 		}
 	}
@@ -902,7 +897,6 @@ CustomListItem *PanelView::AddDirectoryEntry(BEntry *entry,  bool sorted)
 		{
 			if (!item->GetIcon(entry))
 				item->AddIcon(m_UnknownIcon);
-			item->SetHeight(15.0f);
 		}
 	}
 	
@@ -924,7 +918,6 @@ void PanelView::ReadDisks(void)
 	item = new CustomListItem("..",m_Path.String(),FT_DISKBACK, 0);
 	item->AddIcon(m_ParentIcon);
 	m_CustomListView->AddItem(item);
-	item->SetHeight(15.0f);
 
 	// Collect available volumes...
 	BVolumeRoster *vr = new BVolumeRoster();
@@ -951,7 +944,6 @@ void PanelView::ReadDisks(void)
 					{
 						if (!item->GetIcon(&v))
 							item->AddIcon(m_UnknownIcon);
-						item->SetHeight(15.0f);
 					}
 				}
 			}
