@@ -207,7 +207,7 @@ void PanelView::FrameResized(float width, float height)
 	SetPathStringView();
 	m_PathStringView->Invalidate();
 
-	m_CustomListView->ResizeTo(r.right-26,r.bottom-32-32);
+	m_CustomListView->FrameResized(r.right-26,r.bottom-32-32);
 	m_CustomListView->Invalidate();
 	
 	m_Bevel_2->ResizeTo(r.right-4,1);
