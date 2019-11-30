@@ -1,3 +1,10 @@
+/*
+ * Copyright 2002-2019. All rights reserved.
+ * Distributed under the terms of the MIT license.
+ *
+ *	2002-2004, Zsolt Prievara
+ */
+
 #ifndef _GENESISCUSTOMLISTITEM_H_
 #define _GENESISCUSTOMLISTITEM_H_
 

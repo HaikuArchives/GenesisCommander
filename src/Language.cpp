@@ -1,3 +1,10 @@
+/*
+ * Copyright 2002-2019. All rights reserved.
+ * Distributed under the terms of the MIT license.
+ *
+ *	2002-2004, Zsolt Prievara
+ */
+
 #include "Language.h"
 #include "Settings.h"
 #include <File.h>
