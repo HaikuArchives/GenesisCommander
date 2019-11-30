@@ -1,3 +1,10 @@
+/*
+ * Copyright 2002-2019. All rights reserved.
+ * Distributed under the terms of the MIT license.
+ *
+ *	2002-2004, Zsolt Prievara
+ */
+
 #include "GenesisRenameWindow.h"
 #include "GenesisPanelView.h"
 #include "GenesisWindow.h"

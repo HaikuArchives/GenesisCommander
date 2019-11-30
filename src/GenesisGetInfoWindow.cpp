@@ -1,3 +1,11 @@
+/*
+ * Copyright 2002-2019. All rights reserved.
+ * Distributed under the terms of the MIT license.
+ *
+ *	2002-2004, Zsolt Prievara
+ *	2019, Ondrej Čerman
+ */
+
 #include "GenesisGetInfoWindow.h"
 #include "GenesisWindow.h"
 #include <stdio.h>
