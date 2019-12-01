@@ -166,10 +166,32 @@ bool GenesisMakeFileWindow::CreateFolder(const char *dirpath, const char *dirnam
 	dir+="/";
 	dir+=dirname;
 
-	if (create_directory(dir.String(), 0777)==B_OK)		// TODO: jo a 0777?
+	BEntry *entry = new BEntry(dir);
+	if (entry->Exists() && entry->IsDirectory())
+	{
+		BAlert *alert = new BAlert("Cannot create new folder","Folder already exists","OK",NULL,NULL,B_WIDTH_AS_USUAL,B_INFO_ALERT);
+		alert->Go();
 		return 1;
-	else
-		return 0;
+	}
+	
+	status_t status = create_directory(dir.String(), 0777);
+	if (status == B_OK)
+		return 1;
+		
+	BString errormsg;
+	switch (status){
+		case B_NOT_A_DIRECTORY:
+			errormsg.SetToFormat("Entry '%s' already exists", dirname);
+			break;
+		default:
+			errormsg.SetTo("Unknown error");
+			break;
+	}
+
+	BAlert *alert = new BAlert("Cannot create new folder",errormsg.String(),"OK",NULL,NULL,B_WIDTH_AS_USUAL,B_WARNING_ALERT);
+	alert->Go();
+
+	return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////
