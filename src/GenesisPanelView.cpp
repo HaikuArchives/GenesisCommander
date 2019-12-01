@@ -18,7 +18,7 @@
 #include "GenesisCustomListItem.h"
 #include "GenesisGetInfoWindow.h"
 #include "GenesisViewWindow.h"
-#include "GenesisMakeDirWindow.h"
+#include "GenesisMakeFileWindow.h"
 #include "GenesisDeleteWindow.h"
 #include "GenesisCopyWindow.h"
 #include "GenesisRenameWindow.h"
@@ -303,7 +303,13 @@ void PanelView::MessageReceived(BMessage* message)
 			View();
 			break;
 		case MSG_EDIT:	// F4
-			Edit();
+			{
+				BString itemname;
+				if (message->FindString("ItemName",&itemname)==B_OK)
+					Edit(itemname.String());
+				else
+					Edit();
+			}
 			break;
 		case MSG_COPY:	// F5
 			Copy();
@@ -1733,43 +1739,69 @@ void PanelView::View()
 }
 
 ////////////////////////////////////////////////////////////////////////
+void PanelView::Edit(CustomListItem *item)
+////////////////////////////////////////////////////////////////////////
+{
+	if (!item)
+		return;
+
+	switch (item->m_Type)
+	{
+		case FT_FILE:
+		case FT_SYMLINKFILE:
+			BString file;
+			file.SetTo(m_Path.String());
+			file+="/";
+			file+=item->m_FileName;
+				
+			BString tempstring;
+			tempstring.SetTo("StyledEdit \"");
+			tempstring << file.String();
+			tempstring << "\" &";
+			system(tempstring.String());
+					
+			break;
+	}	
+}
+
+////////////////////////////////////////////////////////////////////////
+void PanelView::Edit(const char *filename)
+////////////////////////////////////////////////////////////////////////
+{
+	if (filename == NULL)
+		return;
+
+	Edit(m_CustomListView->FindItemByFileNamePath(m_Path.String(), filename));
+}
+
+////////////////////////////////////////////////////////////////////////
 void PanelView::Edit()
 ////////////////////////////////////////////////////////////////////////
 {
 	if (m_CustomListView->CountSelectedEntries(CT_WITHPARENT)==1)
 	{
-		BString file;
-
-		CustomListItem *item = m_CustomListView->GetSelectedEntry(0);
-		if (item)
-		{
-			switch (item->m_Type)
-			{
-				case FT_FILE:
-				case FT_SYMLINKFILE:
-					file.SetTo(m_Path.String());
-					file+="/";
-					file+=item->m_FileName;
-					
-					BString tempstring;
-					tempstring.SetTo("StyledEdit \"");
-					tempstring << file.String();
-					tempstring << "\" &";
-					system(tempstring.String());
-					
-					break;
-			}
-		}
+		Edit(m_CustomListView->GetSelectedEntry(0));
 	}	
+}
+
+
+////////////////////////////////////////////////////////////////////////
+void PanelView::MakeFile(bool edit)
+////////////////////////////////////////////////////////////////////////
+{
+	GenesisMakeFileWindow *makefilewindow;
+
+	makefilewindow = new GenesisMakeFileWindow(m_Path.String(), Looper(), Window(), false, edit);
+	makefilewindow->Show();
 }
 
 ////////////////////////////////////////////////////////////////////////
 void PanelView::MakeDir(void)
 ////////////////////////////////////////////////////////////////////////
 {
-	GenesisMakeDirWindow *makedirwindow;
+	GenesisMakeFileWindow *makedirwindow;
 
-	makedirwindow = new GenesisMakeDirWindow(m_Path.String(), Looper(), Window());
+	makedirwindow = new GenesisMakeFileWindow(m_Path.String(), Looper(), Window(), true);
 	makedirwindow->Show();
 }
 

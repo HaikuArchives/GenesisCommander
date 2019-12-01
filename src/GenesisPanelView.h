@@ -3,6 +3,7 @@
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
+ *	2019, Ondrej Čerman
  */
 
 #ifndef _GENESISPANELVIEW_H_
@@ -120,8 +121,11 @@ class PanelView : public BView
 
 		void View(void);
 		void Edit(void);
+		void Edit(const char *filename);
+		void Edit(CustomListItem *item);
 		void Copy(void);
 		void MakeDir(void);
+		void MakeFile(bool edit);
 		void Delete(void);
 		void Rename(void);
 		void Move(void);

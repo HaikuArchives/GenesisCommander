@@ -36,7 +36,7 @@ SRCS = GenesisApp.cpp \
 	GenesisCustomTextView.cpp \
 	GenesisDeleteWindow.cpp \
 	GenesisGetInfoWindow.cpp \
-	GenesisMakeDirWindow.cpp \
+	GenesisMakeFileWindow.cpp \
 	GenesisMoveWindow.cpp \
 	GenesisPanelView.cpp \
 	GenesisRenameWindow.cpp \
