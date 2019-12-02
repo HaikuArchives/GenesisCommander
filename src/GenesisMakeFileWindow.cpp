@@ -166,10 +166,12 @@ bool GenesisMakeFileWindow::CreateFolder(const char *dirpath, const char *dirnam
 	dir+="/";
 	dir+=dirname;
 
-	BEntry *entry = new BEntry(dir);
+	BString errormsg;
+	BEntry *entry = new BEntry(dir, true);
 	if (entry->Exists() && entry->IsDirectory())
 	{
-		BAlert *alert = new BAlert("Cannot create new folder","Folder already exists","OK",NULL,NULL,B_WIDTH_AS_USUAL,B_INFO_ALERT);
+		errormsg.SetToFormat("The folder '%s' already exists.", dirname);
+		BAlert *alert = new BAlert("Error creating folder",errormsg.String(),"OK",NULL,NULL,B_WIDTH_AS_USUAL,B_INFO_ALERT);
 		alert->Go();
 		return 1;
 	}
@@ -178,17 +180,16 @@ bool GenesisMakeFileWindow::CreateFolder(const char *dirpath, const char *dirnam
 	if (status == B_OK)
 		return 1;
 		
-	BString errormsg;
 	switch (status){
 		case B_NOT_A_DIRECTORY:
-			errormsg.SetToFormat("Entry '%s' already exists", dirname);
+			errormsg.SetToFormat("A file '%s' already exists.", dirname);
 			break;
 		default:
 			errormsg.SetTo("Unknown error");
 			break;
 	}
 
-	BAlert *alert = new BAlert("Cannot create new folder",errormsg.String(),"OK",NULL,NULL,B_WIDTH_AS_USUAL,B_WARNING_ALERT);
+	BAlert *alert = new BAlert("Error creating folder",errormsg.String(),"OK",NULL,NULL,B_WIDTH_AS_USUAL,B_WARNING_ALERT);
 	alert->Go();
 
 	return 0;
@@ -207,14 +208,22 @@ bool GenesisMakeFileWindow::CreateFile(const char *path, const char *filename)
 	BString errormsg;
 	switch (status){
 		case B_FILE_EXISTS:
-			errormsg.SetToFormat("File '%s' already exists", filename);
+		{
+			BString filepath;
+			filepath.SetToFormat("%s/%s", path, filename);
+			BEntry *entry = new BEntry(filepath, true);
+			if (entry->IsDirectory())
+				errormsg.SetToFormat("A folder '%s' already exists.", filename);
+			else
+				errormsg.SetToFormat("A file '%s' already exists.", filename);
 			break;
+		}
 		default:
 			errormsg.SetTo("Unknown error");
 			break;
 	}
 	
-	BAlert *alert = new BAlert("Cannot create new file",errormsg.String(),"OK",NULL,NULL,B_WIDTH_AS_USUAL,B_WARNING_ALERT);
+	BAlert *alert = new BAlert("Error creating file",errormsg.String(),"OK",NULL,NULL,B_WIDTH_AS_USUAL,B_WARNING_ALERT);
 	alert->Go();
 
 	return 0;
