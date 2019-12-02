@@ -3,10 +3,11 @@
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
+ *	2019, Ondrej Čerman
  */
 
-#ifndef _GENESISMAKEDIRWINDOW_H_
-#define _GENESISMAKEDIRWINDOW_H_
+#ifndef _GENESISMAKEFILEWINDOW_H_
+#define _GENESISMAKEFILEWINDOW_H_
 
 #include <Window.h>
 #include <String.h>
@@ -14,23 +15,26 @@
 #include <TextControl.h>
 #include <String.h>
 
-const uint32 BUTTON_MSG_CREATE_DIR	= 'BMKD';
+const uint32 BUTTON_MSG_CREATE_FILE	= 'BMKF';
 const uint32 BUTTON_MSG_CANCEL		= 'BMKC';
-const uint32 DIRNAME_CHANGED		= 'DNCH';
+const uint32 FILENAME_CHANGED		= 'FNCH';
 
-class GenesisMakeDirWindow : public BWindow
+class GenesisMakeFileWindow : public BWindow
 {
 	public:
-		GenesisMakeDirWindow(const char* dirpath, BLooper* looper,BWindow *mainwindow = NULL);
-		~GenesisMakeDirWindow();
+		GenesisMakeFileWindow(const char* dirpath, BLooper* looper,BWindow *mainwindow = NULL, bool directory = true, bool edit = false);
+		~GenesisMakeFileWindow();
 
 		bool CreateFolder(const char *dirpath, const char *dirname);
+		bool CreateFile(const char *path, const char *filename);
 
 		BView 			*m_View;
 		BButton 		*m_OkButton;
-		BTextControl	*m_DirName;
+		BTextControl	*m_FileName;
 		BLooper			*m_Looper;
 		BString			m_DirPath;
+		bool			m_MkDirMode;
+		bool			m_EditAfter;
 
 		virtual void	MessageReceived(BMessage* message);
 };

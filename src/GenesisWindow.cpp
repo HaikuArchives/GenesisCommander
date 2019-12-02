@@ -3,6 +3,7 @@
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
+ *	2019, Ondrej Čerman
  */
 
 #include "GenesisWindow.h"
@@ -315,6 +316,10 @@ void GenesisWindow::MessageReceived(BMessage* message)
 		case BUTTON_MSG_F4:
 			if (GetActivePanel())
 				GetActivePanel()->Edit();
+			break;
+		case MENU_COMMANDS_EDITNEW:
+			if (GetActivePanel())
+				GetActivePanel()->MakeFile(true);
 			break;
 		case MENU_COMMANDS_COPY:
 		case BUTTON_MSG_F5:
