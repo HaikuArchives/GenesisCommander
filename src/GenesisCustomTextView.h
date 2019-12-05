@@ -16,7 +16,7 @@
 class CustomTextView : public BTextView
 {
 	public:
-		CustomTextView(BRect rect, char *name);
+		CustomTextView(BRect rect, const char *name);
 		~CustomTextView();
 
 		virtual void KeyDown(const char *bytes, int32 numBytes);

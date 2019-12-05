@@ -46,7 +46,7 @@ class GenesisGetInfoWindow : public BWindow
 class PieView : public BView
 {
 	public:
-		PieView(BRect frame, char *name, off_t capacity, off_t free);
+		PieView(BRect frame, const char *name, off_t capacity, off_t free);
 		~PieView();
 		
 		virtual void Draw(BRect r);

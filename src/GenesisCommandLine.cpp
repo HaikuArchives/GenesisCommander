@@ -18,7 +18,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////
-CommandLine::CommandLine(BRect rect, char *name, BMessage* msg)
+CommandLine::CommandLine(BRect rect, const char *name, BMessage* msg)
 	   	   : BTextControl( rect, name , "", "", msg, B_FOLLOW_BOTTOM|B_FOLLOW_LEFT , B_WILL_DRAW )
 ////////////////////////////////////////////////////////////////////////
 {
