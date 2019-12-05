@@ -17,7 +17,7 @@ const uint32 SEEK_ESC		= 'SESC';
 class SeekControl : public BTextControl
 {
 	public:
-		SeekControl(BRect rect, char *name, BMessage* msg);
+		SeekControl(BRect rect, const char *name, BMessage* msg);
 		~SeekControl();
 };
 

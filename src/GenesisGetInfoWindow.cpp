@@ -640,7 +640,7 @@ void GenesisGetDiskInfoWindow::ExamineDevice(BVolume *v)
 }
 
 ////////////////////////////////////////////////////////////////////////
-PieView::PieView(BRect rect, char *name, off_t capacity, off_t free)
+PieView::PieView(BRect rect, const char *name, off_t capacity, off_t free)
 	   	   : BView( rect, name , 0, B_WILL_DRAW )
 ////////////////////////////////////////////////////////////////////////
 {

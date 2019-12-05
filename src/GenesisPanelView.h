@@ -57,7 +57,7 @@ enum ADDTYPES {
 class PanelView : public BView
 {
 	public:
-		PanelView(BRect frame, char *name);
+		PanelView(BRect frame, const char *name);
 		~PanelView();
 
 		// Hook functions...

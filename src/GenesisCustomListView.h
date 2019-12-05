@@ -41,7 +41,7 @@ const uint32 MSG_FILE_SEEK		= 'MPOP';
 class CustomListView : public BListView
 {
 	public:
-		CustomListView(BRect frame, char *name, void *pv);
+		CustomListView(BRect frame, const char *name, void *pv);
 		~CustomListView();
 
 		// Hook functions...

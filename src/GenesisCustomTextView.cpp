@@ -11,7 +11,7 @@
 #include <TextView.h>
 
 ////////////////////////////////////////////////////////////////////////
-CustomTextView::CustomTextView(BRect rect, char *name) :
+CustomTextView::CustomTextView(BRect rect, const char *name) :
 	BTextView(rect, name, rect, B_FOLLOW_ALL , B_WILL_DRAW)
 ////////////////////////////////////////////////////////////////////////
 {

@@ -20,7 +20,7 @@
 #include <Alert.h>
 
 ////////////////////////////////////////////////////////////////////////
-CustomListView::CustomListView(BRect rect, char *name, void *pv)
+CustomListView::CustomListView(BRect rect, const char *name, void *pv)
 	   	   : BListView( rect, name , B_MULTIPLE_SELECTION_LIST, B_FOLLOW_ALL, B_WILL_DRAW | B_NAVIGABLE)
 ////////////////////////////////////////////////////////////////////////
 {

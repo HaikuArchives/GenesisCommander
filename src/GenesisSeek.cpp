@@ -12,7 +12,7 @@
 #include <Handler.h>
 
 ////////////////////////////////////////////////////////////////////////
-SeekControl::SeekControl(BRect rect, char *name, BMessage* msg)
+SeekControl::SeekControl(BRect rect, const char *name, BMessage* msg)
 	   	   : BTextControl( rect, name , "Seek for", "", msg, B_FOLLOW_BOTTOM | B_FOLLOW_LEFT , B_WILL_DRAW )
 ////////////////////////////////////////////////////////////////////////
 {

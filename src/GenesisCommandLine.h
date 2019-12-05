@@ -17,7 +17,7 @@ const uint32 COMMANDLINE_ESC		= 'CESC';
 class CommandLine : public BTextControl
 {
 	public:
-		CommandLine(BRect rect, char *name, BMessage* msg);
+		CommandLine(BRect rect, const char *name, BMessage* msg);
 		~CommandLine();
 
 		BString m_Path;

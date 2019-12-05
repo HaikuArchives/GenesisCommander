@@ -33,7 +33,7 @@
 	public:\
 		BString Get##a(void) { return a; }\
 		void Set##a(BString value) { a = value; m_SettingsChanged = true; }\
-		void Set##a(char *value) { a = value; m_SettingsChanged = true; }
+		void Set##a(const char *value) { a = value; m_SettingsChanged = true; }
 		
 #define SETTING_BOOL(a)\
 	private:\
