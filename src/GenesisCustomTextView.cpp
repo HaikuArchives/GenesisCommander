@@ -3,6 +3,7 @@
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
+ *	2019, Ondrej Čerman
  */
 
 #include "GenesisCustomTextView.h"
@@ -15,12 +16,8 @@ CustomTextView::CustomTextView(BRect rect, const char *name) :
 	BTextView(rect, name, rect, B_FOLLOW_ALL , B_WILL_DRAW)
 ////////////////////////////////////////////////////////////////////////
 {
-//	BRect r;
-
-//	r = Bounds();
-//	r.right -= 8;
-//	r.bottom -= 16;
-//	SetTextRect(r);
+	BRect b = Bounds();
+	FrameResized(b.Width(), b.Height());
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -62,11 +59,9 @@ void CustomTextView::KeyDown(const char *bytes, int32 numBytes)
 void CustomTextView::FrameResized(float width, float height)
 ////////////////////////////////////////////////////////////////////////
 {
-//	BRect r;
-
+	BRect textrect = Bounds();
+	textrect.InsetBy(3.0,3.0);
+	SetTextRect(textrect);
 	BTextView::FrameResized(width, height);
-
-//	r = Bounds();
-//	SetTextRect(r);
 }
 
