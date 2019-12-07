@@ -1946,7 +1946,9 @@ void PanelView::SeekModeOff(void)
 		m_SeekTextControl->RemoveSelf();
 		m_SeekTextControl = NULL;
 	}
-	m_StatusStringView->Show();
+	if (m_StatusStringView->IsHidden())
+		m_StatusStringView->Show();
+
 	m_CustomListView->MakeFocus(true);
 }
 
