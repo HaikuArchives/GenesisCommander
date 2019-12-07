@@ -20,7 +20,7 @@
 #include <MessageFilter.h>
 #include <String.h>
 
-#define __VER__ "0.44"
+#define __VER__ "0.45"
 
 #define MAINWINDOW GenesisWindow::m_MainWindow
 
