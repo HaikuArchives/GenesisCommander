@@ -55,7 +55,7 @@ GenesisMakeFileWindow::GenesisMakeFileWindow(const char* dirpath, BLooper* loope
 	rect.bottom = rect.bottom-14;
 	rect.left = rect.right-80;
 	rect.right = rect.right-20;	
-	m_OkButton = new BButton(rect,"ok","OK",new BMessage(BUTTON_MSG_CREATE_FILE),0,B_WILL_DRAW);
+	m_OkButton = new BButton(rect,"ok","Create",new BMessage(BUTTON_MSG_CREATE_FILE),0,B_WILL_DRAW);
 	BottomView->AddChild(m_OkButton);
 
 	//Cancel Button
