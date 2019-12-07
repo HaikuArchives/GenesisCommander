@@ -53,11 +53,11 @@ GenesisViewWindow::GenesisViewWindow(const char* filename, BWindow *mainwindow) 
 	menu = new BMenu("Edit");
 	menu->AddItem(new BMenuItem("Copy" , new BMessage(VIEWMENU_FILE_COPY), 'C'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem("Select All" , new BMessage(VIEWMENU_FILE_SELECTALL), 'A'));
+	menu->AddItem(new BMenuItem("Select all" , new BMessage(VIEWMENU_FILE_SELECTALL), 'A'));
 	m_MenuBar->AddItem(menu);
 
-	menu = new BMenu("Format");
-	m_MI_WordWrap = new BMenuItem("Wrap text" , new BMessage(VIEWMENU_FILE_WORDWRAP), 'W', B_OPTION_KEY);
+	menu = new BMenu("View");
+	m_MI_WordWrap = new BMenuItem("Wrap lines" , new BMessage(VIEWMENU_FILE_WORDWRAP), 'W', B_OPTION_KEY);
 	menu->AddItem(m_MI_WordWrap);
 	m_MenuBar->AddItem(menu);
 
