@@ -18,7 +18,6 @@
 #include <ScrollView.h>
 #include <Menu.h>
 
-const uint32 VIEWMENU_FILE_SAVEAS		= 'VFSA';
 const uint32 VIEWMENU_FILE_CLOSE		= 'VFCL';
 const uint32 VIEWMENU_FILE_COPY			= 'VFCP';
 const uint32 VIEWMENU_FILE_SELECTALL	= 'VFSE';

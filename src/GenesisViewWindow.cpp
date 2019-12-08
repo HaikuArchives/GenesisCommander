@@ -3,6 +3,7 @@
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
+ *	2019, Ondrej Čerman
  */
 
 #include "GenesisViewWindow.h"
@@ -46,36 +47,34 @@ GenesisViewWindow::GenesisViewWindow(const char* filename, BWindow *mainwindow) 
 
 	// File menu
 	menu = new BMenu("File");
-	menu->AddItem(new BMenuItem("Save as..." , new BMessage(VIEWMENU_FILE_SAVEAS), 0));
-	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem("Close" , new BMessage(VIEWMENU_FILE_CLOSE), 'Q'));
+	menu->AddItem(new BMenuItem("Close" , new BMessage(VIEWMENU_FILE_CLOSE), 'W'));
 	m_MenuBar->AddItem(menu);
 
 	menu = new BMenu("Edit");
 	menu->AddItem(new BMenuItem("Copy" , new BMessage(VIEWMENU_FILE_COPY), 'C'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem("Select All" , new BMessage(VIEWMENU_FILE_SELECTALL), 'A'));
+	menu->AddItem(new BMenuItem("Select all" , new BMessage(VIEWMENU_FILE_SELECTALL), 'A'));
 	m_MenuBar->AddItem(menu);
-/*
-	menu = new BMenu("Format");
-	m_MI_WordWrap = new BMenuItem("Wrap text" , new BMessage(VIEWMENU_FILE_WORDWRAP), 0);
+
+	menu = new BMenu("View");
+	m_MI_WordWrap = new BMenuItem("Wrap lines" , new BMessage(VIEWMENU_FILE_WORDWRAP), 'W', B_OPTION_KEY);
 	menu->AddItem(m_MI_WordWrap);
 	m_MenuBar->AddItem(menu);
-*/
+
 	m_View->AddChild(m_MenuBar);	
 
 	// TextView
 	rect = Bounds();
 	rect.top+=m_MenuBar->Bounds().bottom+1;
-	rect.right-=14;
-	rect.bottom-=20;
+	rect.right-=B_V_SCROLL_BAR_WIDTH;
+	rect.bottom-=B_H_SCROLL_BAR_HEIGHT;
 
 	m_TextView = new CustomTextView(rect, "textview");
 	m_TextView->SetViewColor(255,255,255);
 	m_TextView->MakeEditable(false);
 	m_TextView->SetStylable(true);
 
-//	m_TextView->SetWordWrap(false);	// TODO: Set default value here from some settings...
+	m_TextView->SetWordWrap(false);	// TODO: Set default value here from some settings...
 
 	font = be_fixed_font;
 	font.SetSize(12.0);
@@ -93,7 +92,7 @@ GenesisViewWindow::GenesisViewWindow(const char* filename, BWindow *mainwindow) 
 		delete file;
 	}	
 
-	m_ScrollView = new BScrollView("scrollview", m_TextView, B_FOLLOW_ALL, B_WILL_DRAW, false, true);
+	m_ScrollView = new BScrollView("scrollview", m_TextView, B_FOLLOW_ALL, B_WILL_DRAW, true, true);
 	m_View->AddChild(m_ScrollView);
 
 	// If there is a given window, let's align our window to its center...

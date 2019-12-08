@@ -1671,7 +1671,7 @@ void PanelView::CreateLinkOnDesktop(void)
 	}
 
 	// Let's display the warning message...
-	BAlert *WarningAlert = new BAlert("Confirm",text.String(),"Cancel","Yes",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
+	BAlert *WarningAlert = new BAlert("Confirm",text.String(),"Cancel","Create",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 	WarningAlert->SetShortcut(0, B_ESCAPE);
 	if (WarningAlert->Go()==1)
 	{
@@ -1839,7 +1839,7 @@ void PanelView::Delete(void)
 	}
 
 	// Let's display the warning message...
-	BAlert *WarningAlert = new BAlert("Confirm",text.String(),"Cancel","Yes",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
+	BAlert *WarningAlert = new BAlert("Confirm",text.String(),"Cancel","Delete",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 	WarningAlert->SetShortcut(0, B_ESCAPE);
 	if (WarningAlert->Go()==1)
 	{
@@ -1946,7 +1946,9 @@ void PanelView::SeekModeOff(void)
 		m_SeekTextControl->RemoveSelf();
 		m_SeekTextControl = NULL;
 	}
-	m_StatusStringView->Show();
+	if (m_StatusStringView->IsHidden())
+		m_StatusStringView->Show();
+
 	m_CustomListView->MakeFocus(true);
 }
 
