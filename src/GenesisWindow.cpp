@@ -111,28 +111,14 @@ GenesisWindow::GenesisWindow() :
 	menu->AddItem(new BMenuItem(LANGS("SUBMENU_DELETE"),	new BMessage(MENU_COMMANDS_DELETE), 0));
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem(LANGS("SUBMENU_CREATELINK") , new BMessage(MENU_COMMANDS_CREATE_SYMLINK), 'L'));
+	menu->AddSeparatorItem();
+	menu->AddItem(new BMenuItem(LANGS("SUBMENU_TERMINAL"),	new BMessage(MENU_TERMINAL), 0));
 	m_MenuBar->AddItem(menu);
 
 	menu = new BMenu(LANGS("MENU_PANELS"));
 	menu->AddItem(new BMenuItem(LANGS("SUBMENU_RELOAD"),			new BMessage(MENU_RELOAD), 'R'));
 	menu->AddItem(new BMenuItem(LANGS("SUBMENU_SWAP"),				new BMessage(MENU_SWAP_PANELS), 'U'));
 	menu->AddItem(new BMenuItem(LANGS("SUBMENU_TARGET_EQ_SOURCE"),	new BMessage(MENU_TARGET_SOURCE), 0));
-	m_MenuBar->AddItem(menu);
-
-	menu = new BMenu(LANGS("MENU_SERVICES"));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_RESTARTINPUTSERVER") , new BMessage(MENU_RESTART_INPUTSERVER), 0));
-//	menu->AddItem(new BMenuItem("Restart media server" , new BMessage(MENU_RESTART_MEDIASERVER), 0));
-	menuitem = new BMenuItem(LANGS("SUBMENU_RESTARTMEDIASERVER") , new BMessage(MENU_RESTART_MEDIASERVER), 0);
-	menuitem->SetEnabled(false);
-	menu->AddItem(menuitem);
-
-//	menu->AddItem(new BMenuItem("Restart network server" , new BMessage(MENU_RESTART_NETWORKSERVER), 0));
-	menuitem = new BMenuItem(LANGS("SUBMENU_RESTARTNETWORKSERVER") , new BMessage(MENU_RESTART_NETWORKSERVER), 0);
-	menuitem->SetEnabled(false);
-	menu->AddItem(menuitem);
-
-	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_TERMINAL") , new BMessage(MENU_TERMINAL), 0));
 	m_MenuBar->AddItem(menu);
 
 	menu = new BMenu(LANGS("MENU_HELP"));
@@ -249,9 +235,6 @@ void GenesisWindow::MessageReceived(BMessage* message)
 			m_CommandLine->Execute();
 			if (GetActivePanel())
 				GetActivePanel()->m_CustomListView->MakeFocus(true);
-			break;
-		case MENU_RESTART_INPUTSERVER:
-			system("/boot/beos/system/servers/input_server -q");
 			break;
 		case MENU_TERMINAL:
 			{
