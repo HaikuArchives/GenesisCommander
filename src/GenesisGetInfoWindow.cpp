@@ -7,6 +7,7 @@
  */
 
 #include "GenesisGetInfoWindow.h"
+#include "GenesisIconView.h"
 #include "GenesisWindow.h"
 #include <stdio.h>
 #include <View.h>
@@ -67,8 +68,7 @@ GenesisGetInfoWindow::GenesisGetInfoWindow(const char *dir, BStringList *files, 
 	// Main view
 	rect = m_IconBox->Bounds();
 	rect.InsetBy(2,2);
-	m_IconView = new BView(rect, "iconview", B_FOLLOW_ALL, B_WILL_DRAW);
-	m_IconView->SetViewColor(180, 190, 200, 0);
+	m_IconView = new IconView(rect, "iconview");
 	m_IconBox->AddChild(m_IconView);	
 
 	rect = m_View->Bounds();
@@ -150,16 +150,7 @@ void GenesisGetInfoWindow::ExamineDirectory(const char* filename)
 	char buf[B_FILE_NAME_LENGTH];
 
 	// Let's get its icon...
-	if (nodeinfo.InitCheck()==B_OK)
-	{
-		BBitmap	*iconimage = new BBitmap(BRect(0, 0, 31, 31), B_RGBA32); //B_RGBA32);
-		if (iconimage && nodeinfo.GetTrackerIcon(iconimage,B_LARGE_ICON)==B_OK)
-		{
-			m_IconView->SetViewBitmap(iconimage);
-
-			delete iconimage;
-		}
-	}
+	m_IconView->SetIcon(&nodeinfo);
 
 	// Get filename...	
 	entry.GetName(buf);
@@ -215,16 +206,7 @@ void GenesisGetInfoWindow::ExamineSymLink(const char* filename)
 	nodeinfo.SetTo(&node);	
 	
 	// Let's get its icon...
-	if (nodeinfo.InitCheck()==B_OK)
-	{
-		BBitmap	*iconimage = new BBitmap(BRect(0, 0, 31, 31), B_RGBA32); //B_RGBA32);
-		if (iconimage && nodeinfo.GetTrackerIcon(iconimage,B_LARGE_ICON)==B_OK)
-		{
-			m_IconView->SetViewBitmap(iconimage);
-
-			delete iconimage;
-		}
-	}
+	m_IconView->SetIcon(&nodeinfo);
 
 	// Get filename...	
 	entry.GetName(buf);
@@ -291,16 +273,7 @@ void GenesisGetInfoWindow::ExamineFile(const char* filename)
 	char buf[B_FILE_NAME_LENGTH];
 
 	// Let's get its icon...
-	if (nodeinfo.InitCheck()==B_OK)
-	{
-		BBitmap	*iconimage = new BBitmap(BRect(0, 0, 31, 31), B_RGBA32); //B_RGBA32);
-		if (iconimage && nodeinfo.GetTrackerIcon(iconimage,B_LARGE_ICON)==B_OK)
-		{
-			m_IconView->SetViewBitmap(iconimage);
-
-			delete iconimage;
-		}
-	}
+	m_IconView->SetIcon(&nodeinfo);
 
 	// Get filename...	
 	entry.GetName(buf);
@@ -468,8 +441,7 @@ GenesisGetDiskInfoWindow::GenesisGetDiskInfoWindow(CustomListItem *item, BWindow
 	// Main view
 	rect = IconBox->Bounds();
 	rect.InsetBy(2,2);
-	m_IconView = new BView(rect, "iconview", B_FOLLOW_ALL, B_WILL_DRAW);
-	m_IconView->SetViewColor(180, 190, 200, 0);
+	m_IconView = new IconView(rect, "iconview");
 	IconBox->AddChild(m_IconView);
 
 	rect = m_View->Bounds();
@@ -544,20 +516,8 @@ void GenesisGetDiskInfoWindow::ExamineDevice(BVolume *v)
 	BStringView *sv;
 	BString text;
 
-//	rgb_color overlaycolor = B_TRANSPARENT_32_BIT;
-	
 	// Let's get its icon...
-	if (v->InitCheck()==B_OK)
-	{
-		BBitmap	*iconimage = new BBitmap(BRect(0, 0, 31, 31), B_RGBA32); //B_RGBA32);
-		if (iconimage && v->GetIcon(iconimage,B_LARGE_ICON)==B_OK)
-		{
-			m_IconView->SetViewBitmap(iconimage);
-//			m_IconView->SetViewOverlay(iconimage, &overlaycolor ,  B_FOLLOW_TOP | B_FOLLOW_LEFT, B_TILE_BITMAP);
-
-			delete iconimage;
-		}
-	}
+	m_IconView->SetIcon(v);
 	
 	// Get filename...	
 	v->GetName(buf);
