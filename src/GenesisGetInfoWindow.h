@@ -10,6 +10,7 @@
 #define _GENESISGETINFOWINDOW_H_
 
 #include "GenesisCustomListItem.h"
+#include "GenesisIconView.h"
 #include <Box.h>
 #include <Window.h>
 #include <Bitmap.h>
@@ -38,7 +39,7 @@ class GenesisGetInfoWindow : public BWindow
 						
 		virtual void	MessageReceived(BMessage* message);
 
-		BView *m_IconView;
+		IconView *m_IconView;
 		BView *m_View;
 		BBox *m_IconBox;
 };
@@ -64,7 +65,7 @@ class GenesisGetDiskInfoWindow : public BWindow
 
 		virtual void	MessageReceived(BMessage* message);
 
-		BView *m_IconView;
+		IconView *m_IconView;
 		BView *m_View;
 
 		PieView *m_PieView;

@@ -1,0 +1,66 @@
+/*
+ * Copyright 2002-2019. All rights reserved.
+ * Distributed under the terms of the MIT license.
+ *
+ *	2019, Ondrej Čerman
+ */
+
+#include "GenesisIconView.h"
+#include <View.h>
+#include <NodeInfo.h>
+#include <Volume.h>
+#include <Bitmap.h>
+
+////////////////////////////////////////////////////////////////////////
+IconView::IconView(BRect rect, const char *name) :
+	BView(rect, name, B_FOLLOW_ALL, B_WILL_DRAW)
+////////////////////////////////////////////////////////////////////////
+{
+	m_Icon = new BBitmap(BRect(0, 0, 31, 31), B_RGBA32);
+}
+
+////////////////////////////////////////////////////////////////////////
+IconView::~IconView()
+////////////////////////////////////////////////////////////////////////
+{
+	delete m_Icon;
+}
+
+////////////////////////////////////////////////////////////////////////
+bool IconView::SetIcon(BNodeInfo *nodeinfo)
+////////////////////////////////////////////////////////////////////////
+{
+	if (nodeinfo->InitCheck()==B_OK)
+	{
+		if (nodeinfo->GetTrackerIcon(m_Icon, B_LARGE_ICON)==B_OK){
+			Invalidate();
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+////////////////////////////////////////////////////////////////////////
+bool IconView::SetIcon(BVolume *volume)
+////////////////////////////////////////////////////////////////////////
+{
+	if (volume->InitCheck()==B_OK)
+	{
+		if (volume->GetIcon(m_Icon, B_LARGE_ICON)==B_OK){
+			Invalidate();
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+////////////////////////////////////////////////////////////////////////
+void IconView::Draw(BRect updateRect)
+////////////////////////////////////////////////////////////////////////
+{
+	SetDrawingMode(B_OP_ALPHA);
+	SetHighColor(180, 190, 200);
+	FillRect(Bounds());
+	DrawBitmap(m_Icon, BPoint(0, 0));
+}
+
