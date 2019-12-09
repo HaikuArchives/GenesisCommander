@@ -1697,7 +1697,9 @@ void PanelView::CreateLinkOnDesktop(void)
 			name << " link";
 		
 			linkpath.SetTo(item->m_FilePath.String());
-			linkpath << "/" << item->m_FileName;
+			if (!linkpath.EndsWith("/"))
+				linkpath << "/";
+			linkpath << item->m_FileName;
 		
 			dstdir.CreateSymLink(name.String(), linkpath.String(), &dstlink);
 			
