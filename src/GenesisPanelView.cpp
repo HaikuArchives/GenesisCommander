@@ -92,13 +92,13 @@ PanelView::PanelView(BRect rect, const char *name)
 	find_directory(B_USER_DIRECTORY, &dirPath, true);
 	tempstring = LANG("CD_HOME");
 	tempstring.ReplaceAll("<DIR>", dirPath.Path());
-	m_CD_Home = new BMenuItem(tempstring.String(),new BMessage(PATH_MSG_CD_HOME),0,0);
+	m_CD_Home = new BMenuItem(tempstring.String(),new BMessage(PATH_MSG_CD_HOME),'H');
 	m_PathMenu->AddItem(m_CD_Home);
 	
 	find_directory(B_DESKTOP_DIRECTORY, &dirPath, true);
 	tempstring = LANG("CD_DESKTOP");
 	tempstring.ReplaceAll("<DIR>", dirPath.Path());
-	m_CD_Desktop = new BMenuItem(tempstring.String(),new BMessage(PATH_MSG_CD_DESKTOP),0,0);
+	m_CD_Desktop = new BMenuItem(tempstring.String(),new BMessage(PATH_MSG_CD_DESKTOP),'D');
 	m_PathMenu->AddItem(m_CD_Desktop);
 
 	m_PathMenu->AddSeparatorItem();
