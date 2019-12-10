@@ -112,7 +112,7 @@ GenesisWindow::GenesisWindow() :
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem(LANGS("SUBMENU_CREATELINK") , new BMessage(MENU_COMMANDS_CREATE_SYMLINK), 'L'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_TERMINAL"),	new BMessage(MENU_TERMINAL), 0));
+	menu->AddItem(new BMenuItem(LANGS("SUBMENU_TERMINAL"), new BMessage(MENU_TERMINAL), 'T', B_OPTION_KEY));
 	m_MenuBar->AddItem(menu);
 
 	menu = new BMenu(LANGS("MENU_PANELS"));
@@ -487,7 +487,25 @@ void GenesisWindow::UpdatePanels(void)
 
 	m_LeftPanel->m_CustomListView->Invalidate();
 	m_RightPanel->m_CustomListView->Invalidate();
+
+	// reset shortcuts for [cd] menu items within active panel,
+	// so by pressing the keyboard shortcut the directory will be changed always inside active panel
+	BMenuItem *item;
+	uint32 modifiers;
+	char shortcut;
+
+	for (int32 i = 0; i < active->m_PathMenu->CountItems(); i++)
+	{
+		item = active->m_PathMenu->ItemAt(i);
+		if (item != NULL)
+		{
+			shortcut = item->Shortcut(&modifiers);
+			if (shortcut != 0)
+				item->SetShortcut(shortcut, modifiers);
+		}
+	}
 	
+
 	UpdateCommandLinePath();
 }
 
