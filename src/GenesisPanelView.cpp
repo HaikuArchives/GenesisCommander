@@ -59,7 +59,8 @@ PanelView::PanelView(BRect rect, const char *name)
 {
 	BPath dirPath;			// To query some paths...
 	BString tempstring;		// Ebben lehet kotoraszni a replace-eleshez
-
+	float mpanelheight, menufieldwidth, labelheight;
+	
 	// Default view color...
 	SetViewColor(216, 216, 216, 0);
 
@@ -103,12 +104,15 @@ PanelView::PanelView(BRect rect, const char *name)
 	m_PathMenu->AddSeparatorItem();
 	m_CD_Disks = new BMenuItem(LANGS("CD_DISKS"),new BMessage(PATH_MSG_CD_DISKS),0,0);
 	m_PathMenu->AddItem(m_CD_Disks);
-		
+	
 	// CD BMenuField in the upper left area...
 	m_PathField = new BMenuField(BRect(3,2,20,8*3),"cd","",m_PathMenu, false, 0, B_WILL_DRAW);
 	m_PathField->ResizeToPreferred();
 	m_PathField->SetDivider(0);
 	m_Box->AddChild(m_PathField);
+	
+	menufieldwidth = m_PathField->Bounds().right;
+	mpanelheight = m_PathField->Bounds().bottom;
 
 	// Menu in the top right corner...
 
@@ -128,26 +132,36 @@ PanelView::PanelView(BRect rect, const char *name)
 	m_PanelMenu->AddItem(m_PanelMenu_ShowIcons);
 	
 	// Panel menu BMenuField in the upper right area...
-	m_PanelMenuField = new BMenuField(BRect(Bounds().right-24,2,Bounds().right-4,8*3),"Menu","",m_PanelMenu, false, B_FOLLOW_TOP | B_FOLLOW_RIGHT, B_WILL_DRAW);
-	m_PanelMenuField->ResizeToPreferred();
+	m_PanelMenuField = new BMenuField(BRect(Bounds().right-menufieldwidth,2,Bounds().right-4,2+mpanelheight),"Menu","",m_PanelMenu, false, B_FOLLOW_TOP | B_FOLLOW_RIGHT, B_WILL_DRAW);
 	m_PanelMenuField->SetDivider(0);
-	m_Box->AddChild(m_PanelMenuField);
+	
+	// not sure why there is an empty space within bmenufield,
+	// but to get this aligned, we have to move it by that space, which is this.width - this.menubar.width
+	float emptyswidth = menufieldwidth-(m_PanelMenuField->MenuBar()->Bounds().right);
+	m_PanelMenuField->MoveTo(Bounds().right-4-menufieldwidth+emptyswidth, 2);
 
+	m_Box->AddChild(m_PanelMenuField);
+	
 	// Path text in the upper area...
-	m_PathStringView = new BStringView(BRect(38,2,280,20),"path","");
+	m_PathStringView = new BStringView(BRect(45,20,280,20),"path","");
 	m_PathStringView->SetAlignment(B_ALIGN_CENTER);
+	m_PathStringView->GetPreferredSize(NULL, &labelheight);
+	m_PathStringView->ResizeTo(200, labelheight);
+	m_PathStringView->MoveTo(45, 2+(mpanelheight-labelheight)/2);
+	
 	m_Box->AddChild(m_PathStringView);
 	
-	m_Bevel_1 = new BBox(BRect(2,26,180,27), "bevel1");
+	m_Bevel_1 = new BBox(BRect(2,1+mpanelheight+1,180,1+mpanelheight+2), "bevel1");
 	m_Box->AddChild(m_Bevel_1);
-
+	
 	m_Bevel_2 = new BBox(BRect(2,26,180,27), "bevel2", B_FOLLOW_BOTTOM);
 	m_Bevel_2->MoveTo(2,Bounds().bottom-27);
 	m_Box->AddChild(m_Bevel_2);
 
 	// Status bar in the bottom area...
 	m_StatusStringView = new BStringView(BRect(2,2,180,20),"status","No file(s) selected.", B_FOLLOW_LEFT | B_FOLLOW_BOTTOM);
-	m_StatusStringView->MoveTo(4,Bounds().bottom-25);
+	m_StatusStringView->ResizeToPreferred();
+	m_StatusStringView->MoveTo(4,Bounds().bottom-labelheight-(28-labelheight)/2);
 	m_StatusStringView->SetAlignment(B_ALIGN_LEFT);
 	m_Box->AddChild(m_StatusStringView);
 
@@ -159,7 +173,7 @@ PanelView::PanelView(BRect rect, const char *name)
 
 	r.right-=20;
 	r.left+=6;
-	r.top+=32;
+	r.top+=3+mpanelheight+6;
 	r.bottom-=32;
 
 	m_CustomListView = new CustomListView(r, "file_list", this);
@@ -211,7 +225,7 @@ void PanelView::FrameResized(float width, float height)
 	m_Bevel_1->ResizeTo(r.right-4,1);
 	m_Bevel_1->Invalidate();
 
-	m_PathStringView->ResizeTo(r.right-44-20,18);
+	m_PathStringView->ResizeTo(r.right-44-40,m_PathStringView->Bounds().bottom);
 	SetPathStringView();
 	m_PathStringView->Invalidate();
 
@@ -220,7 +234,7 @@ void PanelView::FrameResized(float width, float height)
 	
 	m_Bevel_2->ResizeTo(r.right-4,1);
 	
-	m_StatusStringView->ResizeTo(r.right-12,18);
+	m_StatusStringView->ResizeTo(r.right-12,m_StatusStringView->Bounds().bottom);
 	m_StatusStringView->Invalidate();
 
 	if (m_SeekTextControl)
