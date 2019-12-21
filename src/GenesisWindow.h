@@ -3,6 +3,7 @@
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
+ *	2019, Ondrej Čerman
  */
 
 #ifndef _GENESISWINDOW_H_
@@ -20,7 +21,7 @@
 #include <MessageFilter.h>
 #include <String.h>
 
-#define __VER__ "0.46"
+#define __VER__ "0.47"
 
 #define MAINWINDOW GenesisWindow::m_MainWindow
 
@@ -68,6 +69,7 @@ const uint32 MSG_UPDATECOMMANDLINE_PATH = 'UCLP';
 const uint32 MSG_ACTIVATE_COMMAND_LINE  = 'MACL';
 const uint32 MSG_COMMAND_LINE_ESC		= 'CESC';
 const uint32 MSG_COMMAND_LINE_ENTER		= 'CENT';
+const uint32 MSG_PREFERENCES_CHANGED	= 'PCHN';
 
 class BButton;
 class Language;
@@ -123,10 +125,13 @@ class GenesisWindow : public BWindow
 		Settings		*m_Settings;
 		Language		*m_Language;
 	private:
-		void SetMousePointerShape(int n);
+		void			SetMousePointerShape(int n);
+		void			UpdateUIVisibility(bool initial = false);
 	
 		MousePointer	m_MousePointer;
 		bool			m_MousePointerChanged;
+		
+		bool			m_FuncKeysVisible;
 };
 
 class EscapeFilter : public BMessageFilter

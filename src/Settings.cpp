@@ -3,6 +3,7 @@
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
+ *	2019, Ondrej Čerman
  */
 
 #include "Settings.h"
@@ -42,6 +43,8 @@ Settings::~Settings()
 void Settings::SetDefaults()
 ////////////////////////////////////////////////////////////////////////
 {
+	SetShowFunctionKeys(true);
+	SetShowCommandLine(true);
 	SetAskOnExit(false);
 	SetLanguage("English");
 	SetWindowLeft(100);
@@ -68,6 +71,10 @@ bool Settings::LoadSettings()
 	DataFile settingsfile;
 	if (settingsfile.LoadDataFile(GetSettingsFile()))
 	{
+		if (settingsfile.GetBool("SHOWFUNCTIONKEYS", tempbool))
+			SetShowFunctionKeys(tempbool);
+		if (settingsfile.GetBool("SHOWCOMMANDLINE", tempbool))
+			SetShowCommandLine(tempbool);
 		if (settingsfile.GetBool("ASKONEXIT", tempbool))
 			SetAskOnExit(tempbool);
 		if (settingsfile.GetString("LANGUAGE", tempstring))
@@ -101,6 +108,8 @@ bool Settings::SaveSettings()
 		settingsfile.WriteText(BString("\n"));
 		settingsfile.WriteText(BString("# General settings\n"));
 		settingsfile.WriteString(BString("LANGUAGE"), GetLanguage());
+		settingsfile.WriteBool(BString("SHOWFUNCTIONKEYS"), GetShowFunctionKeys());
+		settingsfile.WriteBool(BString("SHOWCOMMANDLINE"), GetShowCommandLine());
 		settingsfile.WriteBool(BString("ASKONEXIT"), GetAskOnExit());
 		settingsfile.WriteInteger(BString("WINDOWLEFT"), GetWindowLeft());
 		settingsfile.WriteInteger(BString("WINDOWTOP"), GetWindowTop());

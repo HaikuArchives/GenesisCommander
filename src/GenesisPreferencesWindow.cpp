@@ -25,12 +25,15 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 		B_NOT_MINIMIZABLE | B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_AUTO_UPDATE_SIZE_LIMITS)
 ////////////////////////////////////////////////////////////////////////
 {
-	
+	m_Looper = looper;
 	AddToSubset(mainwindow);
 	BView *settingsview = new BView("settingscontainer", B_WILL_DRAW);
 
 	// Preferences
+	m_ShowFunctionKeys = new BCheckBox("showfkeys", "Show function keys", new BMessage(PREFERENCES_CHANGED));
+	m_ShowCommandLine = new BCheckBox("showfkeys", "Show command line", new BMessage(PREFERENCES_CHANGED));
 	m_AskOnExit = new BCheckBox("askonexit", "Ask on exit", new BMessage(PREFERENCES_CHANGED));
+	
 	m_TerminalWindowTitle = new BTextControl("terminaltitle", "Terminal window title", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
 	m_LeftPanelPath = new BTextControl("leftpath", "Initial path of left panel", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
 	m_RightPanelPath = new BTextControl("rightpath", "Initial path of right panel", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
@@ -54,10 +57,14 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 
 	settingsgrid->SetMinColumnWidth(1, 200);
 	
-	BLayoutBuilder::Group<>(settingsview, B_VERTICAL)
+	BLayoutBuilder::Group<>(settingsview, B_VERTICAL, 0)
 		.SetInsets(20)
+		.Add(m_ShowFunctionKeys)
+		.Add(m_ShowCommandLine)
 		.Add(m_AskOnExit)
+		.Add(BSpaceLayoutItem::CreateVerticalStrut(10))
 		.Add(new BSeparatorView(B_HORIZONTAL))
+		.Add(BSpaceLayoutItem::CreateVerticalStrut(10))
 		.Add(settingsgrid);
 
 	// Bottom bar
@@ -111,6 +118,8 @@ GenesisPreferencesWindow::~GenesisPreferencesWindow()
 void GenesisPreferencesWindow::ReloadSettings()
 ////////////////////////////////////////////////////////////////////////
 {
+	m_ShowCommandLine->SetValue(SETTINGS->GetShowCommandLine() ? B_CONTROL_ON: B_CONTROL_OFF);
+	m_ShowFunctionKeys->SetValue(SETTINGS->GetShowFunctionKeys() ? B_CONTROL_ON: B_CONTROL_OFF);
 	m_AskOnExit->SetValue(SETTINGS->GetAskOnExit() ? B_CONTROL_ON: B_CONTROL_OFF);
 	m_TerminalWindowTitle->SetText(SETTINGS->GetTerminalWindow());
 	m_LeftPanelPath->SetText(SETTINGS->GetLeftPanelPath().String());
@@ -122,6 +131,8 @@ void GenesisPreferencesWindow::ReloadSettings()
 void GenesisPreferencesWindow::ApplySettings()
 ////////////////////////////////////////////////////////////////////////
 {
+	SETTINGS->SetShowCommandLine(m_ShowCommandLine->Value() == B_CONTROL_ON);
+	SETTINGS->SetShowFunctionKeys(m_ShowFunctionKeys->Value() == B_CONTROL_ON);
 	SETTINGS->SetAskOnExit(m_AskOnExit->Value() == B_CONTROL_ON);
 	SETTINGS->SetTerminalWindow(m_TerminalWindowTitle->Text());
 	SETTINGS->SetLeftPanelPath(m_LeftPanelPath->Text());
@@ -152,6 +163,8 @@ void GenesisPreferencesWindow::MessageReceived(BMessage* message)
 			ApplySettings();
 			SETTINGS->SaveSettings();
 			m_ApplyButton->SetEnabled(false);
+			if (m_Looper != NULL)
+				m_Looper->PostMessage(new BMessage(MSG_PREFERENCES_CHANGED), NULL);
 			break;
 		default:
 			BWindow::MessageReceived(message);

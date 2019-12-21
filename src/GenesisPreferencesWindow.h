@@ -32,6 +32,8 @@ class GenesisPreferencesWindow : public BWindow
 		BLooper			*m_Looper;
 
 		BButton			*m_ApplyButton;
+		BCheckBox		*m_ShowFunctionKeys;
+		BCheckBox		*m_ShowCommandLine;
 		BCheckBox		*m_AskOnExit;
 		BTextControl	*m_LeftPanelPath;
 		BTextControl	*m_RightPanelPath;

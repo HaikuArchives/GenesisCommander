@@ -3,6 +3,7 @@
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
+ *	2019, Ondrej Čerman
  */
 
 #include <String.h>
@@ -63,6 +64,8 @@ public:
 	SETTING_STRING(SettingsFile)
 
 	// GENERAL SETTINGS
+	SETTING_BOOL(ShowFunctionKeys)
+	SETTING_BOOL(ShowCommandLine)
 	SETTING_BOOL(AskOnExit)
 	SETTING_INT(WindowLeft)
 	SETTING_INT(WindowTop)
