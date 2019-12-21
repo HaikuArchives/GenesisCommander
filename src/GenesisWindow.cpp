@@ -126,6 +126,7 @@ GenesisWindow::GenesisWindow() :
 	m_MainView->AddChild(m_MenuBar);
 
 	// Buttons
+	m_FuncKeysVisible = true;
 	m_Button_F3 = new BButton(BRect(10,10,40,40),"view",LANGS("BUTTON_F3"),new BMessage(BUTTON_MSG_F3),0,B_WILL_DRAW);
 	m_MainView->AddChild(m_Button_F3);
 	m_Button_F4 = new BButton(BRect(10,10,40,40),"edit",LANGS("BUTTON_F4"),new BMessage(BUTTON_MSG_F4),0,B_WILL_DRAW);
@@ -141,8 +142,6 @@ GenesisWindow::GenesisWindow() :
 	m_Button_F10 = new BButton(BRect(10,10,40,40),"quit",LANGS("BUTTON_F10"),new BMessage(BUTTON_MSG_F10),0,B_WILL_DRAW);
 	m_MainView->AddChild(m_Button_F10);
 
-//	AddShortcut('f', B_COMMAND_KEY, new BMessage(BUTTON_MSG_F10));
-
 	// Command line...
 	m_CommandLine = new CommandLine(BRect(20,20,100,100),"cmdline", NULL);	// new BMessage(CMD_LINE_MSG)
 	m_CommandLine->MoveTo(Bounds().left+2,Bounds().bottom-44);
@@ -156,11 +155,10 @@ GenesisWindow::GenesisWindow() :
 	m_RightPanel = new PanelView(BRect(10,10,100,100),"rightpanel");
 	m_MainView->AddChild(m_RightPanel);
 
-//	m_LeftPanel->GotoHome();
-//	m_RightPanel->GotoHome();
 	m_LeftPanel->ChangePath(SETTINGS->GetLeftPanelPath().String());
 	m_RightPanel->ChangePath(SETTINGS->GetRightPanelPath().String());
 
+	UpdateUIVisibility(true);
 	FrameResized(0,0);
 	SetSizeLimits(400,65535,200,65535);
 
@@ -228,6 +226,10 @@ void GenesisWindow::MessageReceived(BMessage* message)
 				m_LeftPanel->ChangePath(rightpath.String());
 				m_RightPanel->ChangePath(leftpath.String());
 			}
+			break;
+		case MSG_PREFERENCES_CHANGED:
+			UpdateUIVisibility();
+			FrameResized(0,0);
 			break;
 		case MSG_COMMAND_LINE_ENTER:
 			m_CommandLine->Execute();
@@ -330,16 +332,18 @@ void GenesisWindow::MessageReceived(BMessage* message)
 		case MSG_ACTIVATE_COMMAND_LINE:
 			{
 				int8 chr;
-				m_CommandLine->MakeFocus(true);
-				if (message->FindInt8("Chr",&chr)==B_OK)
-				{
-					BString text;
-					BTextView *textview = m_CommandLine->TextView();
+				if (!m_CommandLine->IsHidden()){
+					m_CommandLine->MakeFocus(true);
+					if (message->FindInt8("Chr",&chr)==B_OK)
+					{
+						BString text;
+						BTextView *textview = m_CommandLine->TextView();
 
-					text.SetTo(m_CommandLine->Text());
-					text << (char)chr;
-					textview->Clear();
-					textview->Insert(0,text.String(),strlen(text.String()));
+						text.SetTo(m_CommandLine->Text());
+						text << (char)chr;
+						textview->Clear();
+						textview->Insert(0,text.String(),strlen(text.String()));
+					}
 				}
 			}
 			break;
@@ -377,68 +381,121 @@ void GenesisWindow::MessageReceived(BMessage* message)
 }
 
 ////////////////////////////////////////////////////////////////////////
+void GenesisWindow::UpdateUIVisibility(bool initial)
+////////////////////////////////////////////////////////////////////////
+{
+	bool prefshowfuncheys = SETTINGS->GetShowFunctionKeys();
+	bool prefshowcommandline = SETTINGS->GetShowCommandLine();
+
+	if (m_FuncKeysVisible != prefshowfuncheys)
+	{
+		if (prefshowfuncheys == true)
+		{
+			m_Button_F3->Show();
+			m_Button_F4->Show();
+			m_Button_F5->Show();
+			m_Button_F6->Show();
+			m_Button_F7->Show();
+			m_Button_F8->Show();
+			m_Button_F10->Show();
+		}
+		else
+		{
+			m_Button_F3->Hide();
+			m_Button_F4->Hide();
+			m_Button_F5->Hide();
+			m_Button_F6->Hide();
+			m_Button_F7->Hide();
+			m_Button_F8->Hide();
+			m_Button_F10->Hide();
+		}
+		m_FuncKeysVisible = prefshowfuncheys;
+	}
+
+	bool commandlinevisible = (initial || !m_CommandLine->IsHidden());
+	if (commandlinevisible != prefshowcommandline)
+	{
+		if (prefshowcommandline == true)
+			m_CommandLine->Show();
+		else
+			m_CommandLine->Hide();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////
 void GenesisWindow::FrameResized(float width, float height)
 ////////////////////////////////////////////////////////////////////////
 {
 	BRect r;
-	int top;
+	int bottom;
 	float buttonwidth,left;
 
 	r = Bounds();
-	top = (int)(r.bottom-24);
+	bottom = (int)(r.bottom);
 	left = r.left;
 
 	// Buttons
+	if (m_FuncKeysVisible)
+	{
+		const int funcbtnsheight = 24;
+		
+		bottom = bottom-funcbtnsheight;
+		
+		buttonwidth = (r.right-r.left)/7;
+		m_Button_F3->MoveTo(0,bottom);
+		m_Button_F3->ResizeTo(buttonwidth,funcbtnsheight);
+		m_Button_F3->Invalidate();
 
-	buttonwidth = (r.right-r.left)/7;
-	m_Button_F3->MoveTo(0,top);
-	m_Button_F3->ResizeTo(buttonwidth,24);
-	m_Button_F3->Invalidate();
+		buttonwidth = (r.right-m_Button_F3->Frame().right)/6;
+		m_Button_F4->MoveTo(m_Button_F3->Frame().right,bottom);
+		m_Button_F4->ResizeTo(buttonwidth,funcbtnsheight);
+		m_Button_F4->Invalidate();
 
-	buttonwidth = (r.right-m_Button_F3->Frame().right)/6;
-	m_Button_F4->MoveTo(m_Button_F3->Frame().right,top);
-	m_Button_F4->ResizeTo(buttonwidth,24);
-	m_Button_F4->Invalidate();
+		buttonwidth = (r.right-m_Button_F4->Frame().right)/5;
+		m_Button_F5->MoveTo(m_Button_F4->Frame().right,bottom);
+		m_Button_F5->ResizeTo(buttonwidth,funcbtnsheight);
+		m_Button_F5->Invalidate();
 
-	buttonwidth = (r.right-m_Button_F4->Frame().right)/5;
-	m_Button_F5->MoveTo(m_Button_F4->Frame().right,top);
-	m_Button_F5->ResizeTo(buttonwidth,24);
-	m_Button_F5->Invalidate();
+		buttonwidth = (r.right-m_Button_F5->Frame().right)/4;
+		m_Button_F6->MoveTo(m_Button_F5->Frame().right,bottom);
+		m_Button_F6->ResizeTo(buttonwidth,funcbtnsheight);
+		m_Button_F6->Invalidate();
 
-	buttonwidth = (r.right-m_Button_F5->Frame().right)/4;
-	m_Button_F6->MoveTo(m_Button_F5->Frame().right,top);
-	m_Button_F6->ResizeTo(buttonwidth,24);
-	m_Button_F6->Invalidate();
+		buttonwidth = (r.right-m_Button_F6->Frame().right)/3;
+		m_Button_F7->MoveTo(m_Button_F6->Frame().right,bottom);
+		m_Button_F7->ResizeTo(buttonwidth,funcbtnsheight);
+		m_Button_F7->Invalidate();
 
-	buttonwidth = (r.right-m_Button_F6->Frame().right)/3;
-	m_Button_F7->MoveTo(m_Button_F6->Frame().right,top);
-	m_Button_F7->ResizeTo(buttonwidth,24);
-	m_Button_F7->Invalidate();
+		buttonwidth = (r.right-m_Button_F7->Frame().right)/2;
+		m_Button_F8->MoveTo(m_Button_F7->Frame().right,bottom);
+		m_Button_F8->ResizeTo(buttonwidth,funcbtnsheight);
+		m_Button_F8->Invalidate();
 
-	buttonwidth = (r.right-m_Button_F7->Frame().right)/2;
-	m_Button_F8->MoveTo(m_Button_F7->Frame().right,top);
-	m_Button_F8->ResizeTo(buttonwidth,24);
-	m_Button_F8->Invalidate();
-
-	buttonwidth = (r.right-m_Button_F8->Frame().right);
-	m_Button_F10->MoveTo(m_Button_F8->Frame().right,top);
-	m_Button_F10->ResizeTo(buttonwidth,24);
-	m_Button_F10->Invalidate();
+		buttonwidth = (r.right-m_Button_F8->Frame().right);
+		m_Button_F10->MoveTo(m_Button_F8->Frame().right,bottom);
+		m_Button_F10->ResizeTo(buttonwidth,funcbtnsheight);
+		m_Button_F10->Invalidate();
+	}
 
 	// Command line	
-//	m_CommandLine->MoveTo(r.left+2,top-20);
-	m_CommandLine->ResizeTo(r.right-4,18);
-	m_CommandLine->Invalidate();
+	if (!m_CommandLine->IsHidden())
+	{
+		const int cmdlineheight = 18;
+		m_CommandLine->MoveTo(r.left+2,bottom-cmdlineheight-2);
+		m_CommandLine->ResizeTo(r.right-4,cmdlineheight);
+		m_CommandLine->Invalidate();
+		bottom = bottom-cmdlineheight-2;
+	}
 	
 	// Panels
 	buttonwidth = (r.right-r.left-6)/2;
 	
 	m_LeftPanel->MoveTo(BPoint(r.left+2,r.top+22));
-	m_LeftPanel->ResizeTo(buttonwidth-2,r.bottom-r.top-69);
+	m_LeftPanel->ResizeTo(buttonwidth-2,bottom-r.top-24);
 	m_LeftPanel->FrameResized(0,0);
 
 	m_RightPanel->MoveTo(BPoint(r.left+4+ (int)buttonwidth ,r.top+22));
-	m_RightPanel->ResizeTo((r.right-r.left)-(int)buttonwidth-6,r.bottom-r.top-69);
+	m_RightPanel->ResizeTo((r.right-r.left)-(int)buttonwidth-6,bottom-r.top-24);
 	m_RightPanel->FrameResized(0,0);
 	
 	UpdateIfNeeded();
@@ -643,31 +700,35 @@ filter_result KeyboardFilter::Filter(BMessage* msg, BHandler** target)
 		uint8 byte = 0;
 		int32 key = 0;
 		
-		BTextView *cmdlinetextview = (BTextView *)((GenesisWindow *)m_TargetWindow)->m_CommandLine->TextView();
-
-		if ( cmdlinetextview && cmdlinetextview->IsFocus() )
+		GenesisWindow *window = (GenesisWindow *)m_TargetWindow;
+		if (!window->m_CommandLine->IsHidden())
 		{
-			msg->FindInt32("modifiers", (int32 *)&modifiers);
-			msg->FindInt32("raw_char", (int32 *)&rawKeyChar);
-			msg->FindInt8("byte", (int8 *)&byte);
-			msg->FindInt32("key", &key);
+			BTextView *cmdlinetextview = (BTextView *)window->m_CommandLine->TextView();
 
-//			char buf[256];
-//			sprintf(buf,"%d",key);
-//			BAlert *myAlert = new BAlert("DebugInfo",buf,"OK",NULL,NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
-//			myAlert->Go();										
+			if ( cmdlinetextview && cmdlinetextview->IsFocus() )
+			{
+				msg->FindInt32("modifiers", (int32 *)&modifiers);
+				msg->FindInt32("raw_char", (int32 *)&rawKeyChar);
+				msg->FindInt8("byte", (int8 *)&byte);
+				msg->FindInt32("key", &key);
 
-			if (key == 1)		// ESC
-				return B_SKIP_MESSAGE;	
+//				char buf[256];
+//				sprintf(buf,"%d",key);
+//				BAlert *myAlert = new BAlert("DebugInfo",buf,"OK",NULL,NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
+//				myAlert->Go();										
 
-			if (key>=2 && key<=13)	// Function keys
-				return B_SKIP_MESSAGE;
-				
-			if (key == 15 || key == 31)	// scroll lock || insert
-				return B_SKIP_MESSAGE;
-				
-			if (key == 71 || key == 91)
-				m_TargetWindow->Looper()->PostMessage(m_MessageToSend, NULL);
+				if (key == 1)		// ESC
+					return B_SKIP_MESSAGE;	
+
+				if (key>=2 && key<=13)	// Function keys
+					return B_SKIP_MESSAGE;
+					
+				if (key == 15 || key == 31)	// scroll lock || insert
+					return B_SKIP_MESSAGE;
+					
+				if (key == 71 || key == 91)
+					m_TargetWindow->Looper()->PostMessage(m_MessageToSend, NULL);
+			}
 		}
     }
     
