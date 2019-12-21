@@ -10,6 +10,7 @@
 #include "GenesisCustomListView.h"
 #include "GenesisSeek.h"
 #include "GenesisPanelView.h"
+#include "GenesisPreferencesWindow.h"
 #include "Language.h"
 #include "Settings.h"
 #include "GenesisApp.h"
@@ -68,10 +69,7 @@ GenesisWindow::GenesisWindow() :
 
 	menu->AddSeparatorItem();
 
-//	menu->AddItem(new BMenuItem("Preferences..." , new BMessage(MENU_PREFERENCES), 'P'));
-	menuitem = new BMenuItem(LANGS("SUBMENU_PREFERENCES") , new BMessage(MENU_PREFERENCES), 'P');
-	menuitem->SetEnabled(false);
-	menu->AddItem(menuitem);
+	menu->AddItem(new BMenuItem(LANGS("SUBMENU_PREFERENCES") , new BMessage(MENU_PREFERENCES), 'P'));
 
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem(LANGS("SUBMENU_QUIT") , new BMessage(MENU_EXIT), 'Q'));	
@@ -289,6 +287,11 @@ void GenesisWindow::MessageReceived(BMessage* message)
 		case MENU_GETINFO:
 			if (GetActivePanel())
 				GetActivePanel()->GetInfo();
+			break;
+		case MENU_PREFERENCES:
+			GenesisPreferencesWindow *prefwindow;
+			prefwindow = new GenesisPreferencesWindow(Looper(), m_MainWindow);
+			prefwindow->Show();
 			break;
 		case MENU_COMMANDS_VIEW:
 		case BUTTON_MSG_F3:

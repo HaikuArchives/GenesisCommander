@@ -40,6 +40,7 @@ SRCS = GenesisApp.cpp \
 	GenesisMakeFileWindow.cpp \
 	GenesisMoveWindow.cpp \
 	GenesisPanelView.cpp \
+	GenesisPreferencesWindow.cpp \
 	GenesisRenameWindow.cpp \
 	GenesisSeek.cpp \
 	GenesisViewWindow.cpp \
