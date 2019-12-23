@@ -25,7 +25,6 @@ enum SETTING {
 	SETTING_SHOWFILEDATE,
 };
 
-const uint32 MSG_PANEL_SELECTED = 'PSEL';
 const uint32 MSG_ENTER 			= 'MENT';
 const uint32 MSG_SPACE			= 'MSPC';
 const uint32 MSG_VIEW			= 'MVIW';

@@ -270,11 +270,8 @@ void GenesisWindow::MessageReceived(BMessage* message)
 				GetActivePanel()->AddToSelection(ADD_SYMLINKS);
 			break;
 		case MENU_SEEK:
-			{
-				PanelView *panel = GetActivePanel();
-				if (panel && panel->m_SeekMode==false)
-					panel->SeekModeOn();
-			}
+			if (GetActivePanel())
+				GetActivePanel()->SeekModeOn();
 			break;
 		case MSG_UPDATEPANEL_SELECTION:
 			UpdatePanels();

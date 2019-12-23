@@ -117,7 +117,7 @@ void CustomListView::MakeFocus(bool focusState)
 ////////////////////////////////////////////////////////////////////////
 {
 	if (focusState==true)
-		((PanelView *)Parent())->Looper()->PostMessage(new BMessage(MSG_PANEL_SELECTED), NULL);
+		((PanelView *)m_PV)->SelectPanel();
 
 	BListView::MakeFocus(focusState);
 }
