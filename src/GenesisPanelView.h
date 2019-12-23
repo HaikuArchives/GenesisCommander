@@ -134,6 +134,8 @@ class PanelView : public BView
 		void SeekModeOff(void);
 		void SeekFor(const char *text);
 		
+		void SelectPanel(void);
+		
 		void SetPath(const char *path) { m_Path.SetTo(path); }
 
 		BString			m_Path;				// This is the real path of the panel...

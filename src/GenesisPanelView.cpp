@@ -244,6 +244,17 @@ void PanelView::FrameResized(float width, float height)
 	}
 }
 
+////////////////////////////////////////////////////////////////////////
+void PanelView::SelectPanel(void)
+////////////////////////////////////////////////////////////////////////
+{
+	m_LastSelectionTime = real_time_clock_usecs();
+	Parent()->Looper()->PostMessage(new BMessage(MSG_UPDATEPANEL_SELECTION));	// To update Panels...
+
+	if (m_SeekMode)
+		SeekModeOff();
+}
+
 /*
 void PanelView::SetMousePointer(int n)
 {
@@ -299,13 +310,6 @@ void PanelView::MessageReceived(BMessage* message)
 			break;
 		case MSG_FILELISTVIEW_SELECTION:
 			SelectionChanged();
-			break;
-		case MSG_PANEL_SELECTED:
-			m_LastSelectionTime = real_time_clock_usecs();
-			Parent()->Looper()->PostMessage(new BMessage(MSG_UPDATEPANEL_SELECTION));	// To update Panels...
-
-			if (m_SeekMode)
-				SeekModeOff();
 			break;
 		case MSG_ENTER:
 			Execute(m_CustomListView->GetSelectedEntry(0));
@@ -1937,7 +1941,12 @@ void PanelView::SeekModeOn(void)
 ////////////////////////////////////////////////////////////////////////
 {
 	if (m_PanelMode != PM_NORMAL) return;
-	if (m_SeekMode == true) return;		// Avoid multiple creations...
+	if (m_SeekMode == true)			// Avoid multiple creations...
+	{
+		if (m_SeekTextControl)
+			m_SeekTextControl->MakeFocus(true);
+		return;
+	}
 
 	m_SeekMode = true;
 	m_StatusStringView->Hide();
@@ -1965,7 +1974,8 @@ void PanelView::SeekModeOff(void)
 	if (m_StatusStringView->IsHidden())
 		m_StatusStringView->Show();
 
-	m_CustomListView->MakeFocus(true);
+	if (!m_CustomListView->IsFocus())
+		m_CustomListView->MakeFocus(true);
 }
 
 ////////////////////////////////////////////////////////////////////////
