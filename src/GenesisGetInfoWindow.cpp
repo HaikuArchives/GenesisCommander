@@ -40,7 +40,7 @@ GenesisGetInfoWindow::GenesisGetInfoWindow(const char *dir, BStringList *files, 
 	
 	// Main view
 	m_View = new BView(Bounds(), "infoview", B_FOLLOW_ALL, B_WILL_DRAW);
-	m_View->SetViewColor(216, 216, 216, 0);
+	m_View->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	AddChild(m_View);
 
 	// Bottom View	
@@ -413,7 +413,7 @@ GenesisGetDiskInfoWindow::GenesisGetDiskInfoWindow(CustomListItem *item, BWindow
 	
 	// Main view
 	m_View = new BView(Bounds(), "infoview", B_FOLLOW_ALL, B_WILL_DRAW);
-	m_View->SetViewColor(216, 216, 216, 0);
+	m_View->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	AddChild(m_View);
 
 	// Bottom View	
@@ -604,7 +604,7 @@ PieView::PieView(BRect rect, const char *name, off_t capacity, off_t free)
 	   	   : BView( rect, name , 0, B_WILL_DRAW )
 ////////////////////////////////////////////////////////////////////////
 {
-	SetViewColor(216, 216, 216, 0);
+	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	
 	m_Capacity = capacity;
 	m_Free = free;

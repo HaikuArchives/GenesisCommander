@@ -53,7 +53,7 @@ GenesisWindow::GenesisWindow() :
 
 	// Main view
 	m_MainView = new BView(Bounds(), "mainview", B_FOLLOW_ALL, B_WILL_DRAW);
-	m_MainView->SetViewColor(216, 216, 216, 0);
+	m_MainView->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	AddChild(m_MainView);
 
 	// Menu
