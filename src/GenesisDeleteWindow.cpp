@@ -57,7 +57,7 @@ GenesisDeleteWindow::GenesisDeleteWindow(CustomListView *list, BLooper* looper, 
 	AddToSubset(mainwindow);
 
 	m_View = new BView(Bounds(), "makedirview", B_FOLLOW_ALL, B_WILL_DRAW);
-	m_View->SetViewColor(216, 216, 216, 0);
+	m_View->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	AddChild(m_View);
 
 	// Bottom View	
@@ -94,9 +94,7 @@ GenesisDeleteWindow::GenesisDeleteWindow(CustomListView *list, BLooper* looper, 
 	rect.top += 32;
 	rect.bottom = rect.top+40;
 	m_ProgressBar = new BStatusBar(rect,"progressbar","","");
-	m_ProgressBar->SetViewColor(216,216,216);
-	m_ProgressBar->SetLowColor(216,216,216);
-	m_ProgressBar->SetHighColor(0,0,0);
+	m_ProgressBar->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	m_ProgressBar->SetBarColor(BarColor);
 	m_ProgressBar->SetMaxValue(m_FileCount);
 	AddChild(m_ProgressBar);

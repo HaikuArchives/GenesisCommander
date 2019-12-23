@@ -62,7 +62,7 @@ PanelView::PanelView(BRect rect, const char *name)
 	float mpanelheight, menufieldwidth, labelheight;
 	
 	// Default view color...
-	SetViewColor(216, 216, 216, 0);
+	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 
 	// Default settings...
 	m_Setting_ShowIcons = true;

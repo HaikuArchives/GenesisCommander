@@ -63,7 +63,7 @@ GenesisMoveWindow::GenesisMoveWindow(CustomListView *list, PanelView *destpanel,
 	AddToSubset(mainwindow);
 
 	m_View = new BView(Bounds(), "moveview", B_FOLLOW_ALL, B_WILL_DRAW);
-	m_View->SetViewColor(216, 216, 216, 0);
+	m_View->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	AddChild(m_View);
 
 	// Bottom View	
@@ -104,10 +104,7 @@ GenesisMoveWindow::GenesisMoveWindow(CustomListView *list, PanelView *destpanel,
 		rect.top += 16;
 	rect.bottom = rect.top+20;
 	m_Label = new BStringView(rect,"filename","Move");
-	m_Label->SetAlignment(B_ALIGN_CENTER);
-	m_Label->SetViewColor(216,216,216);
-	m_Label->SetLowColor(216,216,216);
-	m_Label->SetHighColor(0,0,0);
+	m_Label->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	AddChild(m_Label);
 
 	// Edit field
@@ -478,9 +475,7 @@ void GenesisMoveWindow::PrepareMove(void)
 		rect.top += 8;
 		rect.bottom = rect.top+40;
 		m_ProgressBar = new BStatusBar(rect,"progressbar","0%","100%");
-		m_ProgressBar->SetViewColor(216,216,216);
-		m_ProgressBar->SetLowColor(216,216,216);
-		m_ProgressBar->SetHighColor(0,0,0);
+		m_ProgressBar->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 		m_ProgressBar->SetBarColor(BarColor);
 		m_ProgressBar->SetMaxValue(m_FileCount);
 		m_View->AddChild(m_ProgressBar);
@@ -496,9 +491,7 @@ void GenesisMoveWindow::PrepareMove(void)
 		rect.top += 48;
 	rect.bottom = rect.top+40;
 	m_FileBar = new BStatusBar(rect,"filebar","","");
-	m_FileBar->SetViewColor(216,216,216);
-	m_FileBar->SetLowColor(216,216,216);
-	m_FileBar->SetHighColor(0,0,0);
+	m_FileBar->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	m_FileBar->SetBarColor(BarColor);
 	m_View->AddChild(m_FileBar);
 
