@@ -1,9 +1,9 @@
 /*
- * Copyright 2002-2019. All rights reserved.
+ * Copyright 2002-2020. All rights reserved.
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
- *	2019, Ondrej Čerman
+ *	2019-2020, Ondrej Čerman
  */
 
 // 
@@ -24,6 +24,7 @@
 #include "GenesisRenameWindow.h"
 #include "GenesisMoveWindow.h"
 #include "GenesisSeek.h"
+#include "GenesisSelectGroupWindow.h"
 #include "Language.h"
 
 #include <stdio.h>
@@ -70,6 +71,7 @@ PanelView::PanelView(BRect rect, const char *name)
 	m_Setting_ShowFileDate = false;
 
 	m_MonitoringPath.SetTo("");	// Empty string...
+	m_LastFilePattern.SetTo("*.*");
 
 	// Resources
 	LoadResources();
@@ -2004,3 +2006,20 @@ void PanelView::SeekFor(const char *text)
 	}
 }
 
+////////////////////////////////////////////////////////////////////////
+void PanelView::SelectGroup(void)
+////////////////////////////////////////////////////////////////////////
+{
+	GenesisSelectGroupWindow *grpwindow;
+	grpwindow = new GenesisSelectGroupWindow(m_CustomListView, Window(), true);
+	grpwindow->Show();
+}
+
+////////////////////////////////////////////////////////////////////////
+void PanelView::DeselectGroup(void)
+////////////////////////////////////////////////////////////////////////
+{
+	GenesisSelectGroupWindow *grpwindow;
+	grpwindow = new GenesisSelectGroupWindow(m_CustomListView, Window(), false);
+	grpwindow->Show();
+}

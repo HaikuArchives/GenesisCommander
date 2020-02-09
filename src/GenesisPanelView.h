@@ -133,6 +133,8 @@ class PanelView : public BView
 		void SeekModeOn(void);
 		void SeekModeOff(void);
 		void SeekFor(const char *text);
+		void SelectGroup(void);
+		void DeselectGroup(void);
 		
 		void SelectPanel(void);
 		
@@ -140,6 +142,7 @@ class PanelView : public BView
 
 		BString			m_Path;				// This is the real path of the panel...
 		BString			m_MonitoringPath;
+		BString			m_LastFilePattern;
 		uint32			m_CurrentTotalSize;
 		
 		BMenuItem 		*m_CD_Parent;

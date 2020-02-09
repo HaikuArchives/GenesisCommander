@@ -43,6 +43,7 @@ SRCS = GenesisApp.cpp \
 	GenesisPreferencesWindow.cpp \
 	GenesisRenameWindow.cpp \
 	GenesisSeek.cpp \
+	GenesisSelectGroupWindow.cpp \
 	GenesisViewWindow.cpp \
 	GenesisWindow.cpp \
 	Language.cpp \
