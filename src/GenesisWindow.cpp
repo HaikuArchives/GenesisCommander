@@ -43,7 +43,7 @@ GenesisWindow::GenesisWindow() :
 	BMenu *menu;
 	BString title;
 	BMenuItem *menuitem;
-	
+
 	// Language singleton letrehozasa...
 	m_Language = new Language(SETTINGS->GetLanguage());
 
@@ -72,27 +72,20 @@ GenesisWindow::GenesisWindow() :
 	menu->AddItem(new BMenuItem(LANGS("SUBMENU_PREFERENCES") , new BMessage(MENU_PREFERENCES), 'P'));
 
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_QUIT") , new BMessage(MENU_EXIT), 'Q'));	
+	menu->AddItem(new BMenuItem(LANGS("SUBMENU_QUIT") , new BMessage(MENU_EXIT), 'Q'));
 	m_MenuBar->AddItem(menu);
 
 	menu = new BMenu(LANGS("MENU_SELECTION"));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_SELECTALL") , new BMessage(MENU_SELECT_ALL), '+'));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_DESELECTALL") , new BMessage(MENU_DESELECT_ALL), '-'));
+	menu->AddItem(new BMenuItem(LANGS("SUBMENU_SELECTGROUP") , new BMessage(MENU_SELECT_GROUP), '+'));
+	menu->AddItem(new BMenuItem(LANGS("SUBMENU_DESELECTGROUP") , new BMessage(MENU_DESELECT_GROUP), '-'));
 	menu->AddItem(new BMenuItem(LANGS("SUBMENU_INVERTSELECTION") , new BMessage(MENU_INVERT), '*'));
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem(LANGS("SUBMENU_ADDALLFOLDERS") , new BMessage(MENU_ADD_FOLDERS), 0));
 	menu->AddItem(new BMenuItem(LANGS("SUBMENU_ADDALLFILES") , new BMessage(MENU_ADD_FILES), 0));
 	menu->AddItem(new BMenuItem(LANGS("SUBMENU_ADDALLSYMLINKS") , new BMessage(MENU_ADD_SYMLINKS), 0));
 	menu->AddSeparatorItem();
-//	menu->AddItem(new BMenuItem("Select group..." , new BMessage(MENU_SELECT_GROUP), 0));
-	menuitem = new BMenuItem(LANGS("SUBMENU_SELECTGROUP") , new BMessage(MENU_SELECT_GROUP), 0);
-	menuitem->SetEnabled(false);
-	menu->AddItem(menuitem);
-	
-//	menu->AddItem(new BMenuItem("Deselect group..." , new BMessage(MENU_DESELECT_GROUP), 0));
-	menuitem = new BMenuItem(LANGS("SUBMENU_DESELECTGROUP") , new BMessage(MENU_DESELECT_GROUP), 0);
-	menuitem->SetEnabled(false);
-	menu->AddItem(menuitem);
+	menu->AddItem(new BMenuItem(LANGS("SUBMENU_SELECTALL") , new BMessage(MENU_SELECT_ALL), 0));
+	menu->AddItem(new BMenuItem(LANGS("SUBMENU_DESELECTALL") , new BMessage(MENU_DESELECT_ALL), 0));
 
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem(LANGS("SUBMENU_SEEKINLIST") , new BMessage(MENU_SEEK), 'S'));
@@ -146,9 +139,9 @@ GenesisWindow::GenesisWindow() :
 	m_CommandLine = new CommandLine(BRect(20,20,100,100),"cmdline", NULL);	// new BMessage(CMD_LINE_MSG)
 	m_CommandLine->MoveTo(Bounds().left+2,Bounds().bottom-44);
 	m_MainView->AddChild(m_CommandLine);
-	
+
 	// Left Panel...
-	m_LeftPanel = new PanelView(BRect(10,10,100,100),"leftpanel");	
+	m_LeftPanel = new PanelView(BRect(10,10,100,100),"leftpanel");
 	m_MainView->AddChild(m_LeftPanel);
 
 	// Right Panel...
@@ -268,6 +261,14 @@ void GenesisWindow::MessageReceived(BMessage* message)
 		case MENU_ADD_SYMLINKS:
 			if (GetActivePanel())
 				GetActivePanel()->AddToSelection(ADD_SYMLINKS);
+			break;
+		case MENU_SELECT_GROUP:
+			if (GetActivePanel())
+				GetActivePanel()->SelectGroup();
+			break;
+		case MENU_DESELECT_GROUP:
+			if (GetActivePanel())
+				GetActivePanel()->DeselectGroup();
 			break;
 		case MENU_SEEK:
 			if (GetActivePanel())
