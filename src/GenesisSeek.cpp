@@ -1,8 +1,9 @@
 /*
- * Copyright 2002-2019. All rights reserved.
+ * Copyright 2002-2020. All rights reserved.
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
+ *	2019-2020, Ondrej Čerman
  */
 
 #include "GenesisSeek.h"
@@ -20,6 +21,9 @@ SeekControl::SeekControl(BRect rect, const char *name, BMessage* msg)
 	GetFont(&font);
 	SetDivider(font.StringWidth("Seek for")+4);
 
+	font.SetSize(10);
+	TextView()->SetFontAndColor(&font);
+
 	TextView()->DisallowChar(B_FUNCTION_KEY);
 	TextView()->DisallowChar(B_INSERT);
 	TextView()->DisallowChar(B_ESCAPE);
@@ -30,4 +34,14 @@ SeekControl::~SeekControl()
 ////////////////////////////////////////////////////////////////////////
 {
 
+}
+
+////////////////////////////////////////////////////////////////////////
+void SeekControl::FrameResized(float width, float height)
+////////////////////////////////////////////////////////////////////////
+{
+	BRect textrect = TextView()->Bounds();
+	textrect.InsetBy(4.0,0.0);
+	TextView()->SetTextRect(textrect);
+	BTextControl::FrameResized(width, height);
 }

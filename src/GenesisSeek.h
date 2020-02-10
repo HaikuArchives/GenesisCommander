@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019. All rights reserved.
+ * Copyright 2002-2020. All rights reserved.
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
@@ -19,6 +19,7 @@ class SeekControl : public BTextControl
 	public:
 		SeekControl(BRect rect, const char *name, BMessage* msg);
 		~SeekControl();
+		virtual void FrameResized(float width, float height);
 };
 
 #endif
