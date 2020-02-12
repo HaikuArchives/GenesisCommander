@@ -123,7 +123,6 @@ class GenesisWindow : public BWindow
 		BString			m_AppPath;
 
 		Settings		*m_Settings;
-		Language		*m_Language;
 	private:
 		void			SetMousePointerShape(int n);
 		void			UpdateUIVisibility(bool initial = false);

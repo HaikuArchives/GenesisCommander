@@ -25,7 +25,6 @@
 #include "GenesisMoveWindow.h"
 #include "GenesisSeek.h"
 #include "GenesisSelectGroupWindow.h"
-#include "Language.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -83,28 +82,28 @@ PanelView::PanelView(BRect rect, const char *name)
 	// Path
 	m_PathMenu = new BMenu("cd",B_ITEMS_IN_COLUMN);
 
-	m_CD_Parent = new BMenuItem(LANGS("CD_PARENT"),new BMessage(PATH_MSG_CD_PARENT),0,0);
+	m_CD_Parent = new BMenuItem("Parent (..)",new BMessage(PATH_MSG_CD_PARENT),0,0);
 	m_PathMenu->AddItem(m_CD_Parent);
 
 	m_PathMenu->AddSeparatorItem();
 
-	m_CD_Root = new BMenuItem(LANGS("CD_ROOT"),new BMessage(PATH_MSG_CD_ROOT),0,0);
+	m_CD_Root = new BMenuItem("Root (/)",new BMessage(PATH_MSG_CD_ROOT),0,0);
 	m_PathMenu->AddItem(m_CD_Root);
 
 	find_directory(B_USER_DIRECTORY, &dirPath, true);
-	tempstring = LANG("CD_HOME");
+	tempstring = "Home (<DIR>)";
 	tempstring.ReplaceAll("<DIR>", dirPath.Path());
 	m_CD_Home = new BMenuItem(tempstring.String(),new BMessage(PATH_MSG_CD_HOME),'H');
 	m_PathMenu->AddItem(m_CD_Home);
 
 	find_directory(B_DESKTOP_DIRECTORY, &dirPath, true);
-	tempstring = LANG("CD_DESKTOP");
+	tempstring = "Desktop (<DIR>)";
 	tempstring.ReplaceAll("<DIR>", dirPath.Path());
 	m_CD_Desktop = new BMenuItem(tempstring.String(),new BMessage(PATH_MSG_CD_DESKTOP),'D');
 	m_PathMenu->AddItem(m_CD_Desktop);
 
 	m_PathMenu->AddSeparatorItem();
-	m_CD_Disks = new BMenuItem(LANGS("CD_DISKS"),new BMessage(PATH_MSG_CD_DISKS),0,0);
+	m_CD_Disks = new BMenuItem("Disks",new BMessage(PATH_MSG_CD_DISKS),0,0);
 	m_PathMenu->AddItem(m_CD_Disks);
 
 	// CD BMenuField in the upper left area...
@@ -120,13 +119,13 @@ PanelView::PanelView(BRect rect, const char *name)
 
 	m_PanelMenu = new BMenu("",B_ITEMS_IN_COLUMN);
 
-	m_PanelMenu_Find = new BMenuItem(LANGS("PANELMENU_FIND"),new BMessage(PANELMENU_MSG_FIND),0,0);
+	m_PanelMenu_Find = new BMenuItem("Find...",new BMessage(PANELMENU_MSG_FIND),0,0);
 	m_PanelMenu_Find->SetEnabled(false);
 	m_PanelMenu->AddItem(m_PanelMenu_Find);
 
 	m_PanelMenu->AddSeparatorItem();
 
-	m_PanelMenu_ShowIcons = new BMenuItem(LANGS("PANELMENU_SHOWICONS"),new BMessage(PANELMENU_MSG_SHOWICONS),0,0);
+	m_PanelMenu_ShowIcons = new BMenuItem("Show icons",new BMessage(PANELMENU_MSG_SHOWICONS),0,0);
 	if (m_Setting_ShowIcons)
 		m_PanelMenu_ShowIcons->SetMarked(true);
 	else
