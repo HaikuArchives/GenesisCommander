@@ -46,7 +46,6 @@ SRCS = GenesisApp.cpp \
 	GenesisSelectGroupWindow.cpp \
 	GenesisViewWindow.cpp \
 	GenesisWindow.cpp \
-	Language.cpp \
 	Settings.cpp
 
 #	Specify the resource definition files to use. Full or relative paths can be

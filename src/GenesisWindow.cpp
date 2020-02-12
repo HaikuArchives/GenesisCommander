@@ -1,9 +1,9 @@
 /*
- * Copyright 2002-2019. All rights reserved.
+ * Copyright 2002-2020. All rights reserved.
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
- *	2019, Ondrej Čerman
+ *	2019-2020, Ondrej Čerman
  */
 
 #include "GenesisWindow.h"
@@ -11,7 +11,6 @@
 #include "GenesisSeek.h"
 #include "GenesisPanelView.h"
 #include "GenesisPreferencesWindow.h"
-#include "Language.h"
 #include "Settings.h"
 #include "GenesisApp.h"
 #include <Application.h>
@@ -41,15 +40,9 @@ GenesisWindow::GenesisWindow() :
 	ResizeTo(SETTINGS->GetWindowWidth(), SETTINGS->GetWindowHeight());
 
 	BMenu *menu;
-	BString title;
 	BMenuItem *menuitem;
 
-	// Language singleton letrehozasa...
-	m_Language = new Language(SETTINGS->GetLanguage());
-
-	title.SetTo(LANG("WINDOW_TITLE"));
-	title.ReplaceAll("<VER>",__VER__);
-	SetTitle(title.String());
+	SetTitle("Genesis Commander");
 
 	// Main view
 	m_MainView = new BView(Bounds(), "mainview", B_FOLLOW_ALL, B_WILL_DRAW);
@@ -60,79 +53,78 @@ GenesisWindow::GenesisWindow() :
 	m_MenuBar = new BMenuBar(Bounds(),"mainmenu");
 
 	// File menu
-	menu = new BMenu(LANGS("MENU_FILE"));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_GETINFO") , new BMessage(MENU_GETINFO), 'I'));
-//	menu->AddItem(new BMenuItem("Get node info..." , new BMessage(MENU_GETNODEINFO), 0));
-	menuitem = new BMenuItem(LANGS("SUBMENU_GETNODEINFO") , new BMessage(MENU_GETNODEINFO), 0);
+	menu = new BMenu("File");
+	menu->AddItem(new BMenuItem("Get info...", new BMessage(MENU_GETINFO), 'I'));
+	menuitem = new BMenuItem("Get node info...", new BMessage(MENU_GETNODEINFO), 0);
 	menuitem->SetEnabled(false);
 	menu->AddItem(menuitem);
 
 	menu->AddSeparatorItem();
 
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_PREFERENCES") , new BMessage(MENU_PREFERENCES), 'P'));
+	menu->AddItem(new BMenuItem("Preferences...", new BMessage(MENU_PREFERENCES), 'P'));
 
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_QUIT") , new BMessage(MENU_EXIT), 'Q'));
+	menu->AddItem(new BMenuItem("Quit", new BMessage(MENU_EXIT), 'Q'));
 	m_MenuBar->AddItem(menu);
 
-	menu = new BMenu(LANGS("MENU_SELECTION"));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_SELECTGROUP") , new BMessage(MENU_SELECT_GROUP), '+'));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_DESELECTGROUP") , new BMessage(MENU_DESELECT_GROUP), '-'));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_INVERTSELECTION") , new BMessage(MENU_INVERT), '*'));
+	menu = new BMenu("Selection");
+	menu->AddItem(new BMenuItem("Select group...", new BMessage(MENU_SELECT_GROUP), '+'));
+	menu->AddItem(new BMenuItem("Deselect group...", new BMessage(MENU_DESELECT_GROUP), '-'));
+	menu->AddItem(new BMenuItem("Invert selection", new BMessage(MENU_INVERT), '*'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_ADDALLFOLDERS") , new BMessage(MENU_ADD_FOLDERS), 0));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_ADDALLFILES") , new BMessage(MENU_ADD_FILES), 0));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_ADDALLSYMLINKS") , new BMessage(MENU_ADD_SYMLINKS), 0));
+	menu->AddItem(new BMenuItem("Add all folders to selection", new BMessage(MENU_ADD_FOLDERS), 0));
+	menu->AddItem(new BMenuItem("Add all files to selection", new BMessage(MENU_ADD_FILES), 0));
+	menu->AddItem(new BMenuItem("Add all symlinks to selection", new BMessage(MENU_ADD_SYMLINKS), 0));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_SELECTALL") , new BMessage(MENU_SELECT_ALL), 0));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_DESELECTALL") , new BMessage(MENU_DESELECT_ALL), 0));
+	menu->AddItem(new BMenuItem("Select all" , new BMessage(MENU_SELECT_ALL), 0));
+	menu->AddItem(new BMenuItem("Deselect all" , new BMessage(MENU_DESELECT_ALL), 0));
 
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_SEEKINLIST") , new BMessage(MENU_SEEK), 'S'));
+	menu->AddItem(new BMenuItem("Seek in list" , new BMessage(MENU_SEEK), 'S'));
 	m_MenuBar->AddItem(menu);
 
-	menu = new BMenu(LANGS("MENU_COMMANDS"));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_VIEW"),		new BMessage(MENU_COMMANDS_VIEW), 0));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_EDIT"),		new BMessage(MENU_COMMANDS_EDIT), 0));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_EDITNEW"),	new BMessage(MENU_COMMANDS_EDITNEW), 0));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_COPY"),	 	new BMessage(MENU_COMMANDS_COPY), 0));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_MOVE"),		new BMessage(MENU_COMMANDS_MOVE), 0));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_RENAME"),	new BMessage(MENU_COMMANDS_RENAME), 'N'));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_MAKEDIR"),	new BMessage(MENU_COMMANDS_MKDIR), 0));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_DELETE"),	new BMessage(MENU_COMMANDS_DELETE), 0));
+	menu = new BMenu("Commands");
+	menu->AddItem(new BMenuItem("View...",		new BMessage(MENU_COMMANDS_VIEW), 0));
+	menu->AddItem(new BMenuItem("Edit...",		new BMessage(MENU_COMMANDS_EDIT), 0));
+	menu->AddItem(new BMenuItem("Edit new...",	new BMessage(MENU_COMMANDS_EDITNEW), 0));
+	menu->AddItem(new BMenuItem("Copy...",	 	new BMessage(MENU_COMMANDS_COPY), 0));
+	menu->AddItem(new BMenuItem("Move...",		new BMessage(MENU_COMMANDS_MOVE), 0));
+	menu->AddItem(new BMenuItem("Rename...",	new BMessage(MENU_COMMANDS_RENAME), 'N'));
+	menu->AddItem(new BMenuItem("Make dir...",	new BMessage(MENU_COMMANDS_MKDIR), 0));
+	menu->AddItem(new BMenuItem("Delete...",	new BMessage(MENU_COMMANDS_DELETE), 0));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_CREATELINK") , new BMessage(MENU_COMMANDS_CREATE_SYMLINK), 'L'));
+	menu->AddItem(new BMenuItem("Create link on Desktop..." , new BMessage(MENU_COMMANDS_CREATE_SYMLINK), 'L'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_TERMINAL"), new BMessage(MENU_TERMINAL), 'T', B_OPTION_KEY));
+	menu->AddItem(new BMenuItem("Open terminal window", new BMessage(MENU_TERMINAL), 'T', B_OPTION_KEY));
 	m_MenuBar->AddItem(menu);
 
-	menu = new BMenu(LANGS("MENU_PANELS"));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_RELOAD"),			new BMessage(MENU_RELOAD), 'R'));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_SWAP"),				new BMessage(MENU_SWAP_PANELS), 'U'));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_TARGET_EQ_SOURCE"),	new BMessage(MENU_TARGET_SOURCE), 0));
+	menu = new BMenu("Panels");
+	menu->AddItem(new BMenuItem("Reload current panel",	new BMessage(MENU_RELOAD), 'R'));
+	menu->AddItem(new BMenuItem("Swap panels",			new BMessage(MENU_SWAP_PANELS), 'U'));
+	menu->AddItem(new BMenuItem("Target = Source",		new BMessage(MENU_TARGET_SOURCE), 0));
 	m_MenuBar->AddItem(menu);
 
-	menu = new BMenu(LANGS("MENU_HELP"));
-	menu->AddItem(new BMenuItem(LANGS("SUBMENU_ABOUT") , new BMessage(MENU_ABOUT), 0));
+	menu = new BMenu("Help");
+	menu->AddItem(new BMenuItem("About...", new BMessage(MENU_ABOUT), 0));
 	m_MenuBar->AddItem(menu);
 
 	m_MainView->AddChild(m_MenuBar);
 
 	// Buttons
 	m_FuncKeysVisible = true;
-	m_Button_F3 = new BButton(BRect(10,10,40,40),"view",LANGS("BUTTON_F3"),new BMessage(BUTTON_MSG_F3),0,B_WILL_DRAW);
+	m_Button_F3 = new BButton(BRect(10,10,40,40),"view","F3 - View",new BMessage(BUTTON_MSG_F3),0,B_WILL_DRAW);
 	m_MainView->AddChild(m_Button_F3);
-	m_Button_F4 = new BButton(BRect(10,10,40,40),"edit",LANGS("BUTTON_F4"),new BMessage(BUTTON_MSG_F4),0,B_WILL_DRAW);
+	m_Button_F4 = new BButton(BRect(10,10,40,40),"edit","F4 - Edit",new BMessage(BUTTON_MSG_F4),0,B_WILL_DRAW);
 	m_MainView->AddChild(m_Button_F4);
-	m_Button_F5 = new BButton(BRect(10,10,40,40),"copy",LANGS("BUTTON_F5"),new BMessage(BUTTON_MSG_F5),0,B_WILL_DRAW);
+	m_Button_F5 = new BButton(BRect(10,10,40,40),"copy","F5 - Copy",new BMessage(BUTTON_MSG_F5),0,B_WILL_DRAW);
 	m_MainView->AddChild(m_Button_F5);
-	m_Button_F6 = new BButton(BRect(10,10,40,40),"move",LANGS("BUTTON_F6"),new BMessage(BUTTON_MSG_F6),0,B_WILL_DRAW);
+	m_Button_F6 = new BButton(BRect(10,10,40,40),"move","F6 - Move",new BMessage(BUTTON_MSG_F6),0,B_WILL_DRAW);
 	m_MainView->AddChild(m_Button_F6);
-	m_Button_F7 = new BButton(BRect(10,10,40,40),"mkdir",LANGS("BUTTON_F7"),new BMessage(BUTTON_MSG_F7),0,B_WILL_DRAW);
+	m_Button_F7 = new BButton(BRect(10,10,40,40),"mkdir","F7 - MkDir",new BMessage(BUTTON_MSG_F7),0,B_WILL_DRAW);
 	m_MainView->AddChild(m_Button_F7);
-	m_Button_F8 = new BButton(BRect(10,10,40,40),"delete",LANGS("BUTTON_F8"),new BMessage(BUTTON_MSG_F8),0,B_WILL_DRAW);
+	m_Button_F8 = new BButton(BRect(10,10,40,40),"delete","F8 - Delete",new BMessage(BUTTON_MSG_F8),0,B_WILL_DRAW);
 	m_MainView->AddChild(m_Button_F8);
-	m_Button_F10 = new BButton(BRect(10,10,40,40),"quit",LANGS("BUTTON_F10"),new BMessage(BUTTON_MSG_F10),0,B_WILL_DRAW);
+	m_Button_F10 = new BButton(BRect(10,10,40,40),"quit","F10 - Quit",new BMessage(BUTTON_MSG_F10),0,B_WILL_DRAW);
 	m_MainView->AddChild(m_Button_F10);
 
 	// Command line...
@@ -168,9 +160,6 @@ GenesisWindow::~GenesisWindow()
 ////////////////////////////////////////////////////////////////////////
 {
 	m_MainWindow = NULL;
-
-	if (m_Language)
-		delete m_Language;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -179,7 +168,7 @@ bool GenesisWindow::QuitRequested()
 {
 	if (SETTINGS->GetAskOnExit())
 	{
-		BAlert *myAlert = new BAlert("Genesis",LANGS("QUIT"),LANGS("GENERAL_NO"),LANGS("GENERAL_YES"),NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
+		BAlert *myAlert = new BAlert("Genesis","Do you really want to quit?","No","Quit",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 		myAlert->SetShortcut(0, B_ESCAPE);
 		if (myAlert->Go()==1)
 		{
@@ -362,14 +351,13 @@ void GenesisWindow::MessageReceived(BMessage* message)
 		case MENU_ABOUT:
 			{
 				BString text;
-				text = LANG("ABOUT");
+				text = "Genesis Commander for Haiku\nVersion: <VER>\nBuild time: <DATE> - <TIME>\n\nProgrammed by: Zsolt Prievara, Ondrej Čerman\n\nThis program is a beta version and there is no warranty. Use it only at your own risk!\n\nSend bug reports to:\ngithub.com/HaikuArchives/GenesisCommander/issues";
 
 				text.ReplaceAll("<VER>", __VER__);
 				text.ReplaceAll("<DATE>", __DATE__);
 				text.ReplaceAll("<TIME>", __TIME__);
-				text.ReplaceAll("|", "\n");
 
-				BAlert *AboutAlert = new BAlert(LANGS("SUBMENU_ABOUT"),text.String(),LANGS("GENERAL_OK"),NULL,NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_INFO_ALERT);
+				BAlert *AboutAlert = new BAlert("About...",text.String(),"OK",NULL,NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_INFO_ALERT);
 				AboutAlert->Go();
 			}
 			break;
@@ -789,5 +777,3 @@ filter_result SeekFilter::Filter(BMessage* msg, BHandler** target)
 
 	return B_DISPATCH_MESSAGE;
 }
-
-
