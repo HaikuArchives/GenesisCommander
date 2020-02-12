@@ -19,7 +19,7 @@ Settings::Settings()
 {
 	m_Settings = this;
 	SetSettingsFile(GetFullSettingsFileName());
-	
+
 	SetDefaults();
 	if (!LoadSettings())	// ha nincs settings file...
 	{
@@ -28,7 +28,7 @@ Settings::Settings()
 			// ERROR - Cannot save settings file...
 		}
 	}
-	
+
 	m_SettingsChanged = false;
 }
 
@@ -67,7 +67,7 @@ bool Settings::LoadSettings()
 	BString tempstring;
 	bool tempbool;
 	int tempint;
-	
+
 	DataFile settingsfile;
 	if (settingsfile.LoadDataFile(GetSettingsFile()))
 	{
@@ -85,11 +85,11 @@ bool Settings::LoadSettings()
 		GETINT("WINDOWWIDTH", WindowWidth);
 		GETINT("WINDOWHEIGHT", WindowHeight);
 		GETSTRING("TERMINALWINDOW", TerminalWindow);
-		
+
 		GETSTRING("LEFTPANELPATH", LeftPanelPath);
 		GETSTRING("RIGHTPANELPATH", RightPanelPath);
-		
-		return true;		
+
+		return true;
 	}
 	else
 		return false;
@@ -122,7 +122,7 @@ bool Settings::SaveSettings()
 		settingsfile.WriteText(BString("\n"));
 		settingsfile.WriteText(BString("# Right panel\n"));
 		settingsfile.WriteString(BString("RIGHTPANELPATH"), GetRightPanelPath());
-	
+
 		return true;
 	}
 	else
@@ -135,13 +135,13 @@ BString Settings::GetFullSettingsFileName()
 {
 	BString result;
 	BPath dirPath;
-	
+
 	find_directory(B_USER_SETTINGS_DIRECTORY, &dirPath, true);
 	result.SetTo(dirPath.Path());
 
-	result << "/" << SETTINGS_FN;	
-	
-	return result;	
+	result << "/" << SETTINGS_FN;
+
+	return result;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -151,7 +151,7 @@ DataFile::DataFile()
 ////////////////////////////////////////////////////////////////////////
 {
 	m_Text = NULL;
-	m_Pos = 0;	
+	m_Pos = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -160,7 +160,7 @@ DataFile::~DataFile()
 {
 	DataEntry *tempentry;
 	int n = m_Entries.CountItems();
-	
+
 	for (int i=0; i<n; i++)
 	{
 		tempentry = (DataEntry *)m_Entries.ItemAt(0);
@@ -170,7 +170,7 @@ DataFile::~DataFile()
 			delete tempentry;
 		}
 	}
-	
+
 	if (m_Text)
 	{
 		delete m_Text;
@@ -202,23 +202,23 @@ bool DataFile::LoadDataFile(BString filename)
 				Trim(key);
 				Trim(value);
 				AddEntry(key, value);
-			}				
+			}
 		}
 	}
 	else
 		return false;
-		
+
 	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////
 bool DataFile::CreateDataFile(BString filename)
 ////////////////////////////////////////////////////////////////////////
-{	
+{
 	if (m_OutputFile.SetTo(filename.String(), B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE) != B_OK)
 		return false;
-	
-	return true;	
+
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -272,7 +272,7 @@ bool DataFile::GetBool(BString key, bool &result)
 			result = false;
 			return true;
 		}
-		
+
 		return false;	// nem true es nem is false -> error es akkor default marad
 	}
 	else
@@ -288,7 +288,7 @@ void DataFile::WriteInteger(BString key, int data)
 	tempstring << " = ";
 	tempstring << data;
 	tempstring << "\n";
-	
+
 	m_OutputFile.Write(tempstring.String(), tempstring.Length());
 }
 
@@ -301,7 +301,7 @@ void DataFile::WriteString(BString key, BString data)
 	tempstring << " = ";
 	tempstring << data;
 	tempstring << "\n";
-	
+
 	m_OutputFile.Write(tempstring.String(), tempstring.Length());
 }
 
@@ -316,7 +316,7 @@ void DataFile::WriteBool(BString key, bool data)
 		tempstring << "true\n";
 	else
 		tempstring << "false\n";
-	
+
 	m_OutputFile.Write(tempstring.String(), tempstring.Length());
 }
 
@@ -333,7 +333,7 @@ void DataFile::AddEntry(BString key, BString value)
 {
 	if (key.Length()==0)
 		return;
-	
+
 	DataEntry *tempentry;
 	tempentry = new DataEntry();
 	if (tempentry)
@@ -351,7 +351,7 @@ bool DataFile::GetEntry(BString key, BString &result)
 {
 	if (key.Length() == 0)
 		return false;
-	
+
 	unsigned char hashcode = GetHash(key);
 	DataEntry *tempentry;
 
@@ -366,8 +366,8 @@ bool DataFile::GetEntry(BString key, BString &result)
 				return true;
 			}
 		}
-	}	
-	
+	}
+
 	return false;
 }
 
@@ -376,11 +376,11 @@ unsigned char DataFile::GetHash(BString text)
 ////////////////////////////////////////////////////////////////////////
 {
 	unsigned char result = 0;
-	
+
 	text.ToUpper();
 	for (int i=0; i<text.Length(); i++)
 		result ^= text.ByteAt(i);
-		
+
 	return result;
 }
 
@@ -391,12 +391,12 @@ void DataFile::Trim(BString &result)
 	if (result.Length() == 0)
 		return;
 
-	// Elejen a space-ek...	
+	// Elejen a space-ek...
 	while (result.ByteAt(0) == ' ')
 	{
 		result.Remove(0, 1);
 	}
-	
+
 	if (result.Length() == 0)
 		return;
 
@@ -413,7 +413,7 @@ bool DataFile::Read(BString filename)
 {
 	ssize_t readsize;
 	off_t size;
-	
+
 	m_File.SetTo(filename.String(), B_READ_ONLY);
 	if (m_File.GetSize(&size) != B_OK)
 		return false;
@@ -426,7 +426,7 @@ bool DataFile::Read(BString filename)
 		return false;
 
 	readsize = m_File.Read(m_Text, size);
-	
+
 	if (readsize != size)
 	{
 		delete m_Text;
@@ -435,7 +435,7 @@ bool DataFile::Read(BString filename)
 
 	m_Size = readsize;
 	m_Pos = 0;
-	return true;	
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -458,12 +458,12 @@ bool DataFile::GetLine(BString &result)
 			quit = true;
 		else
 			result << chr;
-			
+
 		counter++;
 	}
 
-	m_Pos += counter;	
-	return true;	
+	m_Pos += counter;
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -488,7 +488,7 @@ bool DataFile::ToInt(BString text, int &result)
 
 	if (n == 0)
 		return false;
-				
+
 	for (int i=0; i<n; i++)
 	{
 		x = text[n-i-1];
@@ -497,6 +497,6 @@ bool DataFile::ToInt(BString text, int &result)
 	}
 
 	result = num;
-		
+
 	return true;
 }

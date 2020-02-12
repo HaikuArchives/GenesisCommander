@@ -40,7 +40,7 @@ class GenesisPreferencesWindow : public BWindow
 		BTextControl	*m_TerminalWindowTitle;
 
 		virtual void	MessageReceived(BMessage* message);
-		
+
 	private:
 		void			ReloadSettings(void);
 		void 			ApplySettings(void);

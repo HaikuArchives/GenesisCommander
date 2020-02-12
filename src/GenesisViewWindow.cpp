@@ -29,7 +29,7 @@ GenesisViewWindow::GenesisViewWindow(const char* filename, BWindow *mainwindow) 
 	BString title;
 	BFont font;
 	BMenu *menu;
-	
+
 	m_FileName.SetTo(filename);
 
 	entry.SetTo(filename);
@@ -61,7 +61,7 @@ GenesisViewWindow::GenesisViewWindow(const char* filename, BWindow *mainwindow) 
 	menu->AddItem(m_MI_WordWrap);
 	m_MenuBar->AddItem(menu);
 
-	m_View->AddChild(m_MenuBar);	
+	m_View->AddChild(m_MenuBar);
 
 	// TextView
 	rect = Bounds();
@@ -90,7 +90,7 @@ GenesisViewWindow::GenesisViewWindow(const char* filename, BWindow *mainwindow) 
 
 		m_TextView->SetText(file,0,size);
 		delete file;
-	}	
+	}
 
 	m_ScrollView = new BScrollView("scrollview", m_TextView, B_FOLLOW_ALL, B_WILL_DRAW, true, true);
 	m_View->AddChild(m_ScrollView);
@@ -99,13 +99,13 @@ GenesisViewWindow::GenesisViewWindow(const char* filename, BWindow *mainwindow) 
 	if (mainwindow)
 	{
 		BRect myrect = Bounds();
-		
+
 		rect = mainwindow->Frame();
 		float w = rect.right - rect.left;
 		float h = rect.bottom - rect.top;
 		MoveTo(rect.left + w/2 - (myrect.right-myrect.left)/2, rect.top + h/2 - (myrect.bottom-myrect.top)/2);
-	}	
-	
+	}
+
 	m_TextView->MakeFocus(true);
 }
 
@@ -148,5 +148,5 @@ void GenesisViewWindow::MessageReceived(BMessage* message)
 			break;
 		default:
 			BWindow::MessageReceived(message);
-	}	
+	}
 }

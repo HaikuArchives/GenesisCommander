@@ -51,7 +51,7 @@ GenesisMoveWindow::GenesisMoveWindow(CustomListView *list, PanelView *destpanel,
 	// First we have to remove the parent selection if selected...
 //	RemoveParentSelection();
 
-	m_FileCount = m_CustomListView->CountSelectedEntries(CT_WITHOUTPARENT);			
+	m_FileCount = m_CustomListView->CountSelectedEntries(CT_WITHOUTPARENT);
 
 	if (m_FileCount == 1)
 		m_SingleMove = true;
@@ -66,19 +66,19 @@ GenesisMoveWindow::GenesisMoveWindow(CustomListView *list, PanelView *destpanel,
 	m_View->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	AddChild(m_View);
 
-	// Bottom View	
+	// Bottom View
 	rect = Bounds();
 	rect.top = rect.bottom-44;
 	BView *BottomView = new BView(rect, "infobottomview", B_FOLLOW_ALL, B_WILL_DRAW);
 	BottomView->SetViewColor(180, 190, 200, 0);
-	m_View->AddChild(BottomView);	
-	
-	// Move Button	
+	m_View->AddChild(BottomView);
+
+	// Move Button
 	rect = BottomView->Bounds();
 	rect.top = rect.bottom-34;
 	rect.bottom = rect.bottom-14;
 	rect.left = rect.right-80;
-	rect.right = rect.right-20;	
+	rect.right = rect.right-20;
 	m_MoveButton = new BButton(rect,"move","Move",new BMessage(BUTTON_MSG_MOVE),0,B_WILL_DRAW);
 //	m_CopyButton->SetEnabled(false);
 	BottomView->AddChild(m_MoveButton);
@@ -88,7 +88,7 @@ GenesisMoveWindow::GenesisMoveWindow(CustomListView *list, PanelView *destpanel,
 	rect.top = rect.bottom-34;
 	rect.bottom = rect.bottom-14;
 	rect.left = rect.right-160;
-	rect.right = rect.right-100;	
+	rect.right = rect.right-100;
 	m_CancelButton = new BButton(rect,"cancel","Cancel",new BMessage(BUTTON_MSG_CANCELMOVE),0,B_WILL_DRAW);
 	BottomView->AddChild(m_CancelButton);
 
@@ -139,12 +139,12 @@ GenesisMoveWindow::GenesisMoveWindow(CustomListView *list, PanelView *destpanel,
 			m_FileAsName->SetText( ((CustomListItem *)m_CustomListView->GetSelectedEntry(1))->m_FileName.String() );
 		else
 			m_FileAsName->SetText( ((CustomListItem *)m_CustomListView->GetSelectedEntry(0))->m_FileName.String() );
-		
+
 		m_View->AddChild(m_FileAsName);
 	}
 
-	m_DirName->MakeFocus(true);	
-	
+	m_DirName->MakeFocus(true);
+
 	// Ctrl + Q closes the window...
 	AddShortcut('Q', 0, new BMessage(BUTTON_MSG_CANCELMOVE));
 
@@ -158,7 +158,7 @@ GenesisMoveWindow::GenesisMoveWindow(CustomListView *list, PanelView *destpanel,
 		else
 			text << ((CustomListItem *)m_CustomListView->GetSelectedEntry(0))->m_FileName;
 		text << "'";
-	
+
 		m_Label->SetText(text.String());
 	}
 	else
@@ -166,17 +166,17 @@ GenesisMoveWindow::GenesisMoveWindow(CustomListView *list, PanelView *destpanel,
 		BString text;
 		text.SetTo("Move ");
 		text << m_FileCount << " files";
-		
+
 		m_Label->SetText(text.String());
 	}
-	
+
 	AddCommonFilter(new EscapeFilter(this, new BMessage(BUTTON_MSG_CANCELMOVE)));
-	
+
 	// If there is a given window, let's align our window to its center...
 	if (mainwindow)
 	{
 		BRect myrect = Bounds();
-		
+
 		rect = mainwindow->Frame();
 		float w = rect.right - rect.left;
 		float h = rect.bottom - rect.top;
@@ -192,7 +192,7 @@ GenesisMoveWindow::~GenesisMoveWindow()
 	{
 		if (m_Selection > (m_CustomListView->IndexOf(m_CustomListView->LastItem())))
 			m_Selection = m_CustomListView->IndexOf(m_CustomListView->LastItem());
-			
+
 		m_CustomListView->Select(m_Selection, false);	// false -> remove previously selected item(s)...
 	}
 }
@@ -313,7 +313,7 @@ int32 SingleMoveThreadFunc(void *data)
 		d->Lock();
 		d->m_FileBar->SetText(text.String());
 		d->Unlock();
-		
+
 		filename.SetTo(item->m_FilePath);
 		filename += '/';
 		filename += item->m_FileName;
@@ -365,16 +365,16 @@ int32 MultiMoveThreadFunc(void *data)
 			d->Lock();
 			d->m_FileBar->SetText(text.String());
 			d->Unlock();
-			
+
 			filename.SetTo(item->m_FilePath);
 			filename += '/';
 			filename += item->m_FileName;
 			if (d->Move(filename.String(), d->m_DestPath.String()))
-			{	
+			{
 				// successful move... le lehet szedni a listarol!
 				d->m_Window->Lock();
-				d->m_CustomListView->RemoveItem(item);	
-				d->m_Window->Unlock();		
+				d->m_CustomListView->RemoveItem(item);
+				d->m_Window->Unlock();
 			}
 			else
 			{
@@ -383,13 +383,13 @@ int32 MultiMoveThreadFunc(void *data)
 				d->m_CustomListView->InvalidateItem(d->m_CustomListView->IndexOf(item));
 				d->m_Window->Unlock();
 			}
-			
+
 			d->Lock();
 			d->m_ProgressBar->Update(1);
 			d->Unlock();
 		}
 	}
-	
+
 	d->Lock();
 	d->m_FileBar->SetText("Done");
 	d->m_FileBar->SetTrailingText("");
@@ -409,14 +409,14 @@ void GenesisMoveWindow::PrepareMove(void)
 ////////////////////////////////////////////////////////////////////////
 {
 	BRect rect;
-	
+
 	rgb_color BarColor;
 	BarColor.red = 180;
 	BarColor.green = 190;
-	BarColor.blue = 200;	
+	BarColor.blue = 200;
 
 	m_DestPath.SetTo(m_DirName->Text());
-	
+
 	if (m_SingleMove)
 		m_DestFileName.SetTo(m_FileAsName->Text());
 
@@ -429,21 +429,21 @@ void GenesisMoveWindow::PrepareMove(void)
 	}
 
 	BEntry dest(m_DestPath.String());
-	
+
 	if (dest.InitCheck()!=B_OK)
 	{
 		BAlert *myAlert = new BAlert("Move","Cannot initialize destination entry.","OK", NULL, NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 		myAlert->Go();
 		return;
 	}
-	
+
 	if (!dest.Exists())
 	{
 		BAlert *myAlert = new BAlert("Move","Destination path does not exist.","OK", NULL, NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 		myAlert->Go();
 		return;
 	}
-	
+
 	if (!dest.IsDirectory())
 	{
 		BAlert *myAlert = new BAlert("Move","Destination path is not a folder.","OK", NULL, NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
@@ -452,20 +452,20 @@ void GenesisMoveWindow::PrepareMove(void)
 	}
 
 	BAutolock autolocker(this);
-	
+
 	m_AbortButton = m_MoveButton;
 	m_AbortButton->SetMessage(new BMessage(BUTTON_MSG_ABORTMOVE));
 	m_PauseButton = m_CancelButton;
 	m_PauseButton->SetMessage(new BMessage(BUTTON_MSG_PAUSEMOVE));
-	
+
 	m_DirName->RemoveSelf();
 	m_Label->RemoveSelf();				//	m_Label->MoveBy(0,40);
-	
+
 	if (m_SingleMove)
 		m_FileAsName->RemoveSelf();
-	
+
 	SetTitle("Move in progress...");
-	
+
 	// Add ProgressBar
 	if (!m_SingleMove)
 	{
@@ -480,7 +480,7 @@ void GenesisMoveWindow::PrepareMove(void)
 		m_ProgressBar->SetMaxValue(m_FileCount);
 		m_View->AddChild(m_ProgressBar);
 	}
-	
+
 	// Add File Bar
 	rect = Bounds();
 	rect.left += 24;
@@ -512,7 +512,7 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 ////////////////////////////////////////////////////////////////////////
 {
 	bool result = false;	// Set true when move has been executed correctly...
-	
+
 	BEntry sourcefile(filename);
 	BEntry dstfile;
 	BDirectory destdir;
@@ -542,7 +542,7 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 		{
 			BString text;
 			text << "Source file does not exist.\n";
-		
+
 			BAlert *myAlert = new BAlert("Move",text.String(),"Abort", "Skip all", "Skip", B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
 			switch (myAlert->Go())
 			{
@@ -555,7 +555,7 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 					break;
 				case 2:
 					return result;
-			}	
+			}
 		}
 
 		if (sourcefile.IsDirectory())
@@ -564,7 +564,7 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 			{
 				BString text;
 				text << "Recursive move not allowed.\nPlease check the destination folder.";
-			
+
 				BAlert *myAlert = new BAlert("Move",text.String(),"OK", NULL, NULL, B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
 				myAlert->Go();
 				Close();
@@ -583,7 +583,7 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 			{
 				BString text;
 				dstfile.GetName(name);
-			
+
 				text << "File '" << name << "' already exists. Do you want to overwrite it?";
 
 				BAlert *myAlert = new BAlert("Move",text.String(),"Abort","Overwrite all","Overwrite",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
@@ -601,10 +601,10 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 					case 2:
 						overwrite = true;
 						break;
-				}			
+				}
 			}
 		}
-					
+
 		destdir.SetTo(destination);
 		if (sourcefile.MoveTo(&destdir, destfilename, overwrite)==B_OK)		// Move!!!
 			result = true;
@@ -612,7 +612,7 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 		{
 			text << "Cannot move '" << name << "' to \n\n" << destfullname << "\n\n";
 			text << "Notice that move function works only when the source and destination folder are on the same volume.\n";
-			
+
 			BAlert *myAlert = new BAlert("Move",text.String(),"Abort","Skip all","Skip",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 			myAlert->SetShortcut(0, B_ESCAPE);
 			switch (myAlert->Go())
@@ -624,9 +624,9 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 				case 1:
 					m_SkipAllMoveError = true;
 					break;
-			}		
+			}
 		}
-		
+
 		Lock();
 		m_FileBar->Update(1);
 		Unlock();
@@ -634,7 +634,7 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 	else if (!m_SkipAllMoveError)
 	{
 		text << "Error while initializing file:\n\n" << filename;
-		
+
 		BAlert *myAlert = new BAlert("Move",text.String(),"Abort","Skip all","Skip",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 		myAlert->SetShortcut(0, B_ESCAPE);
 		switch (myAlert->Go())
@@ -646,9 +646,9 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 			case 1:
 				m_SkipAllMoveError = true;
 				break;
-		}	
+		}
 	}
-	
+
 	return result;
 }
 
@@ -657,32 +657,32 @@ int32 GenesisMoveWindow::GetFirstSelection(void)
 ////////////////////////////////////////////////////////////////////////
 {
 	CustomListItem *item;
-	
+
 	item = m_CustomListView->GetSelectedEntry(0);
 	if (item)
 		return m_CustomListView->IndexOf(item);
 	else
-		return 0;	
+		return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////
 bool GenesisMoveWindow::IsDirReadOnly(const char *destination)
 ////////////////////////////////////////////////////////////////////////
 {
-	struct stat statbuf;	
+	struct stat statbuf;
 	BDirectory dir(destination);
 	BVolume volume;
-	
+
 	if (dir.InitCheck()!=B_OK)
 		return false;
-	
+
 	if (dir.GetStatFor(destination, &statbuf)!=B_OK)
 		return false;
-	
+
 	volume.SetTo(statbuf.st_dev);
 	if (volume.IsReadOnly())
 		return true;
-	
+
 	return false;	// Not read only
 }
 
@@ -692,10 +692,10 @@ bool GenesisMoveWindow::IsRecursiveMove(const char *source, const char *destinat
 {
 	BEntry src(source);
 	BEntry dst(destination);
-	
+
 	if (src == dst)
 		return true;
-		
+
 	while ((dst.GetParent(&dst)) == B_OK)
 	{
 		if (src == dst)

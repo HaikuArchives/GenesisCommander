@@ -46,9 +46,9 @@ class GenesisDeleteWindow : public BWindow
 		BLooper			*m_Looper;
 		BStatusBar		*m_ProgressBar;
 //		BStringView		*m_Label;
-		
+
 		int32			m_Selection;
-		
+
 		int 			m_FileCount;
 		bool			m_Paused;
 		bool			m_SkipAllError;

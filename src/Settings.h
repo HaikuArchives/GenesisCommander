@@ -20,14 +20,14 @@
 	public:\
 		int Get##a(void) { return a; }\
 		void Set##a(int value) { a = value; m_SettingsChanged = true; }
-		
+
 #define SETTING_FLOAT(a)\
 	private:\
 		float a;\
 	public:\
 		float Get##a(void) { return a; }\
 		void Set##a(float value) { a = value; m_SettingsChanged = true; }
-		
+
 #define SETTING_STRING(a)\
 	private:\
 		BString a;\
@@ -35,28 +35,28 @@
 		BString Get##a(void) { return a; }\
 		void Set##a(BString value) { a = value; m_SettingsChanged = true; }\
 		void Set##a(const char *value) { a = value; m_SettingsChanged = true; }
-		
+
 #define SETTING_BOOL(a)\
 	private:\
 		bool a;\
 	public:\
 		bool Get##a(void) { return a; }\
 		void Set##a(bool value) { a = value; m_SettingsChanged = true; }
-		
+
 class Settings
 {
 public:
 	Settings();
 	~Settings();
-	
+
 	static Settings *m_Settings;
-	
+
 	void SetDefaults(void);
 	bool LoadSettings(void);
 	bool SaveSettings(void);
-	
+
 	bool IsSettingsChanged(void) { return m_SettingsChanged; }
-	
+
 	Settings *Get(void) { return m_Settings; }
 
 	// GLOBAL VARIABLES - Do not save these!
@@ -75,13 +75,13 @@ public:
 
 	// LEFT PANEL SETTINGS
 	SETTING_STRING(LeftPanelPath)
-	
+
 	// RIGHT PANEL SETTINGS
 	SETTING_STRING(RightPanelPath)
-	
+
 	// LANGUAGE SETTINGS
 	SETTING_STRING(Language)
-	
+
 private:
 	BString GetFullSettingsFileName();
 	bool m_SettingsChanged;
@@ -95,16 +95,16 @@ public:
 
 	bool LoadDataFile(BString filename);
 	bool CreateDataFile(BString filename);
-	
+
 	bool GetInteger(BString key, int &result);
 	bool GetString(BString key, BString &result);
-	bool GetBool(BString key, bool &result);	
-	
+	bool GetBool(BString key, bool &result);
+
 	void WriteInteger(BString key, int data);
 	void WriteString(BString key, BString data);
 	void WriteBool(BString key, bool data);
 	void WriteText(BString text);
-	
+
 private:
 	struct DataEntry
 	{
@@ -121,7 +121,7 @@ private:
 	bool GetLine(BString &result);
 	void RemoveComment(BString &result);
 	bool ToInt(BString text, int &result);
-	
+
 	BList	m_Entries;
 	int   m_Pos;
 	int   m_Size;

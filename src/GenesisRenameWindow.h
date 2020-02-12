@@ -25,7 +25,7 @@ class GenesisRenameWindow : public BWindow
 	public:
 		GenesisRenameWindow(CustomListView *list, BWindow *mainwindow);
 		~GenesisRenameWindow();
-		
+
 		CustomListView	*m_CustomListView;
 		BWindow			*m_Window;
 		BView 			*m_View;
@@ -35,9 +35,9 @@ class GenesisRenameWindow : public BWindow
 		BLooper			*m_Looper;
 		CustomListItem	*m_ItemToSelect;
 		BString			m_ItemNameToSelect;
-		
+
 		virtual void	MessageReceived(BMessage* message);
-		
+
 		void 	Go(void);
 		void	GetNext(void);
 		void 	RemoveParentSelection();

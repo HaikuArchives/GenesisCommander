@@ -18,9 +18,9 @@ Language::Language(BString langfile)
 {
     m_Language = this;
 	BString FullName;
-	
+
 	m_Text = NULL;
-	m_Pos = 0;	
+	m_Pos = 0;
 
 	FullName.SetTo(SETTINGS->GetAppPath());
 	FullName << "/Languages/" << langfile;
@@ -35,7 +35,7 @@ Language::~Language()
 {
 	LanguageEntry *tempentry;
 	int n = m_Entries.CountItems();
-	
+
 	for (int i=0; i<n; i++)
 	{
 		tempentry = (LanguageEntry *)m_Entries.ItemAt(0);
@@ -45,13 +45,13 @@ Language::~Language()
 			delete tempentry;
 		}
 	}
-	
+
 	if (m_Text)
 	{
 		delete m_Text;
 		m_Text = NULL;
 	}
-	
+
 	m_Language = NULL;
 }
 
@@ -98,17 +98,17 @@ void Language::CreateDefaults()
 	AddEntry("SUBMENU_TERMINAL", "Open terminal window");
 	AddEntry("MENU_HELP", "Help");
 	AddEntry("SUBMENU_ABOUT", "About...");
-	
-	AddEntry("BUTTON_F3", "F3 - View"); 
-	AddEntry("BUTTON_F4", "F4 - Edit"); 
-	AddEntry("BUTTON_F5", "F5 - Copy"); 
-	AddEntry("BUTTON_F6", "F6 - Move"); 
-	AddEntry("BUTTON_F7", "F7 - MkDir"); 
-	AddEntry("BUTTON_F8", "F8 - Delete"); 
-	AddEntry("BUTTON_F10", "F10 - Quit"); 
-	
+
+	AddEntry("BUTTON_F3", "F3 - View");
+	AddEntry("BUTTON_F4", "F4 - Edit");
+	AddEntry("BUTTON_F5", "F5 - Copy");
+	AddEntry("BUTTON_F6", "F6 - Move");
+	AddEntry("BUTTON_F7", "F7 - MkDir");
+	AddEntry("BUTTON_F8", "F8 - Delete");
+	AddEntry("BUTTON_F10", "F10 - Quit");
+
 	AddEntry("QUIT", "Do you really want to quit?");
-	
+
 	text.SetTo("");
 	text << "Genesis Commander for Haiku\n";
 	text << "Version: <VER>\n";
@@ -118,23 +118,23 @@ void Language::CreateDefaults()
 	text << "warranty. Use it only at your own risk!\n\n";
 	text << "Send bug reports to: github.com/HaikuArchives/GenesisCommander/issues\n";
 	AddEntry("ABOUT", text.String());
-	
+
 	AddEntry("CD_PARENT", "Parent (..)");
 	AddEntry("CD_ROOT", "Root (/)");
 	AddEntry("CD_HOME", "Home (<DIR>)");
-	AddEntry("CD_DESKTOP", "Desktop (<DIR>)");	
+	AddEntry("CD_DESKTOP", "Desktop (<DIR>)");
 	AddEntry("CD_DISKS", "Disks");
-	
+
 	AddEntry("PANELMENU_FIND", "Find...");
 	AddEntry("PANELMENU_SHOWICONS", "Show icons");
 
 
-	
+
 	AddEntry("GENERAL_YES","Yes");
 	AddEntry("GENERAL_NO","No");
 	AddEntry("GENERAL_CANCEL","Cancel");
 	AddEntry("GENERAL_ABORT","Abort");
-	AddEntry("GENERAL_OK","OK");		
+	AddEntry("GENERAL_OK","OK");
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ void Language::AddEntry(BString key, BString value)
 {
 	if (key.Length()==0)
 		return;
-	
+
 	LanguageEntry *tempentry;
 	tempentry = new LanguageEntry();
 	if (tempentry)
@@ -161,7 +161,7 @@ BString Language::GetEntry(BString key)
 {
 	if (key.Length() == 0)
 		return BString("");
-	
+
 	unsigned char hashcode = GetHash(key);
 	LanguageEntry *tempentry;
 
@@ -173,8 +173,8 @@ BString Language::GetEntry(BString key)
 			if (tempentry->HashValue == hashcode && tempentry->Key == key)
 				return tempentry->Value;
 		}
-	}	
-	
+	}
+
 	return BString("???");
 }
 
@@ -183,11 +183,11 @@ unsigned char Language::GetHash(BString text)
 ////////////////////////////////////////////////////////////////////////
 {
 	unsigned char result = 0;
-	
+
 	text.ToUpper();
 	for (int i=0; i<text.Length(); i++)
 		result ^= text.ByteAt(i);
-		
+
 	return result;
 }
 
@@ -215,12 +215,12 @@ bool Language::LoadLanguageFile(BString filename)
 				Trim(key);
 				Trim(value);
 				AddEntry(key, value);
-			}				
+			}
 		}
 	}
 	else
 		return false;
-		
+
 	return true;
 }
 
@@ -231,12 +231,12 @@ void Language::Trim(BString &result)
 	if (result.Length() == 0)
 		return;
 
-	// Elejen a space-ek...	
+	// Elejen a space-ek...
 	while (result.ByteAt(0) == ' ')
 	{
 		result.Remove(0, 1);
 	}
-	
+
 	if (result.Length() == 0)
 		return;
 
@@ -253,7 +253,7 @@ bool Language::Read(BString filename)
 {
 	ssize_t readsize;
 	off_t size;
-	
+
 	m_File.SetTo(filename.String(), B_READ_ONLY);
 	if (m_File.GetSize(&size) != B_OK)
 		return false;
@@ -266,7 +266,7 @@ bool Language::Read(BString filename)
 		return false;
 
 	readsize = m_File.Read(m_Text, size);
-	
+
 	if (readsize != size)
 	{
 		delete m_Text;
@@ -275,7 +275,7 @@ bool Language::Read(BString filename)
 
 	m_Size = readsize;
 	m_Pos = 0;
-	return true;	
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -298,12 +298,12 @@ bool Language::GetLine(BString &result)
 			quit = true;
 		else
 			result << chr;
-			
+
 		counter++;
 	}
 
-	m_Pos += counter;	
-	return true;	
+	m_Pos += counter;
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -47,21 +47,21 @@ class GenesisMoveWindow : public BWindow
 		BStatusBar		*m_ProgressBar;
 		BStatusBar		*m_FileBar;
 		PanelView		*m_DestPanel;
-		
+
 		int				m_FileCount;
 		int32			m_Selection;
-		
+
 		thread_id		m_MoveThread;
-		
+
 		virtual void	MessageReceived(BMessage* message);
 
 		bool			m_SingleMove;
-		bool			m_Paused;		
+		bool			m_Paused;
 		bool			m_SkipAllMoveError;
 		bool 			m_OverwriteAll;
 		bool			m_SkipSymLinkCreationError;
 		bool			m_SkipAllMissing;		// move
-				
+
 		void			Go(void);
 
 		void RemoveParentSelection();

@@ -21,8 +21,8 @@ class CommandLine : public BTextControl
 		~CommandLine();
 
 		BString m_Path;
-		
-		void Execute(void);		
+
+		void Execute(void);
 		void SetPath(const char *path);
 };
 

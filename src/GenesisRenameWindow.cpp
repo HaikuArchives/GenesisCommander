@@ -31,7 +31,7 @@ GenesisRenameWindow::GenesisRenameWindow(CustomListView *list, BWindow *mainwind
 	m_ItemNameToSelect.SetTo("");
 
 	((PanelView *)m_CustomListView->m_PV)->DisableMonitoring();
-	
+
 	SetType(B_FLOATING_WINDOW);
 	SetFeel(B_MODAL_SUBSET_WINDOW_FEEL);
 	SetFlags(B_NOT_RESIZABLE | B_NOT_ZOOMABLE);
@@ -44,19 +44,19 @@ GenesisRenameWindow::GenesisRenameWindow(CustomListView *list, BWindow *mainwind
 	m_View->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	AddChild(m_View);
 
-	// Bottom View	
+	// Bottom View
 	rect = Bounds();
 	rect.top = rect.bottom-44;
 	BView *BottomView = new BView(rect, "renamebottomview", B_FOLLOW_ALL, B_WILL_DRAW);
 	BottomView->SetViewColor(180, 190, 200, 0);
-	m_View->AddChild(BottomView);	
-	
-	// Rename Button	
+	m_View->AddChild(BottomView);
+
+	// Rename Button
 	rect = BottomView->Bounds();
 	rect.top = rect.bottom-34;
 	rect.bottom = rect.bottom-14;
 	rect.left = rect.right-80;
-	rect.right = rect.right-20;	
+	rect.right = rect.right-20;
 	m_RenameButton = new BButton(rect,"rename","Rename",new BMessage(BUTTON_MSG_RENAME),0,B_WILL_DRAW);
 	BottomView->AddChild(m_RenameButton);
 
@@ -65,7 +65,7 @@ GenesisRenameWindow::GenesisRenameWindow(CustomListView *list, BWindow *mainwind
 	rect.top = rect.bottom-34;
 	rect.bottom = rect.bottom-14;
 	rect.left = rect.right-160;
-	rect.right = rect.right-100;	
+	rect.right = rect.right-100;
 	BButton *CancelButton = new BButton(rect,"cancel","Cancel",new BMessage(BUTTON_MSG_CANCELRENAME),0,B_WILL_DRAW);
 	BottomView->AddChild(CancelButton);
 
@@ -82,23 +82,23 @@ GenesisRenameWindow::GenesisRenameWindow(CustomListView *list, BWindow *mainwind
 	m_EntryName->SetModificationMessage(new BMessage(ENTRYNAME_CHANGED));
 	m_View->AddChild(m_EntryName);
 
-	m_EntryName->MakeFocus(true);	
-	
+	m_EntryName->MakeFocus(true);
+
 	// Ctrl + Q closes the window...
 	AddShortcut('Q', 0, new BMessage(BUTTON_MSG_CANCELRENAME));
-	
+
 	AddCommonFilter(new EscapeFilter(this, new BMessage(BUTTON_MSG_CANCELRENAME)));
 
 	if (strlen(m_EntryName->Text())==0)
 		m_RenameButton->SetEnabled(false);
 	else
 		m_RenameButton->SetEnabled(true);
-	
+
 	// If there is a given window, let's align our window to its center...
 	if (mainwindow)
 	{
 		BRect myrect = Bounds();
-		
+
 		rect = mainwindow->Frame();
 		float w = rect.right - rect.left;
 		float h = rect.bottom - rect.top;
@@ -130,11 +130,11 @@ GenesisRenameWindow::~GenesisRenameWindow()
 				}
 			}
 		}
-		
+
 		if (!found)
 			m_CustomListView->Select(0,false);
-		
-		m_Window->Unlock();			
+
+		m_Window->Unlock();
 	}
 
 	((PanelView *)m_CustomListView->m_PV)->EnableMonitoring();
@@ -166,17 +166,17 @@ void GenesisRenameWindow::MessageReceived(BMessage* message)
 					BString filename;
 					BEntry entry;
 					bool Ok = false;
-					
+
 					filename.SetTo(item->m_FilePath.String());
 					filename << "/" << item->m_FileName;
-				
+
 					entry.SetTo(filename.String());
 					if (entry.InitCheck()==B_OK)
 					{
 						if (entry.Exists()) // Letezik meg? :-)
 						{
 							if (strcmp(m_EntryName->Text(), item->m_FileName.String()) != 0) // Ha meg akarja valtoztatni a nevet...
-							{								
+							{
 								if (entry.Rename(m_EntryName->Text())==B_OK) // Sikerult atnevezni...
 								{
 									m_Window->Lock();
@@ -188,9 +188,9 @@ void GenesisRenameWindow::MessageReceived(BMessage* message)
 								else	// Nem sikerult atnevezni...
 								{
 									BString text;
-								
+
 									text << "Cannot rename '" << item->m_FileName.String() << "' to '" << m_EntryName->Text() << "'.";
-								
+
 									BAlert *myAlert = new BAlert("Rename",text.String(),"Abort","Skip","Retry",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 									myAlert->SetShortcut(0, B_ESCAPE);
 									switch (myAlert->Go())
@@ -203,11 +203,11 @@ void GenesisRenameWindow::MessageReceived(BMessage* message)
 											break;
 										case 2:
 											break;
-									}							
+									}
 								}
 							}
 							else	// Nem valtozott a neve, igy felesleges nevezgetni...
-							{	
+							{
 								m_Window->Lock();
 								m_CustomListView->Deselect(m_CustomListView->IndexOf(item));
 								m_CustomListView->InvalidateItem(m_CustomListView->IndexOf(item));
@@ -217,7 +217,7 @@ void GenesisRenameWindow::MessageReceived(BMessage* message)
 							}
 						}
 					}
-				
+
 					if (Ok)
 					{
 						GetNext();
@@ -248,7 +248,7 @@ void GenesisRenameWindow::GetNext(void)
 	if (item)
 	{
 		Lock();
-		m_EntryName->SetText(item->m_FileName.String());		
+		m_EntryName->SetText(item->m_FileName.String());
 		m_EntryName->MakeFocus(true);
 		Unlock();
 	}

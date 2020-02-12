@@ -98,9 +98,9 @@ class PanelView : public BView
 		void Reload(int index);				// reload and select item by index...
 		void DeleteDirectory(const char *dirname);
 		void UniversalDelete(const char *filename);
-	
+
 		void LoadResources(void);
-		
+
 		void ClearFileList(void);
 		void ReadDirectory(const char *itemname = NULL);
 		CustomListItem *AddDirectoryEntry(BEntry *entry, bool sorted = false);
@@ -113,7 +113,7 @@ class PanelView : public BView
 		void Calculate(CustomListItem *item);
 		void SetPathStringView(void);
 		void GetInfo(void);
-		
+
 		void SetPanelMode(int mode);
 
 		uint64 GetDirectorySize(const char *path);
@@ -129,31 +129,31 @@ class PanelView : public BView
 		void Delete(void);
 		void Rename(void);
 		void Move(void);
-		
+
 		void SeekModeOn(void);
 		void SeekModeOff(void);
 		void SeekFor(const char *text);
 		void SelectGroup(void);
 		void DeselectGroup(void);
-		
+
 		void SelectPanel(void);
-		
+
 		void SetPath(const char *path) { m_Path.SetTo(path); }
 
 		BString			m_Path;				// This is the real path of the panel...
 		BString			m_MonitoringPath;
 		BString			m_LastFilePattern;
 		uint32			m_CurrentTotalSize;
-		
+
 		BMenuItem 		*m_CD_Parent;
 		BMenuItem		*m_CD_Root;
 		BMenuItem		*m_CD_Home;
 		BMenuItem		*m_CD_Desktop;
 		BMenuItem		*m_CD_Disks;
-		
+
 		BMenuItem 		*m_PanelMenu_Find;
 		BMenuItem 		*m_PanelMenu_ShowIcons;
-		
+
 		BMenuField		*m_PathField;
 		BMenuField		*m_PanelMenuField;
 		BMenu			*m_PathMenu;
@@ -167,16 +167,16 @@ class PanelView : public BView
 
 		CustomListView	*m_CustomListView;
 		BScrollView 	*m_pScrollView;
-		
+
 		bigtime_t		m_LastSelectionTime;
-		
+
 		int				m_PanelMode;
 		bool			m_SeekMode;
-		
+
 		// Resources
 		unsigned char	*m_ParentIcon;
 		unsigned char	*m_UnknownIcon;
-				
+
 		// Panel settings
 		bool			m_Setting_ShowIcons;
 		bool			m_Setting_ShowFileSize;

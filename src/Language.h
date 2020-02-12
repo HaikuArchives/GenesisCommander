@@ -28,9 +28,9 @@ class Language
 public:
 	Language(BString langfile);
 	~Language();
-	
-	static Language *m_Language; 
-	
+
+	static Language *m_Language;
+
 	BString GetEntry(BString key);
 
 private:
@@ -42,7 +42,7 @@ private:
 	bool Read(BString filename);
 	bool GetLine(BString &result);
 	void RemoveComment(BString &result);
-	
+
 	BList	m_Entries;
 	int   m_Pos;
 	int   m_Size;

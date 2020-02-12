@@ -27,13 +27,13 @@ enum FILE_TYPE {
 	FT_DISKBACK,
 };
 
-class CustomListItem : public BListItem 
+class CustomListItem : public BListItem
 {
 	public:
 		CustomListItem(const char *filename, const char *filepath, int filetype, int filesize, BHandler *handler = NULL);
 		CustomListItem(const char *drivename, const char *diskpath, int filetype, off_t free, off_t capacity, dev_t deviceid);
 		~CustomListItem();
-	
+
 		bool GetIcon(const char *filename);
 		bool GetIcon(BEntry *entry);
 		bool GetIcon(BVolume *v);
@@ -46,7 +46,7 @@ class CustomListItem : public BListItem
 		bool		m_RSelected;		// Selected flag for Rescan
 		node_ref 	m_NodeRef;			// A fajlok beazonositasara
 		BHandler 	*m_Handler;
-		
+
 		// File entry
 		BString		m_FileName;
 		BString		m_FilePath;
