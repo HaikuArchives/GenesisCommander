@@ -50,7 +50,7 @@ GenesisCopyWindow::GenesisCopyWindow(CustomListView *list, PanelView *destpanel,
 	// First we have to remove the parent selection if selected...
 //	RemoveParentSelection();
 
-	m_FileCount = m_CustomListView->CountSelectedEntries(CT_WITHOUTPARENT);			
+	m_FileCount = m_CustomListView->CountSelectedEntries(CT_WITHOUTPARENT);
 
 	if (m_FileCount == 1)
 		m_SingleCopy = true;
@@ -65,29 +65,29 @@ GenesisCopyWindow::GenesisCopyWindow(CustomListView *list, PanelView *destpanel,
 	m_View->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	AddChild(m_View);
 
-	// Bottom View	
+	// Bottom View
 	rect = Bounds();
 	rect.top = rect.bottom-44;
 	BView *BottomView = new BView(rect, "infobottomview", B_FOLLOW_BOTTOM, B_WILL_DRAW);
 	BottomView->SetViewColor(180, 190, 200, 0);
-	m_View->AddChild(BottomView);	
+	m_View->AddChild(BottomView);
 /*
 	// More checkbox
 	rect = BottomView->Bounds();
 	rect.top = rect.bottom-30;
 	rect.bottom = rect.bottom-14;
 	rect.left = 20;
-	rect.right = rect.left+40;	
+	rect.right = rect.left+40;
 	m_MoreCB = new BCheckBox(rect,"more","Show more",new BMessage(COPY_MORE), B_FOLLOW_BOTTOM, B_WILL_DRAW);
 	m_MoreCB->ResizeToPreferred();
 	BottomView->AddChild(m_MoreCB);
-*/	
-	// OK Button	
+*/
+	// OK Button
 	rect = BottomView->Bounds();
 	rect.top = rect.bottom-34;
 	rect.bottom = rect.bottom-14;
 	rect.left = rect.right-80;
-	rect.right = rect.right-20;	
+	rect.right = rect.right-20;
 	m_CopyButton = new BButton(rect,"copy","Copy",new BMessage(BUTTON_MSG_COPY),B_FOLLOW_BOTTOM,B_WILL_DRAW);
 	BottomView->AddChild(m_CopyButton);
 
@@ -96,7 +96,7 @@ GenesisCopyWindow::GenesisCopyWindow(CustomListView *list, PanelView *destpanel,
 	rect.top = rect.bottom-34;
 	rect.bottom = rect.bottom-14;
 	rect.left = rect.right-160;
-	rect.right = rect.right-100;	
+	rect.right = rect.right-100;
 	m_CancelButton = new BButton(rect,"cancel","Cancel",new BMessage(BUTTON_MSG_CANCELCOPY),B_FOLLOW_BOTTOM,B_WILL_DRAW);
 	BottomView->AddChild(m_CancelButton);
 
@@ -148,12 +148,12 @@ GenesisCopyWindow::GenesisCopyWindow(CustomListView *list, PanelView *destpanel,
 			m_FileAsName->SetText( ((CustomListItem *)m_CustomListView->GetSelectedEntry(1))->m_FileName.String() );
 		else
 			m_FileAsName->SetText( ((CustomListItem *)m_CustomListView->GetSelectedEntry(0))->m_FileName.String() );
-		
+
 		m_View->AddChild(m_FileAsName);
 	}
 
-	m_DirName->MakeFocus(true);	
-	
+	m_DirName->MakeFocus(true);
+
 	// Ctrl + Q closes the window...
 	AddShortcut('Q', 0, new BMessage(BUTTON_MSG_CANCELCOPY));
 
@@ -167,7 +167,7 @@ GenesisCopyWindow::GenesisCopyWindow(CustomListView *list, PanelView *destpanel,
 		else
 			text << ((CustomListItem *)m_CustomListView->GetSelectedEntry(0))->m_FileName;
 		text << "'";
-	
+
 		m_Label->SetText(text.String());
 	}
 	else
@@ -175,17 +175,17 @@ GenesisCopyWindow::GenesisCopyWindow(CustomListView *list, PanelView *destpanel,
 		BString text;
 		text.SetTo("Copy ");
 		text << m_FileCount << " files";
-		
+
 		m_Label->SetText(text.String());
 	}
-	
+
 	AddCommonFilter(new EscapeFilter(this, new BMessage(BUTTON_MSG_CANCELCOPY)));
-	
+
 	// If there is a given window, let's align our window to its center...
 	if (mainwindow)
 	{
 		BRect myrect = Bounds();
-		
+
 		rect = mainwindow->Frame();
 		float w = rect.right - rect.left;
 		float h = rect.bottom - rect.top;
@@ -201,7 +201,7 @@ GenesisCopyWindow::~GenesisCopyWindow()
 	{
 		if (m_Selection > (m_CustomListView->IndexOf(m_CustomListView->LastItem())))
 			m_Selection = m_CustomListView->IndexOf(m_CustomListView->LastItem());
-			
+
 		m_CustomListView->Select(m_Selection, false);	// false -> remove previously selected item(s)...
 	}
 /*
@@ -217,7 +217,7 @@ GenesisCopyWindow::~GenesisCopyWindow()
 		((PanelView *)m_CustomListView->m_PV)->Reload();
 		m_Window->Unlock();
 	}
-*/	
+*/
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -230,7 +230,7 @@ void GenesisCopyWindow::MessageReceived(BMessage* message)
 			if (m_MoreCB->Value())
 				ResizeTo(320,180);
 			else
-				ResizeTo(320,140);			
+				ResizeTo(320,140);
 			break;
 */
 		case COPYNAME_CHANGED:
@@ -342,7 +342,7 @@ int32 SingleCopyThreadFunc(void *data)
 		d->Lock();
 		d->m_FileBar->SetText(text.String());
 		d->Unlock();
-		
+
 		filename.SetTo(item->m_FilePath);
 		filename += '/';
 		filename += item->m_FileName;
@@ -394,7 +394,7 @@ int32 MultiCopyThreadFunc(void *data)
 			d->Lock();
 			d->m_FileBar->SetText(text.String());
 			d->Unlock();
-			
+
 			filename.SetTo(item->m_FilePath);
 			filename += '/';
 			filename += item->m_FileName;
@@ -410,7 +410,7 @@ int32 MultiCopyThreadFunc(void *data)
 			d->m_Window->Unlock();
 		}
 	}
-	
+
 	d->Lock();
 	d->m_FileBar->SetText("Done");
 	d->m_FileBar->SetTrailingText("");
@@ -430,14 +430,14 @@ void GenesisCopyWindow::PrepareCopy(void)
 ////////////////////////////////////////////////////////////////////////
 {
 	BRect rect;
-	
+
 	rgb_color BarColor;
 	BarColor.red = 180;
 	BarColor.green = 190;
-	BarColor.blue = 200;	
+	BarColor.blue = 200;
 
 	m_DestPath.SetTo(m_DirName->Text());
-	
+
 	if (m_SingleCopy)
 		m_DestFileName.SetTo(m_FileAsName->Text());
 
@@ -450,21 +450,21 @@ void GenesisCopyWindow::PrepareCopy(void)
 	}
 
 	BEntry dest(m_DestPath.String());
-	
+
 	if (dest.InitCheck()!=B_OK)
 	{
 		BAlert *myAlert = new BAlert("Copy","Cannot initialize destination entry.","OK", NULL, NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 		myAlert->Go();
 		return;
 	}
-	
+
 	if (!dest.Exists())
 	{
 		BAlert *myAlert = new BAlert("Copy","Destination path does not exist.","OK", NULL, NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 		myAlert->Go();
 		return;
 	}
-	
+
 	if (!dest.IsDirectory())
 	{
 		BAlert *myAlert = new BAlert("Copy","Destination path is not a folder.","OK", NULL, NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
@@ -473,20 +473,20 @@ void GenesisCopyWindow::PrepareCopy(void)
 	}
 
 	BAutolock autolocker(this);
-	
+
 	m_AbortButton = m_CopyButton;
 	m_AbortButton->SetMessage(new BMessage(BUTTON_MSG_ABORTCOPY));
 	m_PauseButton = m_CancelButton;
 	m_PauseButton->SetMessage(new BMessage(BUTTON_MSG_PAUSECOPY));
-	
+
 	m_DirName->RemoveSelf();
 	m_Label->RemoveSelf();				//	m_Label->MoveBy(0,40);
-	
+
 	if (m_SingleCopy)
 		m_FileAsName->RemoveSelf();
-	
+
 	SetTitle("Copy in progress...");
-	
+
 	// Add ProgressBar
 	if (!m_SingleCopy)
 	{
@@ -501,7 +501,7 @@ void GenesisCopyWindow::PrepareCopy(void)
 		m_ProgressBar->SetMaxValue(m_FileCount);
 		m_View->AddChild(m_ProgressBar);
 	}
-	
+
 	// Add File Bar
 	rect = Bounds();
 	rect.left += 24;
@@ -534,12 +534,12 @@ void GenesisCopyWindow::Copy(const char *filename, const char *destination, cons
 {
 	BEntry sourcefile(filename);
 	BString text;
-	
+
 	if (sourcefile.InitCheck()==B_OK)
 	{
 /*
 		BString text;
-		
+
 		text.SetTo("");
 		text << filename << "\n" << destination;
 
@@ -553,7 +553,7 @@ void GenesisCopyWindow::Copy(const char *filename, const char *destination, cons
 			{
 				BString text;
 				text << "Recursive copy not allowed.\nPlease check the destination folder.";
-			
+
 				BAlert *myAlert = new BAlert("Copy",text.String(),"OK", NULL, NULL, B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
 				myAlert->Go();
 				Close();
@@ -570,7 +570,7 @@ void GenesisCopyWindow::Copy(const char *filename, const char *destination, cons
 	else if (!m_SkipAllCopyError)
 	{
 		text << "Error while initializing file:\n\n" << filename;
-		
+
 		BAlert *myAlert = new BAlert("Copy",text.String(),"Abort","Skip all","Skip",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 		myAlert->SetShortcut(0, B_ESCAPE);
 		switch (myAlert->Go())
@@ -582,7 +582,7 @@ void GenesisCopyWindow::Copy(const char *filename, const char *destination, cons
 			case 1:
 				m_SkipAllCopyError = true;
 				break;
-		}	
+		}
 	}
 }
 
@@ -612,9 +612,9 @@ bool GenesisCopyWindow::CopyFile(const char *filename, const char *destination, 
 	if (dstfileentry.Exists() && !m_OverwriteAll)
 	{
 		BString text;
-		
+
 		text << "File '" << name << "' already exists. Do you want to overwrite it?";
-		
+
 		BAlert *myAlert = new BAlert("Copy",text.String(),"Abort","Overwrite all","Overwrite",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 		myAlert->SetShortcut(0, B_ESCAPE);
 		switch (myAlert->Go())
@@ -626,7 +626,7 @@ bool GenesisCopyWindow::CopyFile(const char *filename, const char *destination, 
 			case 1:
 				m_OverwriteAll = true;
 				break;
-		}	
+		}
 	}
 
 	BFile srcfile(filename, B_READ_ONLY);
@@ -634,28 +634,28 @@ bool GenesisCopyWindow::CopyFile(const char *filename, const char *destination, 
 
 	if (srcentry.InitCheck()!=B_OK)
 		return false;
-	
+
 	if (dstentry.InitCheck()!=B_OK)
 		return false;
-		
+
 	if (!srcentry.Exists())
 		return false;
-		
+
 	if (!dstentry.Exists())
 	{
 		return false;
 	}
-	
+
 	if (srcentry.GetStat(&statbuf)!=B_OK)
 	{
 		return false;
 	}
-		
+
 	unsigned char *buf = new unsigned char[statbuf.st_blksize];
 	if (!buf)
 	{
 		return false;
-	}	
+	}
 
 	Lock();
 	m_FileBar->Update(-m_FileBar->CurrentValue());	// Reset to 0.0
@@ -704,15 +704,15 @@ void GenesisCopyWindow::CopyDirectory(const char *dirname, const char *destinati
 	BEntry dstentry;
 	char name[B_FILE_NAME_LENGTH];
 	BString fulldestdir;
-	
+
 	if (srcentry.InitCheck()!=B_OK)
 		return;
-		
+
 	if (!srcentry.Exists())
 		return;
-		
-	srcentry.GetName(name);	
-	
+
+	srcentry.GetName(name);
+
 	fulldestdir.SetTo(destination);
 	if (destdirname)
 		fulldestdir << "/" << destdirname;
@@ -720,10 +720,10 @@ void GenesisCopyWindow::CopyDirectory(const char *dirname, const char *destinati
 		fulldestdir << "/" << name;
 
 	dstentry.SetTo(fulldestdir.String());
-	
+
 	if (dstentry.InitCheck()!=B_OK)
 		return;
-		
+
 	if (!dstentry.Exists())
 	{
 		if (create_directory(fulldestdir.String(), 0777)!=B_OK)		// TODO: jo a 0777?
@@ -731,22 +731,22 @@ void GenesisCopyWindow::CopyDirectory(const char *dirname, const char *destinati
 	}
 
 	BDirectory dir;
-	
+
 	dir.SetTo(dirname);
 	if (dir.InitCheck()==B_OK)
 	{
 		BEntry entry;
-		
+
 		if (dir.GetEntry(&entry)==B_OK)
-		{	
-			while (dir.GetNextEntry(&entry)==B_OK)			
+		{
+			while (dir.GetNextEntry(&entry)==B_OK)
 			{
 				entry.GetName(name);
-								
+
 				if (entry.IsDirectory())
 				{
 					BString fullname;
-					
+
 					fullname.SetTo(dirname);
 					fullname << "/" << name;
 					CopyDirectory(fullname.String(), fulldestdir.String());
@@ -754,15 +754,15 @@ void GenesisCopyWindow::CopyDirectory(const char *dirname, const char *destinati
 				else if (entry.IsSymLink())
 				{
 					BString fullname;
-					
+
 					fullname.SetTo(dirname);
 					fullname << "/" << name;
 					CopyLink(fullname.String(), fulldestdir.String());
 				}
-				else 
+				else
 				{
 					BString fullname;
-					
+
 					fullname.SetTo(dirname);
 					fullname << "/" << name;
 					CopyFile(fullname.String(), fulldestdir.String());
@@ -788,7 +788,7 @@ bool GenesisCopyWindow::CopyLink(const char *linkname, const char *destination, 
 	char name[B_FILE_NAME_LENGTH];
 	struct stat statbuf;
 	entry_ref ref;
-		
+
 	srcentry.SetTo(linkname);
 	srcentry.GetName(name);
 	srcentry.GetRef(&ref);
@@ -797,12 +797,12 @@ bool GenesisCopyWindow::CopyLink(const char *linkname, const char *destination, 
 
 	if (destfilename)
 		sprintf(name,"%s",destfilename);
-	
+
 	if (srcentry.GetStat(&statbuf)!=B_OK)
 		return false;
 
 	dstdir.SetTo(destination);
-	
+
 	if (dstdir.InitCheck()!=B_OK)
 		return false;
 
@@ -815,9 +815,9 @@ bool GenesisCopyWindow::CopyLink(const char *linkname, const char *destination, 
 	if (dstdir.CreateSymLink(name, LinkPath.Path(), &dstlink)!=B_OK && !m_SkipSymLinkCreationError)
 	{
 		BString text;
-		
+
 		text << "Cannot create '" << name << "' symbolic link in '" << LinkPath.Path() << "'";
-		
+
 		BAlert *myAlert = new BAlert("Copy",text.String(),"Abort","Skip all","Skip",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 		myAlert->SetShortcut(0, B_ESCAPE);
 		switch (myAlert->Go())
@@ -829,7 +829,7 @@ bool GenesisCopyWindow::CopyLink(const char *linkname, const char *destination, 
 			case 1:
 				m_SkipSymLinkCreationError = true;
 				break;
-		}	
+		}
 
 		return false;
 	}
@@ -837,7 +837,7 @@ bool GenesisCopyWindow::CopyLink(const char *linkname, const char *destination, 
 	Lock();
 	m_FileBar->Update(1);
 	Unlock();
-		
+
 	dstlink.SetPermissions(statbuf.st_mode);
 	dstlink.SetOwner(statbuf.st_uid);
 	dstlink.SetGroup(statbuf.st_gid);
@@ -872,11 +872,11 @@ bool GenesisCopyWindow::CopyAttr(const char *srcfilename, const char *dstfilenam
 		buf = new unsigned char[attrinfo.size];
 		if (buf)
 		{
-			len = srcnode.ReadAttr(attrname, attrinfo.type, 0, buf, attrinfo.size);		
-			
+			len = srcnode.ReadAttr(attrname, attrinfo.type, 0, buf, attrinfo.size);
+
 			if (len>0)
 				dstnode.WriteAttr(attrname, attrinfo.type, 0, buf, attrinfo.size);
-			
+
 			delete [] buf;
 		}
 	}
@@ -889,32 +889,32 @@ int32 GenesisCopyWindow::GetFirstSelection(void)
 ////////////////////////////////////////////////////////////////////////
 {
 	CustomListItem *item;
-	
+
 	item = m_CustomListView->GetSelectedEntry(0);
 	if (item)
 		return m_CustomListView->IndexOf(item);
 	else
-		return 0;	
+		return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////
 bool GenesisCopyWindow::IsDirReadOnly(const char *destination)
 ////////////////////////////////////////////////////////////////////////
 {
-	struct stat statbuf;	
+	struct stat statbuf;
 	BDirectory dir(destination);
 	BVolume volume;
-	
+
 	if (dir.InitCheck()!=B_OK)
 		return false;
-	
+
 	if (dir.GetStatFor(destination, &statbuf)!=B_OK)
 		return false;
-	
+
 	volume.SetTo(statbuf.st_dev);
 	if (volume.IsReadOnly())
 		return true;
-	
+
 	return false;	// Not read only
 }
 
@@ -924,10 +924,10 @@ bool GenesisCopyWindow::IsRecursiveCopy(const char *source, const char *destinat
 {
 	BEntry src(source);
 	BEntry dst(destination);
-	
+
 	if (src == dst)
 		return true;
-		
+
 	while ((dst.GetParent(&dst)) == B_OK)
 	{
 		if (src == dst)

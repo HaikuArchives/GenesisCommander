@@ -28,17 +28,17 @@ CustomListView::CustomListView(BRect rect, const char *name, void *pv)
 	DirectoryColor.green = 0;
 	DirectoryColor.blue = 128;
 	DirectoryColor.alpha = 255;
-	
+
 	SymLinkColor.red = 0;
 	SymLinkColor.green = 64;
 	SymLinkColor.blue = 64;
 	SymLinkColor.alpha = 255;
-	
-	get_click_speed( &m_ClickSpeed ); 
-	
+
+	get_click_speed( &m_ClickSpeed );
+
 	m_LastClicked = system_time();
 	m_LastClickedItem = -1;
-	
+
 	m_PV = pv;
 }
 
@@ -69,14 +69,14 @@ int CustomListView::CompareFunc( const void *first, const void *second)
 	CustomListItem *item1 = (*(static_cast<CustomListItem * const*>(first )));
 	CustomListItem *item2 = (*(static_cast<CustomListItem * const*>(second)));
 
-	// The '..' item is always the first one...	
+	// The '..' item is always the first one...
 	if (item1->m_Type==FT_PARENT) return -1;
 	else if (item2->m_Type==FT_PARENT) return 1;
-	
+
 	// Directories first...
 	if ((item1->m_Type==FT_DIRECTORY || item1->m_Type==FT_SYMLINKDIR) && (item2->m_Type!=FT_DIRECTORY && item2->m_Type!=FT_SYMLINKDIR)) return -1;
 	else if ((item2->m_Type==FT_DIRECTORY || item2->m_Type==FT_SYMLINKDIR) && (item1->m_Type!=FT_DIRECTORY && item1->m_Type!=FT_SYMLINKDIR)) return 1;
-		
+
 	return strcasecmp(item1->m_FileName.String(),item2->m_FileName.String());
 }
 
@@ -87,14 +87,14 @@ int CustomListView::CompareFunc( CustomListItem *first, CustomListItem *second)
 	CustomListItem *item1 = first;
 	CustomListItem *item2 = second;
 
-	// The '..' item is always the first one...	
+	// The '..' item is always the first one...
 	if (item1->m_Type==FT_PARENT) return -1;
 	else if (item2->m_Type==FT_PARENT) return 1;
-	
+
 	// Directories first...
 	if ((item1->m_Type==FT_DIRECTORY || item1->m_Type==FT_SYMLINKDIR) && (item2->m_Type!=FT_DIRECTORY && item2->m_Type!=FT_SYMLINKDIR)) return -1;
 	else if ((item2->m_Type==FT_DIRECTORY || item2->m_Type==FT_SYMLINKDIR) && (item1->m_Type!=FT_DIRECTORY && item1->m_Type!=FT_SYMLINKDIR)) return 1;
-		
+
 	return strcasecmp(item1->m_FileName.String(),item2->m_FileName.String());
 }
 
@@ -169,31 +169,31 @@ void CustomListView::KeyDown(const char *bytes, int32 numBytes)
 								if (CountSelectedEntries(CT_WITHPARENT)==1)		// Because the '..' is also selectable...
 									((PanelView *)Parent())->Looper()->PostMessage(new BMessage(MSG_EDIT), NULL);
 							}
-	
+
 							// F5 - MakeDir
 							if (keyinfo.key_states[0] & 0x2)
 							{
 								((PanelView *)Parent())->Looper()->PostMessage(new BMessage(MSG_COPY), NULL);
 							}
-							
+
 							// F6 - Move
 							if (keyinfo.key_states[0] & 0x1)
 							{
 								((PanelView *)Parent())->Looper()->PostMessage(new BMessage(MSG_MOVE), NULL);
 							}
-	
+
 							// F7 - MakeDir
 							if (keyinfo.key_states[1] & 0x80)
 							{
 								((PanelView *)Parent())->Looper()->PostMessage(new BMessage(MSG_MAKEDIR), NULL);
 							}
-	
+
 							// F8 - Delete
 							if (keyinfo.key_states[1] & 0x40)
 							{
 								((PanelView *)Parent())->Looper()->PostMessage(new BMessage(MSG_DELETE), NULL);
 							}
-	
+
 							// F10 - Quit
 							if (keyinfo.key_states[1] & 0x10)
 							{
@@ -227,7 +227,7 @@ void CustomListView::KeyDown(const char *bytes, int32 numBytes)
 						process = false;
 						break;
 					}
-					
+
 					Deselect(selected);
 
 					// Last?
@@ -235,7 +235,7 @@ void CustomListView::KeyDown(const char *bytes, int32 numBytes)
 						Select(selected-items,false);
 					else
 						Select(0,false);
-									
+
 					ScrollToSelection();
 				}
 				process = false;
@@ -246,13 +246,13 @@ void CustomListView::KeyDown(const char *bytes, int32 numBytes)
 				{
 					int selected = CurrentSelection(0);
 					int items = GetNumberOfVisibleItems();
-					
+
 					if (CountItems() == (selected +1))	// az utolson vagyunk?
 					{
 						process = false;
 						break;
 					}
-					
+
 					Deselect(selected);
 
 					// Last?
@@ -260,7 +260,7 @@ void CustomListView::KeyDown(const char *bytes, int32 numBytes)
 						Select(selected+items,false);
 					else
 						Select(CountItems()-1,false);
-									
+
 					ScrollToSelection();
 				}
 				process = false;
@@ -273,7 +273,7 @@ void CustomListView::KeyDown(const char *bytes, int32 numBytes)
 						Select(IndexOf(item)+1,true);
 				}
 				else
-					Select(0,true);				
+					Select(0,true);
 				break;
 			case B_LEFT_ARROW:
 				Select(0,false);
@@ -292,8 +292,8 @@ void CustomListView::KeyDown(const char *bytes, int32 numBytes)
 				}
 				break;
 		}
-	}	
-		
+	}
+
 	if (process)
 		BListView::KeyDown(bytes,numBytes);
 }
@@ -310,23 +310,23 @@ int CustomListView::CountEntries(int mode)
 ////////////////////////////////////////////////////////////////////////
 {
 	int n = CountItems();
-	
+
 	if (mode == CT_WITHOUTPARENT)
 	{
 		if (n>0 && ((CustomListItem *)FirstItem())->m_Type==FT_PARENT) n--;
 	}
-	
+
 	return n;
 }
 
 ////////////////////////////////////////////////////////////////////////
 int CustomListView::CountSelectedEntries(int mode)
 ////////////////////////////////////////////////////////////////////////
-{	
+{
 	int32 selected;
 	int i = 0;
 	int c = 0;
-	
+
 	while ( (selected = CurrentSelection(i)) >= 0 )
 	{
 		if (mode == CT_WITHOUTPARENT)
@@ -335,10 +335,10 @@ int CustomListView::CountSelectedEntries(int mode)
 		}
 		else
 			c++;
-	
+
 		i++;
 	}
-	
+
 	return c;
 }
 
@@ -350,7 +350,7 @@ CustomListItem *CustomListView::GetSelectedEntry(int n)
 
 	selected = CurrentSelection(n);
 	if (selected<0) return NULL;
-	
+
 	return (CustomListItem *)ItemAt(selected);
 }
 
@@ -391,16 +391,16 @@ uint64 CustomListView::GetSelectedTotalSize()
 {
 	uint64 n = 0;
 	int i=0;
-	
+
 	CustomListItem *item;
-	
+
 	while ((item = GetSelectedEntry(i)) != NULL)
 	{
 		if (item->m_Type == FT_FILE || item->m_Type == FT_DIRECTORY)
 			n+=item->m_FileSize;
 		i++;
 	}
-	
+
 	return n;
 }
 
@@ -409,13 +409,13 @@ void CustomListView::MouseDown(BPoint point)
 ////////////////////////////////////////////////////////////////////////
 {
 	m_Now = system_time();
-	
+
 	if ((m_Now-m_LastClicked)<m_ClickSpeed)
 	{
 		if (m_LastClickedItem == IndexOf(point))
 		{
 			if (CountSelectedEntries(CT_WITHPARENT)==1)		// Because the '..' is also selectable...
-				((PanelView *)Parent())->Looper()->PostMessage(new BMessage(MSG_ENTER), NULL);		
+				((PanelView *)Parent())->Looper()->PostMessage(new BMessage(MSG_ENTER), NULL);
 
 			// We have to delete the last click's details to be sure the next double-click will be OK...
 			m_LastClickedItem = -1;
@@ -424,13 +424,13 @@ void CustomListView::MouseDown(BPoint point)
 		else
 		{
 			m_LastClickedItem = IndexOf(point);
-			m_LastClicked = m_Now;	
+			m_LastClicked = m_Now;
 		}
 	}
 	else
 	{
 		m_LastClickedItem = IndexOf(point);
-		m_LastClicked = m_Now;	
+		m_LastClicked = m_Now;
 	}
 
 	BListView::MouseDown(point);
@@ -466,7 +466,7 @@ CustomListItem *CustomListView::FindItemByNodeRef(node_ref noderef)
 		if (item && item->m_NodeRef == noderef)
 			return item;
 	}
-	
+
 	return NULL;
 }
 
@@ -483,7 +483,7 @@ void CustomListView::AddSortedItem(CustomListItem *item)
 	{
 		first = 0;
 		last = n-1;
-	
+
 		while ((last-first)>0)
 		{
 			tempitem = (CustomListItem *)ItemAt((first + last) / 2);
@@ -494,7 +494,7 @@ void CustomListView::AddSortedItem(CustomListItem *item)
 		}
 
 		tempitem = (CustomListItem *)ItemAt(first);
-		if (CompareFunc(item, tempitem)>=0)	
+		if (CompareFunc(item, tempitem)>=0)
 			AddItem(item,first + 1); // nagyobb -> utana
 		else
 			AddItem(item,first);	// kisebb -> elotte

@@ -50,20 +50,20 @@ class GenesisCopyWindow : public BWindow
 		BStatusBar		*m_FileBar;
 		PanelView		*m_DestPanel;
 //		BCheckBox		*m_MoreCB;
-		
+
 		int				m_FileCount;
 		int32			m_Selection;
-		
+
 		thread_id		m_CopyThread;
-		
+
 		virtual void	MessageReceived(BMessage* message);
 
 		bool			m_SingleCopy;
-		bool			m_Paused;		
+		bool			m_Paused;
 		bool			m_SkipAllCopyError;
 		bool 			m_OverwriteAll;
 		bool			m_SkipSymLinkCreationError;
-				
+
 		void			Go(void);
 
 		void RemoveParentSelection();

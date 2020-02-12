@@ -88,13 +88,13 @@ class GenesisWindow : public BWindow
 			CR_DEFAULT,
 			CR_HOURGLASS,
 		};
-						
+
 		static GenesisWindow *m_MainWindow;
-						
+
 		virtual bool	QuitRequested();
 		virtual void	MessageReceived(BMessage* message);
 		virtual void	FrameResized(float width, float height);
-		
+
 		PanelView		*GetActivePanel(void);
 		PanelView		*GetInactivePanel(void);
 		void 			UpdatePanels(void);
@@ -107,7 +107,7 @@ class GenesisWindow : public BWindow
 
 		PanelView		*m_LeftPanel;
 		PanelView		*m_RightPanel;
-		
+
 		BButton			*m_Button_F3;
 		BButton			*m_Button_F4;
 		BButton			*m_Button_F5;
@@ -116,21 +116,21 @@ class GenesisWindow : public BWindow
 		BButton			*m_Button_F8;
 		BButton			*m_Button_F9;
 		BButton			*m_Button_F10;
-		
+
 		CommandLine		*m_CommandLine;
-		
+
 		BString			m_AppName;
 		BString			m_AppPath;
-		
+
 		Settings		*m_Settings;
 		Language		*m_Language;
 	private:
 		void			SetMousePointerShape(int n);
 		void			UpdateUIVisibility(bool initial = false);
-	
+
 		MousePointer	m_MousePointer;
 		bool			m_MousePointerChanged;
-		
+
 		bool			m_FuncKeysVisible;
 };
 
@@ -142,7 +142,7 @@ class EscapeFilter : public BMessageFilter
 
 	BWindow		*m_TargetWindow;
 	BMessage	*m_MessageToSend;
-		
+
 	virtual filter_result Filter(BMessage* msg, BHandler** target);
 };
 
@@ -154,7 +154,7 @@ class KeyboardFilter : public BMessageFilter
 
 	BWindow		*m_TargetWindow;
 	BMessage	*m_MessageToSend;
-		
+
 	virtual filter_result Filter(BMessage* msg, BHandler** target);
 };
 
@@ -167,7 +167,7 @@ class SeekFilter : public BMessageFilter
 	BWindow		*m_TargetWindow;
 	BMessage	*m_MessageToSend;
 	PanelView	*m_PV;
-		
+
 	virtual filter_result Filter(BMessage* msg, BHandler** target);
 };
 

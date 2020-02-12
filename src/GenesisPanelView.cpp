@@ -6,7 +6,7 @@
  *	2019-2020, Ondrej Čerman
  */
 
-// 
+//
 //	GenesisPanelView.cpp
 //
 //	This file contains the main functions of a file panel.
@@ -61,7 +61,7 @@ PanelView::PanelView(BRect rect, const char *name)
 	BPath dirPath;			// To query some paths...
 	BString tempstring;		// Ebben lehet kotoraszni a replace-eleshez
 	float mpanelheight, menufieldwidth, labelheight;
-	
+
 	// Default view color...
 	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 
@@ -76,10 +76,10 @@ PanelView::PanelView(BRect rect, const char *name)
 	// Resources
 	LoadResources();
 
-	// Main Box	
+	// Main Box
 	m_Box = new BBox(Bounds(),"box",B_FOLLOW_ALL,B_WILL_DRAW,B_FANCY_BORDER);
 	AddChild(m_Box);
-	
+
 	// Path
 	m_PathMenu = new BMenu("cd",B_ITEMS_IN_COLUMN);
 
@@ -96,7 +96,7 @@ PanelView::PanelView(BRect rect, const char *name)
 	tempstring.ReplaceAll("<DIR>", dirPath.Path());
 	m_CD_Home = new BMenuItem(tempstring.String(),new BMessage(PATH_MSG_CD_HOME),'H');
 	m_PathMenu->AddItem(m_CD_Home);
-	
+
 	find_directory(B_DESKTOP_DIRECTORY, &dirPath, true);
 	tempstring = LANG("CD_DESKTOP");
 	tempstring.ReplaceAll("<DIR>", dirPath.Path());
@@ -106,13 +106,13 @@ PanelView::PanelView(BRect rect, const char *name)
 	m_PathMenu->AddSeparatorItem();
 	m_CD_Disks = new BMenuItem(LANGS("CD_DISKS"),new BMessage(PATH_MSG_CD_DISKS),0,0);
 	m_PathMenu->AddItem(m_CD_Disks);
-	
+
 	// CD BMenuField in the upper left area...
 	m_PathField = new BMenuField(BRect(3,2,20,8*3),"cd","",m_PathMenu, false, 0, B_WILL_DRAW);
 	m_PathField->ResizeToPreferred();
 	m_PathField->SetDivider(0);
 	m_Box->AddChild(m_PathField);
-	
+
 	menufieldwidth = m_PathField->Bounds().right;
 	mpanelheight = m_PathField->Bounds().bottom;
 
@@ -127,35 +127,35 @@ PanelView::PanelView(BRect rect, const char *name)
 	m_PanelMenu->AddSeparatorItem();
 
 	m_PanelMenu_ShowIcons = new BMenuItem(LANGS("PANELMENU_SHOWICONS"),new BMessage(PANELMENU_MSG_SHOWICONS),0,0);
-	if (m_Setting_ShowIcons) 
+	if (m_Setting_ShowIcons)
 		m_PanelMenu_ShowIcons->SetMarked(true);
 	else
 		m_PanelMenu_ShowIcons->SetMarked(false);
 	m_PanelMenu->AddItem(m_PanelMenu_ShowIcons);
-	
+
 	// Panel menu BMenuField in the upper right area...
 	m_PanelMenuField = new BMenuField(BRect(Bounds().right-menufieldwidth,2,Bounds().right-4,2+mpanelheight),"Menu","",m_PanelMenu, false, B_FOLLOW_TOP | B_FOLLOW_RIGHT, B_WILL_DRAW);
 	m_PanelMenuField->SetDivider(0);
-	
+
 	// not sure why there is an empty space within bmenufield,
 	// but to get this aligned, we have to move it by that space, which is this.width - this.menubar.width
 	float emptyswidth = menufieldwidth-(m_PanelMenuField->MenuBar()->Bounds().right);
 	m_PanelMenuField->MoveTo(Bounds().right-4-menufieldwidth+emptyswidth, 2);
 
 	m_Box->AddChild(m_PanelMenuField);
-	
+
 	// Path text in the upper area...
 	m_PathStringView = new BStringView(BRect(45,20,280,20),"path","");
 	m_PathStringView->SetAlignment(B_ALIGN_CENTER);
 	m_PathStringView->GetPreferredSize(NULL, &labelheight);
 	m_PathStringView->ResizeTo(200, labelheight);
 	m_PathStringView->MoveTo(45, 2+(mpanelheight-labelheight)/2);
-	
+
 	m_Box->AddChild(m_PathStringView);
-	
+
 	m_Bevel_1 = new BBox(BRect(2,1+mpanelheight+1,180,1+mpanelheight+2), "bevel1");
 	m_Box->AddChild(m_Bevel_1);
-	
+
 	m_Bevel_2 = new BBox(BRect(2,26,180,27), "bevel2", B_FOLLOW_BOTTOM);
 	m_Bevel_2->MoveTo(2,Bounds().bottom-27);
 	m_Box->AddChild(m_Bevel_2);
@@ -170,7 +170,7 @@ PanelView::PanelView(BRect rect, const char *name)
 	// Seek TextControl
 	m_SeekTextControl = NULL;
 	m_SeekMode = false;
-	
+
 	BRect r = Bounds();
 
 	r.right-=20;
@@ -182,11 +182,11 @@ PanelView::PanelView(BRect rect, const char *name)
 
 	m_pScrollView = new BScrollView("rep_scroll_view", m_CustomListView, B_FOLLOW_ALL, B_WILL_DRAW, false, true);
 	m_Box->AddChild(m_pScrollView);
-	
+
 	m_CustomListView->SetSelectionMessage(new BMessage(MSG_FILELISTVIEW_SELECTION));
 
 	m_PanelMode = -1;
-	SetPanelMode(PM_NORMAL);	
+	SetPanelMode(PM_NORMAL);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -209,10 +209,10 @@ void PanelView::AttachedToWindow()
 	m_CD_Home->SetTarget(this);
 	m_CD_Desktop->SetTarget(this);
 	m_CD_Disks->SetTarget(this);
-	
+
 	m_PanelMenu_Find->SetTarget(this);
 	m_PanelMenu_ShowIcons->SetTarget(this);
-	
+
 	m_CustomListView->SetTarget(this);	// Selection Message!!!
 }
 
@@ -233,9 +233,9 @@ void PanelView::FrameResized(float width, float height)
 
 	m_CustomListView->FrameResized(r.right-26,r.bottom-32-32);
 	m_CustomListView->Invalidate();
-	
+
 	m_Bevel_2->ResizeTo(r.right-4,1);
-	
+
 	m_StatusStringView->ResizeTo(r.right-12,m_StatusStringView->Bounds().bottom);
 	m_StatusStringView->Invalidate();
 
@@ -265,7 +265,7 @@ void PanelView::SetMousePointer(int n)
 		0x10,0x01,0x07,0x07,0x3F,0xF8,0x20,0x58,0x3F,0xF8,0x10,0x30,0x10,0x30,0x08,0x60,0x04,0xC0,0x03,0x80,0x04,0xC0,0x09,0x60,0x13,0xB0,0x17,0xF0,0x3F,0xF8,0x20,0x58,
 		0x3F,0xF8,0x00,0x00,0x3F,0xF8,0x3F,0xF8,0x3F,0xF8,0x14,0x30,0x14,0x30,0x0A,0x60,0x04,0xC0,0x03,0x80,0x04,0xC0,0x09,0x60,0x13,0xB0,0x17,0xF0,0x3F,0xF8,0x3F,0xF8,
 		0x3F,0xF8,0x00,0x00 };
-	
+
 	switch (n)
 	{
 		case CR_DEFAULT:
@@ -352,7 +352,7 @@ void PanelView::MessageReceived(BMessage* message)
 		case MSG_RELOAD:	// Reload after MkDir, Copy, Move, Delete...
 			{
 				BString itemname;
-				
+
 				// If there is a given name, let's set the selector to it...
 				if (message->FindString("ItemName",&itemname)==B_OK)
 					Reload(itemname.String());
@@ -370,7 +370,7 @@ void PanelView::MessageReceived(BMessage* message)
 			}
 			else
 			{
-				m_PanelMenu_ShowIcons->SetMarked(true);			
+				m_PanelMenu_ShowIcons->SetMarked(true);
 				m_Setting_ShowIcons = true;
 				Reload();
 			}
@@ -382,7 +382,7 @@ void PanelView::MessageReceived(BMessage* message)
 				const char *name;
 				entry_ref ref;
 				node_ref nref;
-				
+
 				if (message->FindInt32("opcode", &opcode) == B_OK)
 				{
 					switch (opcode)
@@ -404,7 +404,7 @@ void PanelView::MessageReceived(BMessage* message)
 							message->FindInt32("device", &nref.device);
 							message->FindInt64("node", &nref.node);
 							RescanRemoved(nref);
-							
+
 							message->FindInt32("device", &ref.device);
 							message->FindInt64("to directory", &ref.directory);
 							message->FindString("name", &name);
@@ -433,10 +433,10 @@ void PanelView::MessageReceived(BMessage* message)
 					}
 				}
 			}
-			break;			
+			break;
 		default:
 			BView::MessageReceived(message);
-	}	
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -445,7 +445,7 @@ void PanelView::SaveItemSelection(void)
 {
 	CustomListItem *item;
 	int n = m_CustomListView->CountItems();
-	
+
 	for (int i=0;i<n;i++)
 	{
 		item = (CustomListItem *)m_CustomListView->ItemAt(i);
@@ -467,7 +467,7 @@ void PanelView::LoadItemSelection(void)
 	int n = m_CustomListView->CountItems();
 
 	m_CustomListView->SetSelectionMessage(NULL);
-	
+
 	for (int i=0;i<n;i++)
 	{
 		item = (CustomListItem *)m_CustomListView->ItemAt(i);
@@ -507,9 +507,9 @@ void PanelView::Rescan()
 	m_CustomListView->DoSortList();
 
 	LoadItemSelection();
-	
+
 	m_CurrentTotalSize = m_CustomListView->GetCurrentTotalSize();
-	SelectionChanged();	
+	SelectionChanged();
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -527,7 +527,7 @@ void PanelView::RescanCreated(BEntry *entry)
 
 //	if (entry->InitCheck()!=B_OK)
 //		return;
-		
+
 	if (!entry->Exists())
 		return;
 
@@ -551,7 +551,7 @@ void PanelView::RescanCreated(BEntry *entry)
 //		m_CustomListView->DoSortList();
 
 		LoadItemSelection();
-	
+
 		m_CurrentTotalSize = m_CustomListView->GetCurrentTotalSize();
 //		if (item) m_CurrentTotalSize += item->m_FileSize;
 		SelectionChanged();
@@ -570,7 +570,7 @@ void PanelView::RescanRemoved(node_ref nref)
 		GotoRoot();
 		return;
 	}
-	
+
 	CustomListItem *item = m_CustomListView->FindItemByNodeRef(nref);
 	if (item)
 	{
@@ -600,12 +600,12 @@ void PanelView::RescanStat(node_ref nref)
 		entry.GetStat(&statbuf);
 
 		item->m_FileSize = statbuf.st_size;
-		
+
 		m_CustomListView->InvalidateItem(m_CustomListView->IndexOf(item));
 
 		m_CurrentTotalSize = m_CustomListView->GetCurrentTotalSize();
-		SelectionChanged();	
-	}	
+		SelectionChanged();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -622,11 +622,11 @@ void PanelView::RescanAttr(node_ref nref)
 		fullentryname << "/" << item->m_FileName;
 
 		item->GetIcon(fullentryname.String());
-		
+
 		m_CustomListView->InvalidateItem(m_CustomListView->IndexOf(item));
 
 		m_CurrentTotalSize = m_CustomListView->GetCurrentTotalSize();
-		SelectionChanged();	
+		SelectionChanged();
 	}
 }
 
@@ -638,7 +638,7 @@ void PanelView::RescanForMissingEntries()
 	int n = m_CustomListView->CountItems();
 	BEntry entry;
 	BString fullname;
-	
+
 	for (int i=0;i<n;i++)
 	{
 		item = (CustomListItem *)m_CustomListView->ItemAt(i);
@@ -646,10 +646,10 @@ void PanelView::RescanForMissingEntries()
 		{
 			fullname = m_Path;
 			fullname << "/" << item->m_FileName;
-			
+
 			entry.SetTo(fullname.String());
 			if (!entry.Exists())
-				m_CustomListView->RemoveItem(item);			
+				m_CustomListView->RemoveItem(item);
 		}
 	}
 }
@@ -665,13 +665,13 @@ void PanelView::RescanForNewEntries()
 	if (dir.InitCheck()==B_OK)
 	{
 		BEntry entry;
-		
+
 		if (dir.GetEntry(&entry)==B_OK)
 		{
 			while (dir.GetNextEntry(&entry)==B_OK)
 			{
-				node.SetTo(&entry);	
-				node.GetNodeRef(&noderef);				
+				node.SetTo(&entry);
+				node.GetNodeRef(&noderef);
 				if (m_CustomListView->FindItemByNodeRef(noderef)==NULL)
 					AddDirectoryEntry(&entry);
 			}
@@ -685,7 +685,7 @@ void PanelView::EnableMonitoring()
 {
 	BEntry entry;
 	node_ref nref;
-	
+
 	entry.SetTo(m_Path.String());
 	if (entry.InitCheck()==B_OK)
 	{
@@ -707,7 +707,7 @@ void PanelView::DisableMonitoring(void)
 
 	BEntry entry;
 	node_ref nref;
-	
+
 	entry.SetTo(m_Path.String());
 	if (entry.InitCheck()==B_OK)
 	{
@@ -733,12 +733,12 @@ void PanelView::LoadResources(void)
 	if (be_app->GetAppInfo(&info)==B_OK)
 	{
 		BFile file(&info.ref, B_READ_ONLY);
-		
+
 		if (file.InitCheck()==B_OK)
 		{
 			BResources rsrcs;
 			size_t len = 0;
-			
+
 			if (rsrcs.SetTo(&file)==B_OK)
 			{
 				const void *data;
@@ -747,7 +747,7 @@ void PanelView::LoadResources(void)
 				{
 					m_ParentIcon = new unsigned char[len];
 					memcpy(m_ParentIcon,data,len);
-				}					
+				}
 
 				data = rsrcs.LoadResource('MICN',2,&len);
 				if (data)
@@ -757,7 +757,7 @@ void PanelView::LoadResources(void)
 				}
 			}
 		}
-	}	
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -777,7 +777,7 @@ void PanelView::ReadDirectory(const char *itemname)
 	stop_watching(this);
 //	SetMousePointer(CR_HOURGLASS);
 	MAINWINDOW->SetMousePointer(GenesisWindow::CR_HOURGLASS);
-	
+
 	// If we are not in the root directory, simply start the dir with a '..' entry...
 	if (strcmp(m_Path.String(),"/")!=0)
 	{
@@ -788,31 +788,31 @@ void PanelView::ReadDirectory(const char *itemname)
 			item->AddIcon(m_ParentIcon);
 		}
 	}
-	
+
 	dir = new BDirectory(m_Path.String());
 	if (dir)
 	{
 		BEntry entry;
-		
+
 		if (dir->GetEntry(&entry)==B_OK)
-		{	
-			while (dir->GetNextEntry(&entry)==B_OK)			
+		{
+			while (dir->GetNextEntry(&entry)==B_OK)
 			{
 				AddDirectoryEntry(&entry);
 			}
 		}
-	
+
 		delete dir;
 	}
-	
+
 	m_CustomListView->DoSortList();
-	
+
 	// Always select the first item in the list or the child where we came from...
 	if (itemname)
 	{
 		CustomListItem *item;
 		int n = m_CustomListView->CountItems();
-		
+
 		for (int i=0;i<n;i++)
 		{
 			item = (CustomListItem *)m_CustomListView->ItemAt(i);
@@ -822,12 +822,12 @@ void PanelView::ReadDirectory(const char *itemname)
 				m_CustomListView->Select(i,false);
 				m_CustomListView->ScrollToSelection();
 				break;
-			}			
+			}
 		}
-		
+
 		// When the given file disappeared, we have to select the first entry...
 		if (m_CustomListView->CountSelectedEntries(CT_WITHPARENT)==0)
-			m_CustomListView->Select(0,false);	
+			m_CustomListView->Select(0,false);
 	}
 	else
 		m_CustomListView->Select(0,false);
@@ -838,7 +838,7 @@ void PanelView::ReadDirectory(const char *itemname)
 	Parent()->Looper()->PostMessage(new BMessage(MSG_UPDATECOMMANDLINE_PATH));	// To update command line...
 
 	EnableMonitoring();
-	
+
 //	SetMousePointer(CR_DEFAULT);
 	MAINWINDOW->SetMousePointer(GenesisWindow::CR_DEFAULT);
 }
@@ -857,7 +857,7 @@ CustomListItem *PanelView::AddDirectoryEntry(BEntry *entry,  bool sorted)
 		item = new CustomListItem(name,m_Path.String(),FT_DIRECTORY, 0, this);
 		if (sorted)
 			m_CustomListView->AddSortedItem(item);
-		else	
+		else
 			m_CustomListView->AddItem(item);
 		if (m_Setting_ShowIcons)
 		{
@@ -868,9 +868,9 @@ CustomListItem *PanelView::AddDirectoryEntry(BEntry *entry,  bool sorted)
 	else if (entry->IsSymLink())
 	{
 		BEntry symlinkentry;
-		entry_ref ref;		
+		entry_ref ref;
 		struct stat statbuf;
-	
+
 		entry->GetRef(&ref);
 		if (symlinkentry.SetTo(&ref, true)==B_OK)
 		{
@@ -879,7 +879,7 @@ CustomListItem *PanelView::AddDirectoryEntry(BEntry *entry,  bool sorted)
 				item = new CustomListItem(name,m_Path.String(),FT_SYMLINKDIR, 0, this);
 				if (sorted)
 					m_CustomListView->AddSortedItem(item);
-				else	
+				else
 					m_CustomListView->AddItem(item);
 				if (m_Setting_ShowIcons)
 				{
@@ -893,7 +893,7 @@ CustomListItem *PanelView::AddDirectoryEntry(BEntry *entry,  bool sorted)
 				item = new CustomListItem(name,m_Path.String(),FT_SYMLINKFILE,statbuf.st_size, this);
 				if (sorted)
 					m_CustomListView->AddSortedItem(item);
-				else	
+				else
 					m_CustomListView->AddItem(item);
 				if (m_Setting_ShowIcons)
 				{
@@ -908,10 +908,10 @@ CustomListItem *PanelView::AddDirectoryEntry(BEntry *entry,  bool sorted)
 			item = new CustomListItem(name, m_Path.String(), FT_SYMLINKBROKEN, 0 , this);
 			if (sorted)
 				m_CustomListView->AddSortedItem(item);
-			else	
+			else
 				m_CustomListView->AddItem(item);
 			if (m_Setting_ShowIcons)
-			{					
+			{
 				if (!item->GetIcon(entry))
 					item->AddIcon(m_UnknownIcon);
 			}
@@ -921,11 +921,11 @@ CustomListItem *PanelView::AddDirectoryEntry(BEntry *entry,  bool sorted)
 	{
 		struct stat statbuf;
 		entry->GetStat(&statbuf);
-		
+
 		item = new CustomListItem(name,m_Path.String(),FT_FILE,statbuf.st_size, this);
 		if (sorted)
 			m_CustomListView->AddSortedItem(item);
-		else	
+		else
 			m_CustomListView->AddItem(item);
 		if (m_Setting_ShowIcons)
 		{
@@ -933,7 +933,7 @@ CustomListItem *PanelView::AddDirectoryEntry(BEntry *entry,  bool sorted)
 				item->AddIcon(m_UnknownIcon);
 		}
 	}
-	
+
 	return item;
 }
 
@@ -958,7 +958,7 @@ void PanelView::ReadDisks(void)
 	if (vr)
 	{
 		BVolume v;
-	
+
 		while (vr->GetNextVolume(&v)==B_NO_ERROR)
 		{
 			if (v.GetName(drivename)==B_NO_ERROR)
@@ -1072,7 +1072,7 @@ void PanelView::AddToSelection(ADDTYPES type)
 					item->m_Type == FT_SYMLINKDIR ||
 					item->m_Type == FT_SYMLINKBROKEN )
 					m_CustomListView->Select(i,true);
-				break;		
+				break;
 		}
 	}
 
@@ -1088,7 +1088,7 @@ bool PanelView::DoesEntryExist(const char *filename)
 ////////////////////////////////////////////////////////////////////////
 {
 	BEntry entry;
-	
+
 	entry.SetTo(filename);
 	if (entry.InitCheck()==B_OK)
 	{
@@ -1133,7 +1133,7 @@ void PanelView::EnterDirectory(const char *p)
 	if (DoesEntryExist(p))
 	{
 		m_Path.SetTo(buf);
-	
+
 		SetPathStringView();
 		ClearFileList();
 		ReadDirectory();
@@ -1151,9 +1151,9 @@ void PanelView::GotoParent(void)
 	SetPanelMode(PM_NORMAL);
 	oldpath.SetTo(m_Path.String());
 	oldpath.Remove(0,oldpath.FindLast('/')+1);
-	
+
 	BPath path((const char *)m_Path.String());
-	
+
 	if (path.GetParent(&path)==B_OK)
 		m_Path.SetTo(path.Path());
 
@@ -1256,7 +1256,7 @@ void PanelView::Reload(int index)
 			ReadDirectory();
 			if (index > (m_CustomListView->IndexOf(m_CustomListView->LastItem())))
 				index = m_CustomListView->IndexOf(m_CustomListView->LastItem());
-			
+
 			m_CustomListView->Select(index,false);	// false -> remove previously selected item(s)...
 			break;
 		case PM_DISKS:
@@ -1273,22 +1273,22 @@ void PanelView::DeleteDirectory(const char *dirname)
 {
 	BDirectory *dir;
 	key_info keyinfo;
-	
+
 	// Don't delete the parent directory!!!!!!
 	if (strlen(dirname)>=3)
 	{
 		int len = strlen(dirname);
 		if (dirname[len-1]=='.' && dirname[len-2]=='.' && dirname[len-3]=='/') return;
 	}
-		
+
 	dir = new BDirectory(dirname);
 	if (dir)
 	{
 		BEntry entry;
-		
+
 		if (dir->GetEntry(&entry)==B_OK)
-		{	
-			while (dir->GetNextEntry(&entry)==B_OK)			
+		{
+			while (dir->GetNextEntry(&entry)==B_OK)
 			{
 				get_key_info(&keyinfo);
 				if (keyinfo.key_states[0] & 0x40)	// ESC
@@ -1300,14 +1300,14 @@ void PanelView::DeleteDirectory(const char *dirname)
 
 				BPath path;
 				entry.GetPath(&path);
-				
+
 				if (entry.IsDirectory())
 					DeleteDirectory(path.Path());
 
 				entry.Remove();
 			}
 		}
-	
+
 		delete dir;
 	}
 }
@@ -1339,7 +1339,7 @@ void PanelView::UniversalDelete(const char *filename)
 		{
 			if (entry.IsDirectory())
 				DeleteDirectory(filename);
-		
+
 			entry.Remove();
 		}
 	}
@@ -1361,7 +1361,7 @@ void PanelView::WriteFileSize(BString *str, uint64 FileSize)
 	else if (FileSize>=(1024*1024))
 	{
 		tempstring << FileSize/(1024.0f*1024.0f);
-		sprintf(buf,"%s MB",tempstring.String());	
+		sprintf(buf,"%s MB",tempstring.String());
 	}
 	else if (FileSize>=1024)
 	{
@@ -1373,7 +1373,7 @@ void PanelView::WriteFileSize(BString *str, uint64 FileSize)
 		tempstring << FileSize;
 		sprintf(buf,"%s byte%s",tempstring.String(),FileSize<=1?"":"s");
 	}
-		
+
 	str->SetTo(buf);
 }
 
@@ -1390,7 +1390,7 @@ void PanelView::SelectionChanged(void)
 			{
 				int n = m_CustomListView->CountSelectedEntries(CT_WITHOUTPARENT);
 				int total = m_CustomListView->CountEntries(CT_WITHOUTPARENT);
-	
+
 				CustomListItem *item;
 
 				WriteFileSize(&totalsizestr,m_CurrentTotalSize);
@@ -1402,27 +1402,27 @@ void PanelView::SelectionChanged(void)
 				else if (n==1)
 				{
 					item = m_CustomListView->GetSelectedEntry(0);
-		
+
 					BString selstr,totalstr;
-				
+
 					if (item)
 					{
 						WriteFileSize(&selstr,item->m_FileSize);
 						WriteFileSize(&totalstr,total);
 						sprintf(buf,"%d file%s selected in %s - Total: %d file%s in %s",n,n<=1?"":"s",selstr.String(),total,total<=1?"":"s",totalsizestr.String());
 					}
-					else 
+					else
 						sprintf(buf,"Internal error...");
 				}
 				else
-				{	
+				{
 					BString seltotalsizestr;
-	
+
 					WriteFileSize(&seltotalsizestr,m_CustomListView->GetSelectedTotalSize());
-		
+
 					sprintf(buf,"%d file%s selected in %s - Total: %d file%s in %s", n, n<=1?"":"s", seltotalsizestr.String(), total, total<=1?"":"s", totalsizestr.String());
 				}
-	
+
 				m_StatusStringView->SetText(buf);
 			}
 			break;
@@ -1440,13 +1440,13 @@ void PanelView::SelectionChanged(void)
 					{
 						if (item->m_Capacity>=(1024*1024*1024))
 							sprintf(buf,"%s - Capacity: %.02f GB",item->m_DiskPath.String(),(float)item->m_Capacity/(1024.0*1024.0*1024.0));
-						else 
+						else
 							sprintf(buf,"%s - Capacity: %.02f MB",item->m_DiskPath.String(),(float)item->m_Capacity/(1024.0*1024.0));
-					}			
+					}
 				}
 				else
 					sprintf(buf,"No disks selected.");
-				
+
 				m_StatusStringView->SetText(buf);
 			}
 			break;
@@ -1464,7 +1464,7 @@ void PanelView::Execute(CustomListItem *item)
 	{
 		case FT_DISKITEM:
 			SetPanelMode(PM_NORMAL);
-			ChangePath(item->m_DiskPath.String());			
+			ChangePath(item->m_DiskPath.String());
 			break;
 		case FT_DISKBACK:
 			SetPanelMode(PM_NORMAL);
@@ -1538,10 +1538,10 @@ void PanelView::Calculate(CustomListItem *item)
 		item->m_FileSize = GetDirectorySize(file.String());
 		m_CustomListView->InvalidateItem(m_CustomListView->IndexOf(item));
 	}
-	
+
 	m_CurrentTotalSize = m_CustomListView->GetCurrentTotalSize();
 	SelectionChanged();		// Because the total directory size may change...
-	
+
 //	SetMousePointer(CR_DEFAULT);
 	MAINWINDOW->SetMousePointer(GenesisWindow::CR_DEFAULT);
 }
@@ -1553,7 +1553,7 @@ void PanelView::SetPathStringView(void)
 	BString text, path;
 
 	text = path = m_Path;
-	
+
 	int sw = (int)m_PathStringView->StringWidth(text.String());
 	int w = (int)m_PathStringView->Bounds().Width();
 
@@ -1561,7 +1561,7 @@ void PanelView::SetPathStringView(void)
 	{
 		text.SetTo("...");
 		text += path.Remove(0,1);
-		
+
 		sw = (int)m_PathStringView->StringWidth(text.String());
 	}
 
@@ -1586,11 +1586,11 @@ void PanelView::GetInfo(void)
 		diskinfowindow->Show();
 		return;
 	}
-	
+
 	BStringList files;
 	for (int i = 0; i < selected; i++)
 	{
-		CustomListItem *item = m_CustomListView->GetSelectedEntry(i);		
+		CustomListItem *item = m_CustomListView->GetSelectedEntry(i);
 		if (item && item->m_FileName)
 		{
 			files.Add(item->m_FileName);
@@ -1626,31 +1626,31 @@ uint64 PanelView::GetDirectorySize(const char *path)
 {
 	uint64 size = 0;
 	BDirectory *dir;
-		
+
 	dir = new BDirectory(path);
 	if (dir)
 	{
 		BEntry entry;
-		
+
 		if (dir->GetEntry(&entry)==B_OK)
-		{	
-			while (dir->GetNextEntry(&entry)==B_OK)			
+		{
+			while (dir->GetNextEntry(&entry)==B_OK)
 			{
 				BPath path;
 				entry.GetPath(&path);
-				
+
 				if (entry.IsDirectory())
 					size += GetDirectorySize(path.Path());
 				else
 				{
 					struct stat statbuf;
 					entry.GetStat(&statbuf);
-					
+
 					size += statbuf.st_size;
-				}	
+				}
 			}
 		}
-	
+
 		delete dir;
 	}
 
@@ -1663,7 +1663,7 @@ void PanelView::CreateLinkOnDesktop(void)
 {
 	BString text;
 	CustomListItem *item;
-	
+
 	if (m_PanelMode != PM_NORMAL) return;
 
 	int n = m_CustomListView->CountSelectedEntries(CT_WITHOUTPARENT);
@@ -1675,7 +1675,7 @@ void PanelView::CreateLinkOnDesktop(void)
 	// Let's construct the warning message...
 	if (n==1)
 	{
-		item = m_CustomListView->GetSelectedEntry(0);	
+		item = m_CustomListView->GetSelectedEntry(0);
 		if (item->m_Type==FT_PARENT) // Azon ritka esetek egyike amivel meg lehetett szivatni a programot...
 			item = m_CustomListView->GetSelectedEntry(1);
 
@@ -1700,11 +1700,11 @@ void PanelView::CreateLinkOnDesktop(void)
 		BSymLink dstlink;
 		BPath DesktopPath;
 		find_directory(B_DESKTOP_DIRECTORY, &DesktopPath, true);
-		
+
 		BDirectory dstdir(DesktopPath.Path());
-		
+
 		item = m_CustomListView->GetSelectedEntry(0);
-		
+
 		while (item)
 		{
 			if (item->m_Type==FT_PARENT)
@@ -1712,17 +1712,17 @@ void PanelView::CreateLinkOnDesktop(void)
 				item = m_CustomListView->GetSelectedEntry(0);
 				continue;
 			}
-		
+
 			name.SetTo(item->m_FileName);
 			name << " link";
-		
+
 			linkpath.SetTo(item->m_FilePath.String());
 			if (!linkpath.EndsWith("/"))
 				linkpath << "/";
 			linkpath << item->m_FileName;
-		
+
 			dstdir.CreateSymLink(name.String(), linkpath.String(), &dstlink);
-			
+
 			m_CustomListView->Deselect(m_CustomListView->IndexOf(item));
 			m_CustomListView->InvalidateItem(m_CustomListView->IndexOf(item));
 
@@ -1757,7 +1757,7 @@ void PanelView::View()
 					break;
 			}
 		}
-	}	
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1775,15 +1775,15 @@ void PanelView::Edit(CustomListItem *item)
 			file.SetTo(m_Path.String());
 			file+="/";
 			file+=item->m_FileName;
-				
+
 			BString tempstring;
 			tempstring.SetTo("StyledEdit \"");
 			tempstring << file.String();
 			tempstring << "\" &";
 			system(tempstring.String());
-					
+
 			break;
-	}	
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1803,7 +1803,7 @@ void PanelView::Edit()
 	if (m_CustomListView->CountSelectedEntries(CT_WITHPARENT)==1)
 	{
 		Edit(m_CustomListView->GetSelectedEntry(0));
-	}	
+	}
 }
 
 
@@ -1834,7 +1834,7 @@ void PanelView::Delete(void)
 	BString text;
 	CustomListItem *item;
 	GenesisDeleteWindow *deletewindow;
-	
+
 	if (m_PanelMode != PM_NORMAL) return;
 
 	int n = m_CustomListView->CountSelectedEntries(CT_WITHOUTPARENT);
@@ -1845,7 +1845,7 @@ void PanelView::Delete(void)
 	// Let's construct the warning message...
 	if (n==1)
 	{
-		item = m_CustomListView->GetSelectedEntry(0);	
+		item = m_CustomListView->GetSelectedEntry(0);
 		if (item->m_Type==FT_PARENT) // Azon ritka esetek egyike amivel meg lehetett szivatni a programot...
 			item = m_CustomListView->GetSelectedEntry(1);
 
@@ -1907,7 +1907,7 @@ void PanelView::Rename(void)
 	if (m_CustomListView->CountSelectedEntries(CT_WITHOUTPARENT)>0)
 	{
 		GenesisRenameWindow *renamewindow;
-	
+
 		renamewindow = new GenesisRenameWindow(m_CustomListView, Window());
 		renamewindow->Go();
 	}
@@ -1988,9 +1988,9 @@ void PanelView::SeekFor(const char *text)
 	int n = m_CustomListView->CountItems();
 
 	if (m_PanelMode != PM_NORMAL) return;
-	
+
 	m_CustomListView->DeselectAll();
-	
+
 	for (int i=0;i<n;i++)
 	{
 		item = (CustomListItem *)m_CustomListView->ItemAt(i);

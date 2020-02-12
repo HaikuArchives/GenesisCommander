@@ -363,14 +363,14 @@ void GenesisWindow::MessageReceived(BMessage* message)
 			{
 				BString text;
 				text = LANG("ABOUT");
-				
+
 				text.ReplaceAll("<VER>", __VER__);
 				text.ReplaceAll("<DATE>", __DATE__);
 				text.ReplaceAll("<TIME>", __TIME__);
 				text.ReplaceAll("|", "\n");
-				
+
 				BAlert *AboutAlert = new BAlert(LANGS("SUBMENU_ABOUT"),text.String(),LANGS("GENERAL_OK"),NULL,NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_INFO_ALERT);
-				AboutAlert->Go();			
+				AboutAlert->Go();
 			}
 			break;
 		default:
@@ -436,9 +436,9 @@ void GenesisWindow::FrameResized(float width, float height)
 	if (m_FuncKeysVisible)
 	{
 		const int funcbtnsheight = 24;
-		
+
 		bottom = bottom-funcbtnsheight;
-		
+
 		buttonwidth = (r.right-r.left)/7;
 		m_Button_F3->MoveTo(0,bottom);
 		m_Button_F3->ResizeTo(buttonwidth,funcbtnsheight);
@@ -475,7 +475,7 @@ void GenesisWindow::FrameResized(float width, float height)
 		m_Button_F10->Invalidate();
 	}
 
-	// Command line	
+	// Command line
 	if (!m_CommandLine->IsHidden())
 	{
 		const int cmdlineheight = 18;
@@ -484,10 +484,10 @@ void GenesisWindow::FrameResized(float width, float height)
 		m_CommandLine->Invalidate();
 		bottom = bottom-cmdlineheight-2;
 	}
-	
+
 	// Panels
 	buttonwidth = (r.right-r.left-6)/2;
-	
+
 	m_LeftPanel->MoveTo(BPoint(r.left+2,r.top+22));
 	m_LeftPanel->ResizeTo(buttonwidth-2,bottom-r.top-24);
 	m_LeftPanel->FrameResized(0,0);
@@ -495,7 +495,7 @@ void GenesisWindow::FrameResized(float width, float height)
 	m_RightPanel->MoveTo(BPoint(r.left+4+ (int)buttonwidth ,r.top+22));
 	m_RightPanel->ResizeTo((r.right-r.left)-(int)buttonwidth-6,bottom-r.top-24);
 	m_RightPanel->FrameResized(0,0);
-	
+
 	UpdateIfNeeded();
 }
 
@@ -523,7 +523,7 @@ PanelView *GenesisWindow::GetInactivePanel(void)
 void GenesisWindow::UpdatePanels(void)
 ////////////////////////////////////////////////////////////////////////
 {
-	// Path 
+	// Path
 	m_LeftPanel->m_PathStringView->SetHighColor(128,128,128);
 	m_RightPanel->m_PathStringView->SetHighColor(128,128,128);
 
@@ -539,7 +539,7 @@ void GenesisWindow::UpdatePanels(void)
 
 	m_LeftPanel->m_CustomListView->SetSelectionColor(200,200,200);
 	m_RightPanel->m_CustomListView->SetSelectionColor(200,200,200);
-	
+
 	active->m_CustomListView->SetSelectionColor(128,128,128);
 	active->m_CustomListView->SetViewColor(180,190,200);	// 102, 152, 203
 
@@ -562,7 +562,7 @@ void GenesisWindow::UpdatePanels(void)
 				item->SetShortcut(shortcut, modifiers);
 		}
 	}
-	
+
 
 	UpdateCommandLinePath();
 }
@@ -581,7 +581,7 @@ void GenesisWindow::SetMousePointer(MousePointer mp)
 	{
 		m_MousePointerChanged = true;
 		m_MousePointer = mp;
-	
+
 		switch (mp)
 		{
 			case CR_DEFAULT:
@@ -604,7 +604,7 @@ void GenesisWindow::SetMousePointerShape(int n)
 		0x10,0x01,0x07,0x07,0x3F,0xF8,0x20,0x58,0x3F,0xF8,0x10,0x30,0x10,0x30,0x08,0x60,0x04,0xC0,0x03,0x80,0x04,0xC0,0x09,0x60,0x13,0xB0,0x17,0xF0,0x3F,0xF8,0x20,0x58,
 		0x3F,0xF8,0x00,0x00,0x3F,0xF8,0x3F,0xF8,0x3F,0xF8,0x14,0x30,0x14,0x30,0x0A,0x60,0x04,0xC0,0x03,0x80,0x04,0xC0,0x09,0x60,0x13,0xB0,0x17,0xF0,0x3F,0xF8,0x3F,0xF8,
 		0x3F,0xF8,0x00,0x00 };
-	
+
 	switch (n)
 	{
 		case CR_DEFAULT:
@@ -697,7 +697,7 @@ filter_result KeyboardFilter::Filter(BMessage* msg, BHandler** target)
 		uint32 rawKeyChar = 0;
 		uint8 byte = 0;
 		int32 key = 0;
-		
+
 		GenesisWindow *window = (GenesisWindow *)m_TargetWindow;
 		if (!window->m_CommandLine->IsHidden())
 		{
@@ -713,23 +713,23 @@ filter_result KeyboardFilter::Filter(BMessage* msg, BHandler** target)
 //				char buf[256];
 //				sprintf(buf,"%d",key);
 //				BAlert *myAlert = new BAlert("DebugInfo",buf,"OK",NULL,NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
-//				myAlert->Go();										
+//				myAlert->Go();
 
 				if (key == 1)		// ESC
-					return B_SKIP_MESSAGE;	
+					return B_SKIP_MESSAGE;
 
 				if (key>=2 && key<=13)	// Function keys
 					return B_SKIP_MESSAGE;
-					
+
 				if (key == 15 || key == 31)	// scroll lock || insert
 					return B_SKIP_MESSAGE;
-					
+
 				if (key == 71 || key == 91)
 					m_TargetWindow->Looper()->PostMessage(m_MessageToSend, NULL);
 			}
 		}
     }
-    
+
 	return B_DISPATCH_MESSAGE;
 }
 
@@ -762,9 +762,9 @@ filter_result SeekFilter::Filter(BMessage* msg, BHandler** target)
 		uint32 rawKeyChar = 0;
 		uint8 byte = 0;
 		int32 key = 0;
-		
+
 		if (m_PV->m_SeekTextControl==NULL) return B_DISPATCH_MESSAGE;
-		
+
 		BTextView *seektextview = m_PV->m_SeekTextControl->TextView();
 
 		if ( seektextview && seektextview->IsFocus() )
@@ -786,7 +786,7 @@ filter_result SeekFilter::Filter(BMessage* msg, BHandler** target)
 //			myAlert->Go();
 		}
     }
-    
+
 	return B_DISPATCH_MESSAGE;
 }
 

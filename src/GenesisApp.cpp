@@ -26,13 +26,13 @@ int main(int argc, char* argv[])
 	int x = apppath.FindLast("/");
 	apppath.Remove(x, apppath.Length()-x);
 	SETTINGS->SetAppPath(apppath);
-	
+
 	GenesisApp* app = new GenesisApp();
 	app->Run();
-	
+
 	if (settings)
 		delete settings;
-	
+
 	return(0);
 }
 

@@ -36,7 +36,7 @@ class GenesisGetInfoWindow : public BWindow
 		void ExamineSymLink(const char* filename);
 		void ExamineFile(const char* filename);
 		void ExamineMultipleFiles(const char *dir, const BStringList *filesList);
-						
+
 		virtual void	MessageReceived(BMessage* message);
 
 		IconView *m_IconView;
@@ -49,9 +49,9 @@ class PieView : public BView
 	public:
 		PieView(BRect frame, const char *name, off_t capacity, off_t free);
 		~PieView();
-		
+
 		virtual void Draw(BRect r);
-		
+
 		off_t m_Capacity, m_Free;
 };
 

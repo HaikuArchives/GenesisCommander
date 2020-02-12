@@ -32,20 +32,20 @@ CustomListItem::CustomListItem(const char *filename, const char *filepath, int f
 	m_FileSize = filesize;
 	m_Type = filetype;
 	m_Handler = handler;
-	
+
 	m_IconImage = new BBitmap(BRect(0, 0, 15, 15), B_RGBA32);
-	
+
 	m_RSelected = false;
 
 	// Generate node ref...
 	BString fullnodepath(filepath);
 	BNode node;
-	
+
 	fullnodepath << "/" << filename;
-	node.SetTo(fullnodepath.String());	
+	node.SetTo(fullnodepath.String());
 	node.GetNodeRef(&m_NodeRef);		// Store global ID to identify the entries...
 
-	// Start watching current node...	
+	// Start watching current node...
 	if (m_Handler)
 		watch_node(&m_NodeRef, B_WATCH_STAT | B_WATCH_ATTR , m_Handler);
 }
@@ -76,7 +76,7 @@ CustomListItem::~CustomListItem()
 ////////////////////////////////////////////////////////////////////////
 {
 	if (m_Handler) watch_node(&m_NodeRef, B_STOP_WATCHING, m_Handler);
-	
+
 	if (m_IconImage) delete m_IconImage;
 }
 
@@ -143,9 +143,9 @@ void CustomListItem::DrawItem(BView *owner, BRect bounds, bool complete)
 	int filenamewidth;			// Width of file name column...
 	int availablewidth;
 	BString tempstring;
-	
+
 	bool Setting_ShowIcon = ((CustomListView *)owner)->GetBoolSetting(SETTING_SHOWICON);
-	
+
 	if (IsSelected() || complete)
 	{
 		rgb_color color;
@@ -156,7 +156,7 @@ void CustomListItem::DrawItem(BView *owner, BRect bounds, bool complete)
 			color = owner->ViewColor();
 
 		owner->SetHighColor(color);
-		owner->FillRect(bounds);	
+		owner->FillRect(bounds);
 	}
 
 	switch (m_Type)
@@ -191,9 +191,9 @@ void CustomListItem::DrawItem(BView *owner, BRect bounds, bool complete)
 			break;
 		case FT_FILE:
 			if (m_FileSize>=(1024*1024))
-				sprintf(buf,"%.02f MB",m_FileSize/(float)(1024*1024));	
+				sprintf(buf,"%.02f MB",m_FileSize/(float)(1024*1024));
 			else if (m_FileSize>=1024)
-				sprintf(buf,"%.02f KB",m_FileSize/1024.0f);	
+				sprintf(buf,"%.02f KB",m_FileSize/1024.0f);
 			else
 			{
 				tempstring.SetTo("");
@@ -225,13 +225,13 @@ void CustomListItem::DrawItem(BView *owner, BRect bounds, bool complete)
 			break;
 		case FT_DISKITEM:
 			if (m_FreeBytes>=(1024*1024))
-				sprintf(buf,"%.02f MB free",m_FreeBytes/(float)(1024*1024));	
+				sprintf(buf,"%.02f MB free",m_FreeBytes/(float)(1024*1024));
 			else if (m_FreeBytes>=1024)
-				sprintf(buf,"%.02f KB free",m_FreeBytes/1024.0f);	
+				sprintf(buf,"%.02f KB free",m_FreeBytes/1024.0f);
 			else
 			{
 				tempstring.SetTo("");
-				tempstring << m_FileSize;			
+				tempstring << m_FileSize;
 				sprintf(buf,"%s byte%s free",tempstring.String(),m_FreeBytes<=1?"":"s");
 			}
 			break;
@@ -239,7 +239,7 @@ void CustomListItem::DrawItem(BView *owner, BRect bounds, bool complete)
 			sprintf(buf," ");
 			break;
 	}
-	owner->SetFont(be_plain_font);	// Before any StringWidth we have to set the font!!! 
+	owner->SetFont(be_plain_font);	// Before any StringWidth we have to set the font!!!
 	filesizewidth = (int)owner->StringWidth(buf);
 	if (Setting_ShowIcon)
 		owner->MovePenTo(bounds.right-4-filesizewidth, bounds.bottom-3);
@@ -252,7 +252,7 @@ void CustomListItem::DrawItem(BView *owner, BRect bounds, bool complete)
 		owner->MovePenTo(bounds.left+20, bounds.bottom-3);
 	else
 		owner->MovePenTo(bounds.left+4, bounds.bottom-2);
-		
+
 	switch (m_Type)
 	{
 		case FT_DISKBACK:
@@ -297,23 +297,23 @@ void CustomListItem::DrawItem(BView *owner, BRect bounds, bool complete)
 			len = strlen(buf);
 
 			if (len-4<0) break;
-		
+
 			buf[len-1]=0;
 			buf[len-2]='.';
 			buf[len-3]='.';
 			buf[len-4]='.';
-			
+
 			filenamewidth = (int)owner->StringWidth(buf);
 		}
 	}
 	owner->DrawString(buf);
-	
+
 	// Icon
 	if (Setting_ShowIcon && m_IconImage /*&& (m_Type!=FT_PARENT && m_Type!=FT_DISKBACK)*/)
 	{
 		owner->SetDrawingMode(B_OP_OVER);
 		owner->DrawBitmap(m_IconImage,BPoint(2, bounds.top));
-	}	
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////

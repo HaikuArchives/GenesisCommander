@@ -52,9 +52,9 @@ class CustomListView : public BListView
 		virtual void MakeFocus(bool focusState = true);
 		virtual void MouseDown(BPoint point);
 		virtual void MessageReceived(BMessage* message);
-				
+
 		void DoSortList(void);
-		
+
 		int  CountEntries(int mode);
 		int  CountSelectedEntries(int mode);
 		CustomListItem *GetSelectedEntry(int n);
@@ -72,11 +72,11 @@ class CustomListView : public BListView
 	    bigtime_t	m_Now,m_LastClicked;
     	bigtime_t	m_ClickSpeed;
 		int			m_LastClickedItem;
-		
+
 		rgb_color 	SelectionColor;
 		rgb_color	DirectoryColor;
 		rgb_color	SymLinkColor;
-		
+
 		void		*m_PV;
 
 	private:

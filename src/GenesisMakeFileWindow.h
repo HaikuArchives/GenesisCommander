@@ -44,10 +44,10 @@ class CustomTextControl : public BTextControl
 	public:
 		CustomTextControl(BRect rect, const char *name, const char *label, const char *text);
 		~CustomTextControl();
-	
+
 //		virtual void KeyUp(const char *bytes, int32 numBytes);
 		virtual void	MessageReceived(BMessage* message);
-		
+
 //		void SetESCMessage(BMessage *msg);
 };
 

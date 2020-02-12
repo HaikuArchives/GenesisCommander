@@ -37,28 +37,28 @@ GenesisGetInfoWindow::GenesisGetInfoWindow(const char *dir, BStringList *files, 
 	SetFlags(B_NOT_RESIZABLE | B_NOT_ZOOMABLE);
 
 	AddToSubset(mainwindow);
-	
+
 	// Main view
 	m_View = new BView(Bounds(), "infoview", B_FOLLOW_ALL, B_WILL_DRAW);
 	m_View->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	AddChild(m_View);
 
-	// Bottom View	
+	// Bottom View
 	rect = Bounds();
 	rect.top = rect.bottom-44;
 	BView *BottomView = new BView(rect, "infobottomview", B_FOLLOW_ALL, B_WILL_DRAW);
 	BottomView->SetViewColor(180, 190, 200, 0);
-	m_View->AddChild(BottomView);	
-	
-	// OK Button	
+	m_View->AddChild(BottomView);
+
+	// OK Button
 	rect = BottomView->Bounds();
 	rect.top = rect.bottom-34;
 	rect.bottom = rect.bottom-14;
 	rect.left = rect.right-80;
-	rect.right = rect.right-20;	
+	rect.right = rect.right-20;
 	BButton *OkButton = new BButton(rect,"ok","OK",new BMessage(BUTTON_MSG_OK),0,B_WILL_DRAW);
 	BottomView->AddChild(OkButton);
-	
+
 	SetDefaultButton(OkButton);
 
 	// Icon Box
@@ -69,7 +69,7 @@ GenesisGetInfoWindow::GenesisGetInfoWindow(const char *dir, BStringList *files, 
 	rect = m_IconBox->Bounds();
 	rect.InsetBy(2,2);
 	m_IconView = new IconView(rect, "iconview");
-	m_IconBox->AddChild(m_IconView);	
+	m_IconBox->AddChild(m_IconView);
 
 	rect = m_View->Bounds();
 	rect.left += 2;
@@ -80,7 +80,7 @@ GenesisGetInfoWindow::GenesisGetInfoWindow(const char *dir, BStringList *files, 
 	m_View->AddChild(Bevel_1);
 
 // -------------------------------------------------------------------------
-	
+
 	if (files->CountStrings() == 1){
 		// File informations....
 		BString filename;
@@ -112,7 +112,7 @@ GenesisGetInfoWindow::GenesisGetInfoWindow(const char *dir, BStringList *files, 
 	}
 	else{
 		SetTitle("Files information...");
-		ExamineMultipleFiles(dir, files);	
+		ExamineMultipleFiles(dir, files);
 	}
 
 	AddCommonFilter(new EscapeFilter(this, new BMessage(BUTTON_MSG_OK)));
@@ -121,7 +121,7 @@ GenesisGetInfoWindow::GenesisGetInfoWindow(const char *dir, BStringList *files, 
 	if (mainwindow)
 	{
 		BRect myrect = Bounds();
-		
+
 		rect = mainwindow->Frame();
 		float w = rect.right - rect.left;
 		float h = rect.bottom - rect.top;
@@ -146,13 +146,13 @@ void GenesisGetInfoWindow::ExamineDirectory(const char* filename)
 
 	BStringView *sv;
 	BString text;
-	
+
 	char buf[B_FILE_NAME_LENGTH];
 
 	// Let's get its icon...
 	m_IconView->SetIcon(&nodeinfo);
 
-	// Get filename...	
+	// Get filename...
 	entry.GetName(buf);
 	text.SetTo(buf);
 	sv = new BStringView(BRect(48,20,390,32),"filename",text.String());
@@ -193,35 +193,35 @@ void GenesisGetInfoWindow::ExamineSymLink(const char* filename)
 	entry_ref ref;
 	BNode node;
 	BNodeInfo nodeinfo; //(&node);
-	
+
 	BString text;
 	BStringView *sv;
-	
+
 	char buf[B_FILE_NAME_LENGTH];
 
 	entry.GetRef(&ref);
 	symlinkentry.SetTo(&ref, true);
 
 	node.SetTo(&symlinkentry);
-	nodeinfo.SetTo(&node);	
-	
+	nodeinfo.SetTo(&node);
+
 	// Let's get its icon...
 	m_IconView->SetIcon(&nodeinfo);
 
-	// Get filename...	
+	// Get filename...
 	entry.GetName(buf);
 	text.SetTo(buf);
 	sv = new BStringView(BRect(48,20,390,32),"filename",text.String());
-	sv->ResizeToPreferred();	
+	sv->ResizeToPreferred();
 	m_View->AddChild(sv);
-	
+
 	// Get its path...
 	BPath path;
 	entry.GetPath(&path);
 	text.SetTo("Full path: ");
 	text += path.Path();
 	sv = new BStringView(BRect(8,60,390,74),"filepath",text.String());
-	sv->ResizeToPreferred();	
+	sv->ResizeToPreferred();
 	m_View->AddChild(sv);
 
 	// Type: Symbolic link
@@ -256,7 +256,6 @@ void GenesisGetInfoWindow::ExamineSymLink(const char* filename)
 	sv = new BStringView(BRect(8,140,390,154),"linkedfilesize",text.String());
 	sv->ResizeToPreferred();
 	m_View->AddChild(sv);
-	
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -275,7 +274,7 @@ void GenesisGetInfoWindow::ExamineFile(const char* filename)
 	// Let's get its icon...
 	m_IconView->SetIcon(&nodeinfo);
 
-	// Get filename...	
+	// Get filename...
 	entry.GetName(buf);
 	text.SetTo(buf);
 	sv = new BStringView(BRect(48,20,390,32),"filename",text.String());
@@ -293,7 +292,7 @@ void GenesisGetInfoWindow::ExamineFile(const char* filename)
 
 	// Type: Plain file
 	sv = new BStringView(BRect(8,80,390,94),"filetype","Type: Plain file");
-	sv->ResizeToPreferred();	
+	sv->ResizeToPreferred();
 	m_View->AddChild(sv);
 
 	// Get file size...
@@ -303,7 +302,7 @@ void GenesisGetInfoWindow::ExamineFile(const char* filename)
 	text << statbuf.st_size;
 	text += " bytes";
 	sv = new BStringView(BRect(8,100,390,114),"filesize",text.String());
-	sv->ResizeToPreferred();	
+	sv->ResizeToPreferred();
 	m_View->AddChild(sv);
 }
 
@@ -340,13 +339,13 @@ void GenesisGetInfoWindow::ExamineMultipleFiles(const char *dir, const BStringLi
 		}
 		entry.Unset();
 	}
-	
+
 	m_IconBox->Hide();
 
 	// label
 	text.SetToFormat("%d files selected in %s", filesList->CountStrings(), dir);
 	sv = new BStringView(BRect(8,20,390,32),"label",text.String());
-	
+
 	sv->ResizeToPreferred();
 	m_View->AddChild(sv);
 
@@ -410,28 +409,28 @@ GenesisGetDiskInfoWindow::GenesisGetDiskInfoWindow(CustomListItem *item, BWindow
 
 //	SetType(B_MODAL_WINDOW);
 //	SetFlags(B_NOT_RESIZABLE);
-	
+
 	// Main view
 	m_View = new BView(Bounds(), "infoview", B_FOLLOW_ALL, B_WILL_DRAW);
 	m_View->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	AddChild(m_View);
 
-	// Bottom View	
+	// Bottom View
 	rect = Bounds();
 	rect.top = rect.bottom-44;
 	BView *BottomView = new BView(rect, "infobottomview", B_FOLLOW_ALL, B_WILL_DRAW);
 	BottomView->SetViewColor(180, 190, 200, 0);
-	m_View->AddChild(BottomView);	
-	
-	// OK Button	
+	m_View->AddChild(BottomView);
+
+	// OK Button
 	rect = BottomView->Bounds();
 	rect.top = rect.bottom-34;
 	rect.bottom = rect.bottom-14;
 	rect.left = rect.right-80;
-	rect.right = rect.right-20;	
+	rect.right = rect.right-20;
 	BButton *OkButton = new BButton(rect,"ok","OK",new BMessage(BUTTON_MSG_OK),0,B_WILL_DRAW);
 	BottomView->AddChild(OkButton);
-	
+
 	SetDefaultButton(OkButton);
 
 	// Icon Box
@@ -451,14 +450,14 @@ GenesisGetDiskInfoWindow::GenesisGetDiskInfoWindow(CustomListItem *item, BWindow
 	rect.bottom = 53;
 	BBox *Bevel_1 = new BBox(rect);
 	m_View->AddChild(Bevel_1);
-	
+
 	// Get our drive...
 	BVolumeRoster *vr = new BVolumeRoster();
 	if (vr)
 	{
 		BVolume v;
 		bool found = false;
-	
+
 		while (vr->GetNextVolume(&v)==B_NO_ERROR)
 		{
 			if (v.Device()==item->m_DeviceID)
@@ -470,14 +469,14 @@ GenesisGetDiskInfoWindow::GenesisGetDiskInfoWindow(CustomListItem *item, BWindow
 
 		delete vr;
 	}
-	
+
 	AddCommonFilter(new EscapeFilter(this, new BMessage(BUTTON_MSG_OK)));
-	
+
 	// If there is a given window, let's align our window to its center...
 	if (mainwindow)
 	{
 		BRect myrect = Bounds();
-		
+
 		rect = mainwindow->Frame();
 		float w = rect.right - rect.left;
 		float h = rect.bottom - rect.top;
@@ -518,8 +517,8 @@ void GenesisGetDiskInfoWindow::ExamineDevice(BVolume *v)
 
 	// Let's get its icon...
 	m_IconView->SetIcon(v);
-	
-	// Get filename...	
+
+	// Get filename...
 	v->GetName(buf);
 	text.SetTo(buf);
 	sv = new BStringView(BRect(48,20,390,32),"drivename",text.String());
@@ -537,13 +536,13 @@ void GenesisGetDiskInfoWindow::ExamineDevice(BVolume *v)
 	text += path.Path();
 	sv = new BStringView(BRect(8,60,390,74),"driverootpath",text.String());
 	sv->ResizeToPreferred();
-	m_View->AddChild(sv);	
+	m_View->AddChild(sv);
 
 	// Get drive capacity...
 	capacity = v->Capacity();
 	if (capacity>=(1024*1024*1024))
 		sprintf(buf,"%.02f GB",capacity/(1024.0*1024.0*1024.0));
-	else 
+	else
 		sprintf(buf,"%.02f MB",capacity/(1024.0*1024.0));
 	text.SetTo("Drive capacity: ");
 	text += buf;
@@ -605,7 +604,7 @@ PieView::PieView(BRect rect, const char *name, off_t capacity, off_t free)
 ////////////////////////////////////////////////////////////////////////
 {
 	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
-	
+
 	m_Capacity = capacity;
 	m_Free = free;
 }
@@ -639,7 +638,7 @@ void PieView::Draw(BRect r)
 
 	SetHighColor(100,110,120);
 	StrokeArc(rect, 0.0f, 360.0/100.0*usedpercent );
-	
+
 	// Free space
 	rect = Bounds();
 	rect.left = 0;
@@ -650,11 +649,11 @@ void PieView::Draw(BRect r)
 	FillRect(rect);
 	SetHighColor(0,0,0);
 	StrokeRect(rect);
-	
+
 	SetHighColor(0,0,0);
 	SetLowColor(216, 216, 216, 0);
 	DrawString("- Free space",BPoint(rect.right+4,rect.top+9));
-	
+
 	// Used space
 	rect = Bounds();
 	rect.top = rect.bottom-10;

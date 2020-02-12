@@ -33,20 +33,20 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 	m_ShowFunctionKeys = new BCheckBox("showfkeys", "Show function keys", new BMessage(PREFERENCES_CHANGED));
 	m_ShowCommandLine = new BCheckBox("showfkeys", "Show command line", new BMessage(PREFERENCES_CHANGED));
 	m_AskOnExit = new BCheckBox("askonexit", "Ask on exit", new BMessage(PREFERENCES_CHANGED));
-	
+
 	m_TerminalWindowTitle = new BTextControl("terminaltitle", "Terminal window title", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
 	m_LeftPanelPath = new BTextControl("leftpath", "Initial path of left panel", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
 	m_RightPanelPath = new BTextControl("rightpath", "Initial path of right panel", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
-	
+
 	BButton *SetCurrLeftPathButton = new BButton("currleft", "Set to current", new BMessage(BUTTON_MSG_SET_CURR_PATH_L));
 	SetCurrLeftPathButton->SetToolTip("Set initial path to current path of left panel");
 	BButton *SetCurrRightPathButton = new BButton("currleft", "Set to current", new BMessage(BUTTON_MSG_SET_CURR_PATH_R));
 	SetCurrRightPathButton->SetToolTip("Set initial path to current path of right panel");
-	
+
 	BGridLayout* settingsgrid = BGridLayoutBuilder(10, 10)
 		.Add(m_TerminalWindowTitle->CreateLabelLayoutItem(), 0, 0)
 		.Add(m_TerminalWindowTitle->CreateTextViewLayoutItem(), 1, 0)
-		
+
 		.Add(m_LeftPanelPath->CreateLabelLayoutItem(), 0, 1)
 		.Add(m_LeftPanelPath->CreateTextViewLayoutItem(), 1, 1)
 		.Add(SetCurrLeftPathButton, 2, 1)
@@ -56,7 +56,7 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 		.Add(SetCurrRightPathButton, 2, 2);
 
 	settingsgrid->SetMinColumnWidth(1, 200);
-	
+
 	BLayoutBuilder::Group<>(settingsview, B_VERTICAL, 0)
 		.SetInsets(20)
 		.Add(m_ShowFunctionKeys)
@@ -70,7 +70,7 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 	// Bottom bar
 	m_ApplyButton = new BButton("apply", "Apply", new BMessage(BUTTON_MSG_APPLY));
 	m_ApplyButton->SetEnabled(false);
-	
+
 	BButton *CancelButton = new BButton("cancel", "Cancel", new BMessage(BUTTON_MSG_CANCEL));
 	BView *bottomciew = new BView("infobottomview", B_WILL_DRAW);
 	BLayoutBuilder::Group<>(bottomciew)
@@ -82,7 +82,7 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 			.End();
 
 	bottomciew->SetViewColor(180, 190, 200, 0);
-	
+
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.Add(settingsview)
 		.Add(bottomciew);
@@ -99,7 +99,7 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 		float h = rect.bottom - rect.top;
 		MoveTo(rect.left + w/2 - (myrect.right-myrect.left)/2, rect.top + h/2 - (myrect.bottom-myrect.top)/2);
 	}
-	
+
 	ReloadSettings();
 
 	m_TerminalWindowTitle->SetModificationMessage(new BMessage(PREFERENCES_CHANGED));
@@ -111,7 +111,7 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 GenesisPreferencesWindow::~GenesisPreferencesWindow()
 ////////////////////////////////////////////////////////////////////////
 {
-	
+
 }
 
 ////////////////////////////////////////////////////////////////////////

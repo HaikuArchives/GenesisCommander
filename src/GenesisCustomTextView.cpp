@@ -50,7 +50,7 @@ void CustomTextView::KeyDown(const char *bytes, int32 numBytes)
 				break;
 		}
 	}
-	
+
 	if (process)
 		BTextView::KeyDown(bytes,numBytes);
 }
