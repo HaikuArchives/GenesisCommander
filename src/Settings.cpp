@@ -46,7 +46,6 @@ void Settings::SetDefaults()
 	SetShowFunctionKeys(true);
 	SetShowCommandLine(true);
 	SetAskOnExit(false);
-	SetLanguage("English");
 	SetWindowLeft(100);
 	SetWindowTop(100);
 	SetWindowWidth(600);
@@ -77,8 +76,6 @@ bool Settings::LoadSettings()
 			SetShowCommandLine(tempbool);
 		if (settingsfile.GetBool("ASKONEXIT", tempbool))
 			SetAskOnExit(tempbool);
-		if (settingsfile.GetString("LANGUAGE", tempstring))
-			SetLanguage(tempstring);
 		if (settingsfile.GetInteger("WINDOWLEFT", tempint))
 			SetWindowLeft(tempint);
 		GETINT("WINDOWTOP", WindowTop);
@@ -107,7 +104,6 @@ bool Settings::SaveSettings()
 		settingsfile.WriteText(BString("############################\n"));
 		settingsfile.WriteText(BString("\n"));
 		settingsfile.WriteText(BString("# General settings\n"));
-		settingsfile.WriteString(BString("LANGUAGE"), GetLanguage());
 		settingsfile.WriteBool(BString("SHOWFUNCTIONKEYS"), GetShowFunctionKeys());
 		settingsfile.WriteBool(BString("SHOWCOMMANDLINE"), GetShowCommandLine());
 		settingsfile.WriteBool(BString("ASKONEXIT"), GetAskOnExit());

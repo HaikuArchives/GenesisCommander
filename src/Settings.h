@@ -79,9 +79,6 @@ public:
 	// RIGHT PANEL SETTINGS
 	SETTING_STRING(RightPanelPath)
 
-	// LANGUAGE SETTINGS
-	SETTING_STRING(Language)
-
 private:
 	BString GetFullSettingsFileName();
 	bool m_SettingsChanged;

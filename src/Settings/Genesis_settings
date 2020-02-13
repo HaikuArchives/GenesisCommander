@@ -1,9 +1,8 @@
 ############################
-# Genesis Commander v0.42 Settings
+# Genesis Commander Settings
 ############################
 
 # General settings
-LANGUAGE = Magyar
 ASKONEXIT = true
 WINDOWLEFT = 100
 WINDOWTOP = 100
