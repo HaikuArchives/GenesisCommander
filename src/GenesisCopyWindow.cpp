@@ -630,7 +630,7 @@ bool GenesisCopyWindow::CopyFile(const char *filename, const char *destination, 
 	}
 
 	BFile srcfile(filename, B_READ_ONLY);
-	BFile dstfile(destname.String(), B_WRITE_ONLY | B_CREATE_FILE);
+	BFile dstfile(destname.String(), B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE);
 
 	if (srcentry.InitCheck()!=B_OK)
 		return false;
