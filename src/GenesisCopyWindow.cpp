@@ -612,20 +612,48 @@ bool GenesisCopyWindow::CopyFile(const char *filename, const char *destination, 
 	if (dstfileentry.Exists() && !m_OverwriteAll)
 	{
 		BString text;
+		BAlert *myAlert;
 
-		text << "File '" << name << "' already exists. Do you want to overwrite it?";
-
-		BAlert *myAlert = new BAlert("Copy",text.String(),"Abort","Overwrite all","Overwrite",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
-		myAlert->SetShortcut(0, B_ESCAPE);
-		switch (myAlert->Go())
+		if (dstfileentry.IsDirectory())
 		{
-			case 0:
-				Close();
-				kill_thread(m_CopyThread);
-				break;
-			case 1:
-				m_OverwriteAll = true;
-				break;
+			if (!m_SkipAllCopyError) {
+				text << "Directory '" << name << "' cannot be overwritten with a file.";
+				myAlert = new BAlert("Copy",text.String(),"Abort","Skip all","Skip",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
+
+				switch (myAlert->Go())
+				{
+					case 0:
+						Close();
+						kill_thread(m_CopyThread);
+						break;
+					case 1:
+						m_SkipAllCopyError = true;
+						break;
+				}
+			}
+			return false;
+		}
+		else{
+			if (!m_OverwriteAll) {
+				text << "File '" << name << "' already exists. Do you want to overwrite it?";
+				myAlert = new BAlert("Copy",text.String(),"Abort","Overwrite all","Overwrite",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
+				myAlert->SetShortcut(0, B_ESCAPE);
+
+				switch (myAlert->Go())
+				{
+					case 0:
+						Close();
+						kill_thread(m_CopyThread);
+						break;
+					case 1:
+						m_OverwriteAll = true;
+						break;
+				}
+
+				if (dstfileentry.IsSymLink()){
+					dstfileentry.Remove();
+				}
+			}
 		}
 	}
 
