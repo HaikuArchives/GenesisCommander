@@ -1,8 +1,9 @@
 /*
- * Copyright 2002-2019. All rights reserved.
+ * Copyright 2002-2020. All rights reserved.
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
+ *	2019-2020, Ondrej Čerman
  */
 
 #include "GenesisCopyWindow.h"
@@ -43,6 +44,7 @@ GenesisCopyWindow::GenesisCopyWindow(CustomListView *list, PanelView *destpanel,
 	m_SkipAllCopyError = false;
 	m_OverwriteAll = false;
 	m_SkipSymLinkCreationError = false;
+	m_PossiblyMultipleFiles = true;
 
 	// After the delete process we have to select an item if no item selected...
 	m_Selection = GetFirstSelection();
@@ -144,11 +146,14 @@ GenesisCopyWindow::GenesisCopyWindow(CustomListView *list, PanelView *destpanel,
 		m_FileAsName->SetDivider(m_View->StringWidth("to")+4);
 		m_FileAsName->SetModificationMessage(new BMessage(COPYNAME_CHANGED));
 
-		if (((CustomListItem *)m_CustomListView->GetSelectedEntry(0))->m_Type == FT_PARENT)
-			m_FileAsName->SetText( ((CustomListItem *)m_CustomListView->GetSelectedEntry(1))->m_FileName.String() );
-		else
-			m_FileAsName->SetText( ((CustomListItem *)m_CustomListView->GetSelectedEntry(0))->m_FileName.String() );
+		CustomListItem *file = (CustomListItem *)m_CustomListView->GetSelectedEntry(0);
+		if (file->m_Type == FT_PARENT)
+			file = (CustomListItem *)m_CustomListView->GetSelectedEntry(1);
 
+		if (file->m_Type != FT_DIRECTORY)
+			m_PossiblyMultipleFiles = false;
+
+		m_FileAsName->SetText(file->m_FileName.String());
 		m_View->AddChild(m_FileAsName);
 	}
 
@@ -570,16 +575,13 @@ void GenesisCopyWindow::Copy(const char *filename, const char *destination, cons
 	else if (!m_SkipAllCopyError)
 	{
 		text << "Error while initializing file:\n\n" << filename;
-
-		BAlert *myAlert = new BAlert("Copy",text.String(),"Abort","Skip all","Skip",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
-		myAlert->SetShortcut(0, B_ESCAPE);
-		switch (myAlert->Go())
+		switch (CopySkipAlert(text.String()))
 		{
-			case 0:
+			case A_SKIP_ABORT:
 				Close();
 				kill_thread(m_CopyThread);
 				break;
-			case 1:
+			case A_SKIP_ALL:
 				m_SkipAllCopyError = true;
 				break;
 		}
@@ -612,21 +614,18 @@ bool GenesisCopyWindow::CopyFile(const char *filename, const char *destination, 
 	if (dstfileentry.Exists() && !m_OverwriteAll)
 	{
 		BString text;
-		BAlert *myAlert;
 
 		if (dstfileentry.IsDirectory())
 		{
 			if (!m_SkipAllCopyError) {
 				text << "Directory '" << name << "' cannot be overwritten with a file.";
-				myAlert = new BAlert("Copy",text.String(),"Abort","Skip all","Skip",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
-
-				switch (myAlert->Go())
+				switch (CopySkipAlert(text.String()))
 				{
-					case 0:
+					case A_SKIP_ABORT:
 						Close();
 						kill_thread(m_CopyThread);
 						break;
-					case 1:
+					case A_SKIP_ALL:
 						m_SkipAllCopyError = true;
 						break;
 				}
@@ -636,16 +635,13 @@ bool GenesisCopyWindow::CopyFile(const char *filename, const char *destination, 
 		else{
 			if (!m_OverwriteAll) {
 				text << "File '" << name << "' already exists. Do you want to overwrite it?";
-				myAlert = new BAlert("Copy",text.String(),"Abort","Overwrite all","Overwrite",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
-				myAlert->SetShortcut(0, B_ESCAPE);
-
-				switch (myAlert->Go())
+				switch (CopyOverwriteAlert(text.String()))
 				{
-					case 0:
+					case A_OVERWR_ABORT:
 						Close();
 						kill_thread(m_CopyThread);
 						break;
-					case 1:
+					case A_OVERWR_ALL:
 						m_OverwriteAll = true;
 						break;
 				}
@@ -843,18 +839,15 @@ bool GenesisCopyWindow::CopyLink(const char *linkname, const char *destination, 
 	if (dstdir.CreateSymLink(name, LinkPath.Path(), &dstlink)!=B_OK && !m_SkipSymLinkCreationError)
 	{
 		BString text;
-
 		text << "Cannot create '" << name << "' symbolic link in '" << LinkPath.Path() << "'";
 
-		BAlert *myAlert = new BAlert("Copy",text.String(),"Abort","Skip all","Skip",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
-		myAlert->SetShortcut(0, B_ESCAPE);
-		switch (myAlert->Go())
+		switch (CopySkipAlert(text.String()))
 		{
-			case 0:
+			case A_SKIP_ABORT:
 				Close();
 				kill_thread(m_CopyThread);
 				break;
-			case 1:
+			case A_SKIP_ALL:
 				m_SkipSymLinkCreationError = true;
 				break;
 		}
@@ -965,3 +958,48 @@ bool GenesisCopyWindow::IsRecursiveCopy(const char *source, const char *destinat
 	return false;
 }
 
+////////////////////////////////////////////////////////////////////////
+ALERT_SKIP_OPTS GenesisCopyWindow::CopySkipAlert(const char* text)
+////////////////////////////////////////////////////////////////////////
+{
+	BAlert *alert = new BAlert("Copy", text, "Abort", NULL, NULL, B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
+
+	if (m_PossiblyMultipleFiles)
+		alert->AddButton("Skip all");
+
+	alert->AddButton("Skip");
+	alert->SetShortcut(0, B_ESCAPE);
+
+	switch (alert->Go())
+	{
+		case 0:
+			return A_SKIP_ABORT;
+		case 1:
+			return m_PossiblyMultipleFiles ? A_SKIP_ALL: A_SKIP_1;
+		default:
+			return A_SKIP_1;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////
+ALERT_OVERWR_OPTS GenesisCopyWindow::CopyOverwriteAlert(const char* text)
+////////////////////////////////////////////////////////////////////////
+{
+	BAlert *alert = new BAlert("Copy", text, "Abort", NULL, NULL, B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
+
+	if (m_PossiblyMultipleFiles)
+		alert->AddButton("Overwrite all");
+
+	alert->AddButton("Overwrite");
+	alert->SetShortcut(0, B_ESCAPE);
+
+	switch (alert->Go())
+	{
+		case 0:
+			return A_OVERWR_ABORT;
+		case 1:
+			return m_PossiblyMultipleFiles ? A_OVERWR_ALL: A_OVERWR_1;
+		default:
+			return A_OVERWR_1;
+	}
+}

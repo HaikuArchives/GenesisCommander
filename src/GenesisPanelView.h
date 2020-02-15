@@ -54,6 +54,18 @@ enum ADDTYPES {
 	ADD_SYMLINKS,
 };
 
+enum ALERT_SKIP_OPTS {
+	A_SKIP_ABORT,
+	A_SKIP_ALL,
+	A_SKIP_1
+};
+
+enum ALERT_OVERWR_OPTS {
+	A_OVERWR_ABORT,
+	A_OVERWR_ALL,
+	A_OVERWR_1
+};
+
 class PanelView : public BView
 {
 	public:

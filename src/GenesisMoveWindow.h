@@ -1,8 +1,9 @@
 /*
- * Copyright 2002-2019. All rights reserved.
+ * Copyright 2002-2020. All rights reserved.
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
+ *	2019-2020, Ondrej Čerman
  */
 
 #ifndef _GENESISMOVEWINDOW_H_
@@ -56,6 +57,7 @@ class GenesisMoveWindow : public BWindow
 		virtual void	MessageReceived(BMessage* message);
 
 		bool			m_SingleMove;
+		bool			m_PossiblyMultipleFiles;
 		bool			m_Paused;
 		bool			m_SkipAllMoveError;
 		bool 			m_OverwriteAll;
@@ -70,6 +72,9 @@ class GenesisMoveWindow : public BWindow
 		int32 GetFirstSelection(void);
 		bool IsDirReadOnly(const char *destination);
 		bool IsRecursiveMove(const char *source, const char *destination);
+
+		ALERT_SKIP_OPTS MoveSkipAlert(const char* text);
+		ALERT_OVERWR_OPTS MoveOverwriteAlert(const char* text);
 };
 
 #endif
