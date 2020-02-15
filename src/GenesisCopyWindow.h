@@ -1,8 +1,9 @@
 /*
- * Copyright 2002-2019. All rights reserved.
+ * Copyright 2002-2020. All rights reserved.
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
+ *	2019-2020, Ondrej Čerman
  */
 
 #ifndef _GENESISCOPYWINDOW_H_
@@ -59,6 +60,7 @@ class GenesisCopyWindow : public BWindow
 		virtual void	MessageReceived(BMessage* message);
 
 		bool			m_SingleCopy;
+		bool			m_PossiblyMultipleFiles;
 		bool			m_Paused;
 		bool			m_SkipAllCopyError;
 		bool 			m_OverwriteAll;
@@ -76,6 +78,9 @@ class GenesisCopyWindow : public BWindow
 		int32 GetFirstSelection(void);
 		bool IsDirReadOnly(const char *destination);
 		bool IsRecursiveCopy(const char *source, const char *destination);
+
+		ALERT_SKIP_OPTS CopySkipAlert(const char* text);
+		ALERT_OVERWR_OPTS CopyOverwriteAlert(const char* text);
 };
 
 #endif

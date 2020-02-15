@@ -1,8 +1,9 @@
 /*
- * Copyright 2002-2019. All rights reserved.
+ * Copyright 2002-2020. All rights reserved.
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
+ *	2019-2020, Ondrej Čerman
  */
 
 #include "GenesisMoveWindow.h"
@@ -44,6 +45,7 @@ GenesisMoveWindow::GenesisMoveWindow(CustomListView *list, PanelView *destpanel,
 	m_OverwriteAll = false;
 	m_SkipSymLinkCreationError = false;
 	m_SkipAllMissing = false;
+	m_PossiblyMultipleFiles = true;
 
 	// After the delete process we have to select an item if no item selected...
 	m_Selection = GetFirstSelection();
@@ -135,11 +137,14 @@ GenesisMoveWindow::GenesisMoveWindow(CustomListView *list, PanelView *destpanel,
 		m_FileAsName->SetDivider(m_View->StringWidth("to")+4);
 		m_FileAsName->SetModificationMessage(new BMessage(MOVENAME_CHANGED));
 
-		if (((CustomListItem *)m_CustomListView->GetSelectedEntry(0))->m_Type == FT_PARENT)
-			m_FileAsName->SetText( ((CustomListItem *)m_CustomListView->GetSelectedEntry(1))->m_FileName.String() );
-		else
-			m_FileAsName->SetText( ((CustomListItem *)m_CustomListView->GetSelectedEntry(0))->m_FileName.String() );
+		CustomListItem *file = (CustomListItem *)m_CustomListView->GetSelectedEntry(0);
+		if (file->m_Type == FT_PARENT)
+			file = (CustomListItem *)m_CustomListView->GetSelectedEntry(1);
 
+		if (file->m_Type != FT_DIRECTORY)
+			m_PossiblyMultipleFiles = false;
+
+		m_FileAsName->SetText(file->m_FileName.String());
 		m_View->AddChild(m_FileAsName);
 	}
 
@@ -542,18 +547,16 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 		{
 			BString text;
 			text << "Source file does not exist.\n";
-
-			BAlert *myAlert = new BAlert("Move",text.String(),"Abort", "Skip all", "Skip", B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
-			switch (myAlert->Go())
+			switch (MoveSkipAlert(text.String()))
 			{
-				case 0:
+				case A_SKIP_ABORT:
 					Close();
 					kill_thread(m_MoveThread);
 					break;
-				case 1:
+				case A_SKIP_ALL:
 					m_SkipAllMissing = true;
 					break;
-				case 2:
+				case A_SKIP_1:
 					return result;
 			}
 		}
@@ -585,20 +588,17 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 				dstfile.GetName(name);
 
 				text << "File '" << name << "' already exists. Do you want to overwrite it?";
-
-				BAlert *myAlert = new BAlert("Move",text.String(),"Abort","Overwrite all","Overwrite",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
-				myAlert->SetShortcut(0, B_ESCAPE);
-				switch (myAlert->Go())
+				switch (MoveOverwriteAlert(text.String()))
 				{
-					case 0:
+					case A_OVERWR_ABORT:
 						Close();
 						kill_thread(m_MoveThread);
 						break;
-					case 1:
+					case A_OVERWR_ALL:
 						m_OverwriteAll = true;
 						overwrite = true;
 						break;
-					case 2:
+					case A_OVERWR_1:
 						overwrite = true;
 						break;
 				}
@@ -612,16 +612,13 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 		{
 			text << "Cannot move '" << name << "' to \n\n" << destfullname << "\n\n";
 			text << "Notice that move function works only when the source and destination folder are on the same volume.\n";
-
-			BAlert *myAlert = new BAlert("Move",text.String(),"Abort","Skip all","Skip",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
-			myAlert->SetShortcut(0, B_ESCAPE);
-			switch (myAlert->Go())
+			switch (MoveSkipAlert(text.String()))
 			{
-				case 0:
+				case A_SKIP_ABORT:
 					Close();
 					kill_thread(m_MoveThread);
 					break;
-				case 1:
+				case A_SKIP_ALL:
 					m_SkipAllMoveError = true;
 					break;
 			}
@@ -634,16 +631,13 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 	else if (!m_SkipAllMoveError)
 	{
 		text << "Error while initializing file:\n\n" << filename;
-
-		BAlert *myAlert = new BAlert("Move",text.String(),"Abort","Skip all","Skip",B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
-		myAlert->SetShortcut(0, B_ESCAPE);
-		switch (myAlert->Go())
+		switch (MoveSkipAlert(text.String()))
 		{
-			case 0:
+			case A_SKIP_ABORT:
 				Close();
 				kill_thread(m_MoveThread);
 				break;
-			case 1:
+			case A_SKIP_ALL:
 				m_SkipAllMoveError = true;
 				break;
 		}
@@ -705,3 +699,49 @@ bool GenesisMoveWindow::IsRecursiveMove(const char *source, const char *destinat
 	return false;
 }
 
+
+////////////////////////////////////////////////////////////////////////
+ALERT_SKIP_OPTS GenesisMoveWindow::MoveSkipAlert(const char* text)
+////////////////////////////////////////////////////////////////////////
+{
+	BAlert *alert = new BAlert("Move", text, "Abort", NULL, NULL, B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
+
+	if (m_PossiblyMultipleFiles)
+		alert->AddButton("Skip all");
+
+	alert->AddButton("Skip");
+	alert->SetShortcut(0, B_ESCAPE);
+
+	switch (alert->Go())
+	{
+		case 0:
+			return A_SKIP_ABORT;
+		case 1:
+			return m_PossiblyMultipleFiles ? A_SKIP_ALL: A_SKIP_1;
+		default:
+			return A_SKIP_1;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////
+ALERT_OVERWR_OPTS GenesisMoveWindow::MoveOverwriteAlert(const char* text)
+////////////////////////////////////////////////////////////////////////
+{
+	BAlert *alert = new BAlert("Move", text, "Abort", NULL, NULL, B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
+
+	if (m_PossiblyMultipleFiles)
+		alert->AddButton("Overwrite all");
+
+	alert->AddButton("Overwrite");
+	alert->SetShortcut(0, B_ESCAPE);
+
+	switch (alert->Go())
+	{
+		case 0:
+			return A_OVERWR_ABORT;
+		case 1:
+			return m_PossiblyMultipleFiles ? A_OVERWR_ALL: A_OVERWR_1;
+		default:
+			return A_OVERWR_1;
+	}
+}
