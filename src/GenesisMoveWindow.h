@@ -61,6 +61,7 @@ class GenesisMoveWindow : public BWindow
 		bool			m_Paused;
 		bool			m_SkipAllMoveError;
 		bool 			m_OverwriteAll;
+		bool 			m_MoveAll;
 		bool			m_SkipSymLinkCreationError;
 		bool			m_SkipAllMissing;		// move
 
