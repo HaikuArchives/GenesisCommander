@@ -579,28 +579,110 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 		{
 			overwrite = true;
 		}
-		else
-		{
-			dstfile.SetTo(destfullname.String());
-			if (dstfile.InitCheck()==B_OK && dstfile.Exists())
-			{
-				BString text;
-				dstfile.GetName(name);
 
-				text << "File '" << name << "' already exists. Do you want to overwrite it?";
-				switch (MoveOverwriteAlert(text.String()))
+		dstfile.SetTo(destfullname.String());
+		if (dstfile.InitCheck()==B_OK && dstfile.Exists())
+		{
+			BString text;
+
+			if (sourcefile.IsDirectory())
+			{
+				if (dstfile.IsDirectory())
 				{
-					case A_OVERWR_ABORT:
-						Close();
-						kill_thread(m_MoveThread);
-						break;
-					case A_OVERWR_ALL:
-						m_OverwriteAll = true;
-						overwrite = true;
-						break;
-					case A_OVERWR_1:
-						overwrite = true;
-						break;
+					BPath entrypath;
+					BEntry entry;
+					BDirectory *dir = new BDirectory(&sourcefile);
+
+					if (!m_MoveAll)
+					{
+						dstfile.GetName(name);
+						text << "Directory '" << name << "' already exists in the destination folder. Do you want to move contents of source directory into existing directory in the destination folder?";
+						BAlert *alert = new BAlert("Move", text, "Abort", "Move All", "Move", B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
+						switch (alert->Go())
+						{
+							case 0:
+								Close();
+								kill_thread(m_MoveThread);
+								break;
+							case 1:
+								m_MoveAll = true;
+								break;
+						}
+					}
+
+					if (dir->GetEntry(&entry)==B_OK)
+					{
+						while (dir->GetNextEntry(&entry)==B_OK)
+						{
+							entry.GetPath(&entrypath);
+							Move(entrypath.Path(), destfullname);
+						}
+					}
+
+					if (dir->CountEntries()==0)
+					{
+						if (sourcefile.Remove() == B_OK)
+							return true;
+					}
+
+					return false;
+				}
+				else
+				{
+					if (m_SkipAllMoveError == false)
+					{
+						text << "File '" << name << "' cannot be overwritten with a directory.";
+						switch (MoveSkipAlert(text.String()))
+						{
+							case A_SKIP_ABORT:
+								Close();
+								kill_thread(m_MoveThread);
+								break;
+							case A_SKIP_ALL:
+								m_SkipAllMoveError = true;
+								break;
+						}
+					}
+					return false;
+				}
+			}
+			else
+			{
+				if (!dstfile.IsDirectory())
+				{
+					text << "File '" << name << "' already exists. Do you want to overwrite it?";
+					switch (MoveOverwriteAlert(text.String()))
+					{
+						case A_OVERWR_ABORT:
+							Close();
+							kill_thread(m_MoveThread);
+							break;
+						case A_OVERWR_ALL:
+							m_OverwriteAll = true;
+							overwrite = true;
+							break;
+						case A_OVERWR_1:
+							overwrite = true;
+							break;
+					}
+				}
+				else
+				{
+					if (m_SkipAllMoveError == false)
+					{
+						text << "Directory '" << name << "' cannot be overwritten with a file.";
+						switch (MoveSkipAlert(text.String()))
+						{
+							case A_SKIP_ABORT:
+								Close();
+								kill_thread(m_MoveThread);
+								break;
+							case A_SKIP_ALL:
+								m_SkipAllMoveError = true;
+								break;
+						}
+					}
+					return false;
 				}
 			}
 		}
@@ -745,3 +827,4 @@ ALERT_OVERWR_OPTS GenesisMoveWindow::MoveOverwriteAlert(const char* text)
 			return A_OVERWR_1;
 	}
 }
+
