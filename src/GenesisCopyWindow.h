@@ -64,6 +64,7 @@ class GenesisCopyWindow : public BWindow
 		bool			m_Paused;
 		bool			m_SkipAllCopyError;
 		bool 			m_OverwriteAll;
+		bool 			m_CopyAll;
 		bool			m_SkipSymLinkCreationError;
 
 		void			Go(void);
