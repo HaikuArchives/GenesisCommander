@@ -44,6 +44,7 @@ GenesisCopyWindow::GenesisCopyWindow(CustomListView *list, PanelView *destpanel,
 	m_SkipAllCopyError = false;
 	m_OverwriteAll = false;
 	m_SkipSymLinkCreationError = false;
+	m_CopyAll = false;
 	m_PossiblyMultipleFiles = true;
 
 	// After the delete process we have to select an item if no item selected...
@@ -611,7 +612,7 @@ bool GenesisCopyWindow::CopyFile(const char *filename, const char *destination, 
 	BEntry dstfileentry(destname.String());
 	if (dstfileentry.InitCheck()!=B_OK)
 		return false;
-	if (dstfileentry.Exists() && !m_OverwriteAll)
+	if (dstfileentry.Exists())
 	{
 		BString text;
 
@@ -748,7 +749,50 @@ void GenesisCopyWindow::CopyDirectory(const char *dirname, const char *destinati
 	if (dstentry.InitCheck()!=B_OK)
 		return;
 
-	if (!dstentry.Exists())
+	if (dstentry.Exists())
+	{
+		BString text;
+
+		if (dstentry.IsDirectory())
+		{
+			if (!m_CopyAll)
+			{
+				dstentry.GetName(name);
+				text << "Directory '" << name << "' already exists in the destination folder. Do you want to copy contents of source directory into existing directory in the destination folder?";
+				BAlert *alert = new BAlert("Move", text, "Abort", "Copy All", "Copy", B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
+				switch (alert->Go())
+				{
+					case 0:
+						Close();
+						kill_thread(m_CopyThread);
+						break;
+					case 1:
+						m_CopyAll = true;
+						break;
+				}
+			}
+		}
+		else
+		{
+			if (!m_SkipAllCopyError)
+			{
+				dstentry.GetName(name);
+				text << "File '" << name << "' cannot be overwritten with a directory.";
+				switch (CopySkipAlert(text.String()))
+				{
+					case A_SKIP_ABORT:
+						Close();
+						kill_thread(m_CopyThread);
+						break;
+					case A_SKIP_ALL:
+						m_SkipAllCopyError = true;
+						break;
+				}
+			}
+			return;
+		}
+	}
+	else
 	{
 		if (create_directory(fulldestdir.String(), 0777)!=B_OK)		// TODO: jo a 0777?
 			return;
