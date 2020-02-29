@@ -455,12 +455,23 @@ void GenesisCopyWindow::PrepareCopy(void)
 	}
 
 	BEntry dest(m_DestPath.String());
-
 	if (dest.InitCheck()!=B_OK)
 	{
 		BAlert *myAlert = new BAlert("Copy","Cannot initialize destination entry.","OK", NULL, NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 		myAlert->Go();
 		return;
+	}
+
+	if (dest.IsSymLink()){
+		entry_ref ref;
+		dest.GetRef(&ref);
+		dest.SetTo(&ref, true);
+		if (dest.InitCheck()!=B_OK)
+		{
+			BAlert *myAlert = new BAlert("Copy","Cannot initialize symlinked destination entry.","OK", NULL, NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
+			myAlert->Go();
+			return;
+		}
 	}
 
 	if (!dest.Exists())

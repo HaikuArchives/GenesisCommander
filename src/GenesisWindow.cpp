@@ -212,6 +212,13 @@ void GenesisWindow::MessageReceived(BMessage* message)
 		case MSG_PREFERENCES_CHANGED:
 			UpdateUIVisibility();
 			FrameResized(0,0);
+			if (!SETTINGS->GetSymlinkedPaths())
+			{
+				if (m_LeftPanel->m_Path != m_LeftPanel->m_PathExpanded)
+					m_LeftPanel->ChangePath(m_LeftPanel->m_PathExpanded);
+				if (m_RightPanel->m_Path != m_RightPanel->m_PathExpanded)
+					m_RightPanel->ChangePath(m_RightPanel->m_PathExpanded);
+			}
 			break;
 		case MSG_COMMAND_LINE_ENTER:
 			m_CommandLine->Execute();

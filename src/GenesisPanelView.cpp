@@ -25,6 +25,7 @@
 #include "GenesisMoveWindow.h"
 #include "GenesisSeek.h"
 #include "GenesisSelectGroupWindow.h"
+#include "Settings.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -490,7 +491,7 @@ void PanelView::Rescan()
 	if (m_PanelMode != PM_NORMAL)
 		return;
 
-	if (!DoesEntryExist(m_Path.String()))
+	if (!DoesEntryExist(m_PathExpanded.String()))
 	{
 		GotoRoot();
 		return;
@@ -518,7 +519,7 @@ void PanelView::RescanCreated(BEntry *entry)
 	if (m_PanelMode != PM_NORMAL)
 		return;
 
-	if (!DoesEntryExist(m_Path.String()))
+	if (!DoesEntryExist(m_PathExpanded.String()))
 	{
 		GotoRoot();
 		return;
@@ -536,7 +537,7 @@ void PanelView::RescanCreated(BEntry *entry)
 
 	entry->GetParent(&parententry);
 	parententry.GetPath(&path);
-	if (strcmp(path.Path(),m_Path.String())!=0)
+	if (strcmp(path.Path(),m_PathExpanded.String())!=0)
 		return;
 
 	entry->GetName(name);
@@ -564,7 +565,7 @@ void PanelView::RescanRemoved(node_ref nref)
 	if (m_PanelMode != PM_NORMAL)
 		return;
 
-	if (!DoesEntryExist(m_Path.String()))
+	if (!DoesEntryExist(m_PathExpanded.String()))
 	{
 		GotoRoot();
 		return;
@@ -657,7 +658,7 @@ void PanelView::RescanForMissingEntries()
 void PanelView::RescanForNewEntries()
 ////////////////////////////////////////////////////////////////////////
 {
-	BDirectory dir(m_Path.String());
+	BDirectory dir(m_PathExpanded.String());
 	BNode node;
 	node_ref noderef;
 
@@ -685,14 +686,14 @@ void PanelView::EnableMonitoring()
 	BEntry entry;
 	node_ref nref;
 
-	entry.SetTo(m_Path.String());
+	entry.SetTo(m_PathExpanded.String());
 	if (entry.InitCheck()==B_OK)
 	{
 		if (entry.Exists())
 		{
 			entry.GetNodeRef(&nref);
 			if (watch_node(&nref, B_WATCH_ALL | B_WATCH_MOUNT , this)==B_OK)
-				m_MonitoringPath = m_Path;
+				m_MonitoringPath = m_PathExpanded;
 			else
 				m_MonitoringPath.SetTo("");		// Empty string
 		}
@@ -707,7 +708,7 @@ void PanelView::DisableMonitoring(void)
 	BEntry entry;
 	node_ref nref;
 
-	entry.SetTo(m_Path.String());
+	entry.SetTo(m_PathExpanded.String());
 	if (entry.InitCheck()==B_OK)
 	{
 		if (entry.Exists())
@@ -1101,12 +1102,39 @@ bool PanelView::DoesEntryExist(const char *filename)
 }
 
 ////////////////////////////////////////////////////////////////////////
+void PanelView::SetExpandedPath()
+////////////////////////////////////////////////////////////////////////
+{
+	entry_ref ref;
+	BEntry entry;
+	BPath entrypath;
+
+	if (SETTINGS->GetSymlinkedPaths())
+	{
+		entry.SetTo(m_Path);
+		if (entry.GetRef(&ref) == B_OK)
+		{
+			entry.SetTo(&ref, true);
+			if (entry.GetPath(&entrypath) == B_OK)
+			{
+				m_PathExpanded.SetTo(entrypath.Path());
+				return;
+			}
+		}
+	}
+
+	m_PathExpanded.SetTo(m_Path);
+}
+
+
+////////////////////////////////////////////////////////////////////////
 void PanelView::ChangePath(const char *p)
 ////////////////////////////////////////////////////////////////////////
 {
 	if (DoesEntryExist(p))
 	{
 		m_Path.SetTo(p);
+		SetExpandedPath();
 
 		SetPathStringView();
 		ClearFileList();
@@ -1132,6 +1160,7 @@ void PanelView::EnterDirectory(const char *p)
 	if (DoesEntryExist(p))
 	{
 		m_Path.SetTo(buf);
+		SetExpandedPath();
 
 		SetPathStringView();
 		ClearFileList();
@@ -1154,7 +1183,10 @@ void PanelView::GotoParent(void)
 	BPath path((const char *)m_Path.String());
 
 	if (path.GetParent(&path)==B_OK)
+	{
 		m_Path.SetTo(path.Path());
+		SetExpandedPath();
+	}
 
 	SetPathStringView();
 	ClearFileList();
@@ -1167,6 +1199,7 @@ void PanelView::GotoRoot(void)
 {
 	SetPanelMode(PM_NORMAL);
 	m_Path.SetTo("/");
+	m_PathExpanded.SetTo("/");
 	SetPathStringView();
 	ClearFileList();
 	ReadDirectory();
@@ -1181,6 +1214,7 @@ void PanelView::GotoHome(void)
 
 	SetPanelMode(PM_NORMAL);
 	m_Path.SetTo(dirPath.Path());
+	m_PathExpanded.SetTo(dirPath.Path());
 	SetPathStringView();
 	ClearFileList();
 	ReadDirectory();
@@ -1195,6 +1229,7 @@ void PanelView::GotoDesktop(void)
 
 	SetPanelMode(PM_NORMAL);
 	m_Path.SetTo(dirPath.Path());
+	m_PathExpanded.SetTo(dirPath.Path());
 	SetPathStringView();
 	ClearFileList();
 	ReadDirectory();
@@ -1476,6 +1511,12 @@ void PanelView::Execute(CustomListItem *item)
 			EnterDirectory(item->m_FileName.String());
 			break;
 		case FT_SYMLINKDIR:
+			if (SETTINGS->GetSymlinkedPaths())
+			{
+				EnterDirectory(item->m_FileName.String());
+				break;
+			}
+			// else fall through;
 		case FT_SYMLINKFILE:	// TODO: ha mar ugyis tudjuk elore....
 			{
 				BEntry symlinkentry;

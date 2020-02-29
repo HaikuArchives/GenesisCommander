@@ -1,8 +1,8 @@
 /*
- * Copyright 2002-2019. All rights reserved.
+ * Copyright 2002-2020. All rights reserved.
  * Distributed under the terms of the MIT license.
  *
- *	2019, Ondrej Čerman
+ *	2019-2020, Ondrej Čerman
  */
 
 #include "GenesisPreferencesWindow.h"
@@ -32,6 +32,7 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 	// Preferences
 	m_ShowFunctionKeys = new BCheckBox("showfkeys", "Show function keys", new BMessage(PREFERENCES_CHANGED));
 	m_ShowCommandLine = new BCheckBox("showfkeys", "Show command line", new BMessage(PREFERENCES_CHANGED));
+	m_SymlinkedPaths = new BCheckBox("followsymlinks", "Keep symlinked directory paths when navigating", new BMessage(PREFERENCES_CHANGED));
 	m_AskOnExit = new BCheckBox("askonexit", "Ask on exit", new BMessage(PREFERENCES_CHANGED));
 
 	m_TerminalWindowTitle = new BTextControl("terminaltitle", "Terminal window title", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
@@ -61,6 +62,7 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 		.SetInsets(20)
 		.Add(m_ShowFunctionKeys)
 		.Add(m_ShowCommandLine)
+		.Add(m_SymlinkedPaths)
 		.Add(m_AskOnExit)
 		.Add(BSpaceLayoutItem::CreateVerticalStrut(10))
 		.Add(new BSeparatorView(B_HORIZONTAL))
@@ -120,6 +122,7 @@ void GenesisPreferencesWindow::ReloadSettings()
 {
 	m_ShowCommandLine->SetValue(SETTINGS->GetShowCommandLine() ? B_CONTROL_ON: B_CONTROL_OFF);
 	m_ShowFunctionKeys->SetValue(SETTINGS->GetShowFunctionKeys() ? B_CONTROL_ON: B_CONTROL_OFF);
+	m_SymlinkedPaths->SetValue(SETTINGS->GetSymlinkedPaths() ? B_CONTROL_ON: B_CONTROL_OFF);
 	m_AskOnExit->SetValue(SETTINGS->GetAskOnExit() ? B_CONTROL_ON: B_CONTROL_OFF);
 	m_TerminalWindowTitle->SetText(SETTINGS->GetTerminalWindow());
 	m_LeftPanelPath->SetText(SETTINGS->GetLeftPanelPath().String());
@@ -133,6 +136,7 @@ void GenesisPreferencesWindow::ApplySettings()
 {
 	SETTINGS->SetShowCommandLine(m_ShowCommandLine->Value() == B_CONTROL_ON);
 	SETTINGS->SetShowFunctionKeys(m_ShowFunctionKeys->Value() == B_CONTROL_ON);
+	SETTINGS->SetSymlinkedPaths(m_SymlinkedPaths->Value() == B_CONTROL_ON);
 	SETTINGS->SetAskOnExit(m_AskOnExit->Value() == B_CONTROL_ON);
 	SETTINGS->SetTerminalWindow(m_TerminalWindowTitle->Text());
 	SETTINGS->SetLeftPanelPath(m_LeftPanelPath->Text());

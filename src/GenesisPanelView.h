@@ -1,9 +1,9 @@
 /*
- * Copyright 2002-2019. All rights reserved.
+ * Copyright 2002-2020. All rights reserved.
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
- *	2019, Ondrej Čerman
+ *	2019-2020, Ondrej Čerman
  */
 
 #ifndef _GENESISPANELVIEW_H_
@@ -94,6 +94,7 @@ class PanelView : public BView
 
 //		virtual void SetMousePointer(int n);
 		bool DoesEntryExist(const char *filename);
+		void SetExpandedPath();
 		void ChangePath(const char *p);
 		void EnterDirectory(const char *p);
 		void SelectAll(void);
@@ -152,7 +153,8 @@ class PanelView : public BView
 
 		void SetPath(const char *path) { m_Path.SetTo(path); }
 
-		BString			m_Path;				// This is the real path of the panel...
+		BString			m_Path;				// This is the path of the panel...
+		BString			m_PathExpanded;		// This is path of the panel with expanded symlinks
 		BString			m_MonitoringPath;
 		BString			m_LastFilePattern;
 		uint32			m_CurrentTotalSize;

@@ -1,9 +1,9 @@
 /*
- * Copyright 2002-2019. All rights reserved.
+ * Copyright 2002-2020. All rights reserved.
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
- *	2019, Ondrej Čerman
+ *	2019-2020, Ondrej Čerman
  */
 
 #include "Settings.h"
@@ -45,6 +45,7 @@ void Settings::SetDefaults()
 {
 	SetShowFunctionKeys(true);
 	SetShowCommandLine(true);
+	SetSymlinkedPaths(false);
 	SetAskOnExit(false);
 	SetWindowLeft(100);
 	SetWindowTop(100);
@@ -74,6 +75,8 @@ bool Settings::LoadSettings()
 			SetShowFunctionKeys(tempbool);
 		if (settingsfile.GetBool("SHOWCOMMANDLINE", tempbool))
 			SetShowCommandLine(tempbool);
+		if (settingsfile.GetBool("SYMLINKEDPATHS", tempbool))
+			SetSymlinkedPaths(tempbool);
 		if (settingsfile.GetBool("ASKONEXIT", tempbool))
 			SetAskOnExit(tempbool);
 		if (settingsfile.GetInteger("WINDOWLEFT", tempint))
@@ -106,6 +109,7 @@ bool Settings::SaveSettings()
 		settingsfile.WriteText(BString("# General settings\n"));
 		settingsfile.WriteBool(BString("SHOWFUNCTIONKEYS"), GetShowFunctionKeys());
 		settingsfile.WriteBool(BString("SHOWCOMMANDLINE"), GetShowCommandLine());
+		settingsfile.WriteBool(BString("SYMLINKEDPATHS"), GetSymlinkedPaths());
 		settingsfile.WriteBool(BString("ASKONEXIT"), GetAskOnExit());
 		settingsfile.WriteInteger(BString("WINDOWLEFT"), GetWindowLeft());
 		settingsfile.WriteInteger(BString("WINDOWTOP"), GetWindowTop());
