@@ -54,6 +54,7 @@ GenesisMoveWindow::GenesisMoveWindow(CustomListView *list, PanelView *destpanel,
 //	RemoveParentSelection();
 
 	m_FileCount = m_CustomListView->CountSelectedEntries(CT_WITHOUTPARENT);
+	m_TopFilesLeft = m_FileCount;
 
 	if (m_FileCount == 1)
 		m_SingleMove = true;
@@ -312,6 +313,7 @@ int32 SingleMoveThreadFunc(void *data)
 	item = (CustomListItem *)d->m_CustomListView->GetSelectedEntry(0);
 	if (item)
 	{
+		d->m_CurrentLevel = 1;
 		filename.SetTo(item->m_FileName); // = (BString *)d->m_FileList->ItemAt(i);
 		text.SetTo("");
 		text << "Moving '" << filename.String() << "' as '" << d->m_DestFileName.String() << "'";
@@ -333,6 +335,8 @@ int32 SingleMoveThreadFunc(void *data)
 		d->m_CustomListView->InvalidateItem(d->m_CustomListView->IndexOf(item));
 		d->m_Window->Unlock();
 	}
+
+	d->m_TopFilesLeft = 0;
 
 	d->Lock();
 	d->m_FileBar->SetText("Done");
@@ -364,6 +368,10 @@ int32 MultiMoveThreadFunc(void *data)
 		item = (CustomListItem *)d->m_CustomListView->GetSelectedEntry(0);
 		if (item)
 		{
+			d->m_CurrentLevel = 1;
+			if (d->m_TopFilesLeft == 1 && item->m_Type != FT_DIRECTORY)
+				d->m_PossiblyMultipleFiles = false;
+
 			filename.SetTo(item->m_FileName); // = (BString *)d->m_FileList->ItemAt(i);
 			text.SetTo("");
 			text << "Moving '" << filename.String() << "'";
@@ -393,6 +401,7 @@ int32 MultiMoveThreadFunc(void *data)
 			d->m_ProgressBar->Update(1);
 			d->Unlock();
 		}
+		d->m_TopFilesLeft--;
 	}
 
 	d->Lock();
@@ -629,6 +638,9 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 				}
 				else
 				{
+					if (m_CurrentLevel == 1 && m_TopFilesLeft == 1) // if we cannot move last dir
+						m_PossiblyMultipleFiles = false;
+
 					if (m_SkipAllMoveError == false)
 					{
 						text << "File '" << name << "' cannot be overwritten with a directory.";
