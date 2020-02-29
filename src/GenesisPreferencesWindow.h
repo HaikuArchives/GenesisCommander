@@ -1,8 +1,8 @@
 /*
- * Copyright 2002-2019. All rights reserved.
+ * Copyright 2002-2020. All rights reserved.
  * Distributed under the terms of the MIT license.
  *
- *	2019, Ondrej Čerman
+ *	2019-2020, Ondrej Čerman
  */
 
 #ifndef _GENESISPREFERENCESWINDOW_H_
@@ -34,6 +34,7 @@ class GenesisPreferencesWindow : public BWindow
 		BButton			*m_ApplyButton;
 		BCheckBox		*m_ShowFunctionKeys;
 		BCheckBox		*m_ShowCommandLine;
+		BCheckBox		*m_SymlinkedPaths;
 		BCheckBox		*m_AskOnExit;
 		BTextControl	*m_LeftPanelPath;
 		BTextControl	*m_RightPanelPath;

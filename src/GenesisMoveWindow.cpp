@@ -451,6 +451,17 @@ void GenesisMoveWindow::PrepareMove(void)
 		return;
 	}
 
+	if (dest.IsSymLink()){
+		entry_ref ref;
+		dest.GetRef(&ref);
+		if (dest.SetTo(&ref, true) != B_OK)
+		{
+			BAlert *myAlert = new BAlert("Move","Cannot initialize symlinked destination entry.","OK", NULL, NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
+			myAlert->Go();
+			return;
+		}
+	}
+
 	if (!dest.Exists())
 	{
 		BAlert *myAlert = new BAlert("Move","Destination path does not exist.","OK", NULL, NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);

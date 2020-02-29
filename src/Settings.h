@@ -1,9 +1,9 @@
 /*
- * Copyright 2002-2019. All rights reserved.
+ * Copyright 2002-2020. All rights reserved.
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
- *	2019, Ondrej Čerman
+ *	2019-2020, Ondrej Čerman
  */
 
 #include <String.h>
@@ -66,6 +66,7 @@ public:
 	// GENERAL SETTINGS
 	SETTING_BOOL(ShowFunctionKeys)
 	SETTING_BOOL(ShowCommandLine)
+	SETTING_BOOL(SymlinkedPaths)
 	SETTING_BOOL(AskOnExit)
 	SETTING_INT(WindowLeft)
 	SETTING_INT(WindowTop)
