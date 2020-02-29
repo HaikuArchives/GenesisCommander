@@ -54,6 +54,7 @@ GenesisCopyWindow::GenesisCopyWindow(CustomListView *list, PanelView *destpanel,
 //	RemoveParentSelection();
 
 	m_FileCount = m_CustomListView->CountSelectedEntries(CT_WITHOUTPARENT);
+	m_TopFilesLeft = m_FileCount;
 
 	if (m_FileCount == 1)
 		m_SingleCopy = true;
@@ -342,6 +343,7 @@ int32 SingleCopyThreadFunc(void *data)
 	item = (CustomListItem *)d->m_CustomListView->GetSelectedEntry(0);
 	if (item)
 	{
+		d->m_CurrentLevel = 1;
 		filename.SetTo(item->m_FileName); // = (BString *)d->m_FileList->ItemAt(i);
 		text.SetTo("");
 		text << "Copying '" << filename.String() << "' as '" << d->m_DestFileName.String() << "'";
@@ -363,6 +365,8 @@ int32 SingleCopyThreadFunc(void *data)
 		d->m_CustomListView->InvalidateItem(d->m_CustomListView->IndexOf(item));
 		d->m_Window->Unlock();
 	}
+
+	d->m_TopFilesLeft = 0;
 
 	d->Lock();
 	d->m_FileBar->SetText("Done");
@@ -394,6 +398,10 @@ int32 MultiCopyThreadFunc(void *data)
 		item = (CustomListItem *)d->m_CustomListView->GetSelectedEntry(0);
 		if (item)
 		{
+			d->m_CurrentLevel = 1;
+			if (d->m_TopFilesLeft == 1 && item->m_Type != FT_DIRECTORY)
+				d->m_PossiblyMultipleFiles = false;
+
 			filename.SetTo(item->m_FileName); // = (BString *)d->m_FileList->ItemAt(i);
 			text.SetTo("");
 			text << "Copying '" << filename.String() << "'";
@@ -415,6 +423,7 @@ int32 MultiCopyThreadFunc(void *data)
 			d->m_CustomListView->InvalidateItem(d->m_CustomListView->IndexOf(item));
 			d->m_Window->Unlock();
 		}
+		d->m_TopFilesLeft--;
 	}
 
 	d->Lock();
@@ -774,6 +783,9 @@ void GenesisCopyWindow::CopyDirectory(const char *dirname, const char *destinati
 		}
 		else
 		{
+			if (m_CurrentLevel == 1 && m_TopFilesLeft == 1) // if we cannot copy last dir
+				m_PossiblyMultipleFiles = false;
+
 			if (!m_SkipAllCopyError)
 			{
 				dstentry.GetName(name);
@@ -807,6 +819,7 @@ void GenesisCopyWindow::CopyDirectory(const char *dirname, const char *destinati
 
 		if (dir.GetEntry(&entry)==B_OK)
 		{
+			m_CurrentLevel++;
 			while (dir.GetNextEntry(&entry)==B_OK)
 			{
 				entry.GetName(name);
@@ -836,6 +849,7 @@ void GenesisCopyWindow::CopyDirectory(const char *dirname, const char *destinati
 					CopyFile(fullname.String(), fulldestdir.String());
 				}
 			}
+			m_CurrentLevel--;
 		}
 	}
 

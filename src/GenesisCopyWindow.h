@@ -53,6 +53,8 @@ class GenesisCopyWindow : public BWindow
 //		BCheckBox		*m_MoreCB;
 
 		int				m_FileCount;
+		int				m_TopFilesLeft;
+		int				m_CurrentLevel;
 		int32			m_Selection;
 
 		thread_id		m_CopyThread;
