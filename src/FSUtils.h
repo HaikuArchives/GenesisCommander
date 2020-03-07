@@ -24,6 +24,8 @@ class FSUtils{
 		static void CopyStats(struct stat *srcstat, BNode *dst);
 		static bool CopyAttr(BNode *srcnode, BNode *destnode);
 		static bool CopyAttr(const char *srcfilename, const char *dstfilename);
+		static bool IsRecursiveCopyMove(const char *source, const char *destination);
+		static bool IsDirReadOnly(const char *destination);
 
 	private:
 

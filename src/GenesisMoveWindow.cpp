@@ -435,7 +435,7 @@ void GenesisMoveWindow::PrepareMove(void)
 	if (m_SingleMove)
 		m_DestFileName.SetTo(m_FileAsName->Text());
 
-	if (IsDirReadOnly(m_DestPath.String()))
+	if (FSUtils::IsDirReadOnly(m_DestPath.String()))
 	{
 		BAlert *myAlert = new BAlert("Move", "Cannot move to a write protected volume.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
 		myAlert->SetShortcut(0, B_ESCAPE);
@@ -587,7 +587,7 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 
 		if (sourcefile.IsDirectory())
 		{
-			if (IsRecursiveMove(filename, destination))
+			if (FSUtils::IsRecursiveCopyMove(filename, destination))
 			{
 				BString text;
 				text << "Recursive move not allowed.\nPlease check the destination folder.";
@@ -911,47 +911,6 @@ int32 GenesisMoveWindow::GetFirstSelection(void)
 	else
 		return 0;
 }
-
-////////////////////////////////////////////////////////////////////////
-bool GenesisMoveWindow::IsDirReadOnly(const char *destination)
-////////////////////////////////////////////////////////////////////////
-{
-	struct stat statbuf;
-	BDirectory dir(destination);
-	BVolume volume;
-
-	if (dir.InitCheck()!=B_OK)
-		return false;
-
-	if (dir.GetStatFor(destination, &statbuf)!=B_OK)
-		return false;
-
-	volume.SetTo(statbuf.st_dev);
-	if (volume.IsReadOnly())
-		return true;
-
-	return false;	// Not read only
-}
-
-////////////////////////////////////////////////////////////////////////
-bool GenesisMoveWindow::IsRecursiveMove(const char *source, const char *destination)
-////////////////////////////////////////////////////////////////////////
-{
-	BEntry src(source);
-	BEntry dst(destination);
-
-	if (src == dst)
-		return true;
-
-	while ((dst.GetParent(&dst)) == B_OK)
-	{
-		if (src == dst)
-			return true;
-	}
-
-	return false;
-}
-
 
 ////////////////////////////////////////////////////////////////////////
 ALERT_SKIP_OPTS GenesisMoveWindow::MoveSkipAlert(const char* text)
