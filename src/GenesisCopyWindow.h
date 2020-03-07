@@ -77,10 +77,7 @@ class GenesisCopyWindow : public BWindow
 		bool CopyFile(const char *filename, const char *destination, const char *destfilename = NULL);
 		void CopyDirectory(const char *dirname, const char *destination, const char *destdirname = NULL);
 		bool CopyLink(const char *linkname, const char *destination, const char *destfilename = NULL);
-		bool CopyAttr(const char *srcfilename, const char *dstfilename);
 		int32 GetFirstSelection(void);
-		bool IsDirReadOnly(const char *destination);
-		bool IsRecursiveCopy(const char *source, const char *destination);
 
 		ALERT_SKIP_OPTS CopySkipAlert(const char* text);
 		ALERT_OVERWR_OPTS CopyOverwriteAlert(const char* text);

@@ -74,8 +74,6 @@ class GenesisMoveWindow : public BWindow
 		bool Move(const char *filename, const char *destination, const char *destfilename = NULL);
 		bool CopyAndDelete(BEntry *sourceentry, BEntry *dstentry, BDirectory *dstdir);
 		int32 GetFirstSelection(void);
-		bool IsDirReadOnly(const char *destination);
-		bool IsRecursiveMove(const char *source, const char *destination);
 
 		ALERT_SKIP_OPTS MoveSkipAlert(const char* text);
 		ALERT_OVERWR_OPTS MoveOverwriteAlert(const char* text);

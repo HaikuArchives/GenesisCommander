@@ -6,6 +6,7 @@
  */
 
 #include "FSUtils.h"
+#include <Directory.h>
 #include <File.h>
 #include <fs_attr.h>
 #include <Node.h>
@@ -13,6 +14,7 @@
 #include <Path.h>
 #include <StatusBar.h>
 #include <String.h>
+#include <Volume.h>
 #include <Window.h>
 
 ////////////////////////////////////////////////////////////////////////
@@ -100,3 +102,43 @@ bool FSUtils::CopyAttr(const char *srcfilename, const char *dstfilename)
 	return CopyAttr(&srcnode, &dstnode);
 }
 
+////////////////////////////////////////////////////////////////////////
+bool FSUtils::IsDirReadOnly(const char *destination)
+////////////////////////////////////////////////////////////////////////
+{
+	struct stat statbuf;
+	BDirectory dir(destination);
+	BVolume volume;
+
+	if (dir.InitCheck()!=B_OK)
+		return false;
+
+	if (dir.GetStatFor(destination, &statbuf)!=B_OK)
+		return false;
+
+	volume.SetTo(statbuf.st_dev);
+	if (volume.IsReadOnly())
+		return true;
+
+	return false;	// Not read only
+}
+
+
+////////////////////////////////////////////////////////////////////////
+bool FSUtils::IsRecursiveCopyMove(const char *source, const char *destination)
+////////////////////////////////////////////////////////////////////////
+{
+	BEntry src(source);
+	BEntry dst(destination);
+
+	if (src == dst)
+		return true;
+
+	while ((dst.GetParent(&dst)) == B_OK)
+	{
+		if (src == dst)
+			return true;
+	}
+
+	return false;
+}

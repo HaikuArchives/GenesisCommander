@@ -6,6 +6,7 @@
  *	2019-2020, Ondrej Čerman
  */
 
+#include "FSUtils.h"
 #include "GenesisCopyWindow.h"
 #include "GenesisPanelView.h"
 #include "GenesisWindow.h"
@@ -456,7 +457,7 @@ void GenesisCopyWindow::PrepareCopy(void)
 	if (m_SingleCopy)
 		m_DestFileName.SetTo(m_FileAsName->Text());
 
-	if (IsDirReadOnly(m_DestPath.String()))
+	if (FSUtils::IsDirReadOnly(m_DestPath.String()))
 	{
 		BAlert *myAlert = new BAlert("Copy", "Cannot copy to a write protected volume.", "OK", NULL, NULL, B_WIDTH_AS_USUAL, B_OFFSET_SPACING, B_WARNING_ALERT);
 		myAlert->SetShortcut(0, B_ESCAPE);
@@ -575,7 +576,7 @@ void GenesisCopyWindow::Copy(const char *filename, const char *destination, cons
 
 		if (sourcefile.IsDirectory())
 		{
-			if (IsRecursiveCopy(filename, destination))
+			if (FSUtils::IsRecursiveCopyMove(filename, destination))
 			{
 				BString text;
 				text << "Recursive copy not allowed.\nPlease check the destination folder.";
@@ -696,47 +697,17 @@ bool GenesisCopyWindow::CopyFile(const char *filename, const char *destination, 
 		return false;
 	}
 
-	unsigned char *buf = new unsigned char[statbuf.st_blksize];
-	if (!buf)
-	{
-		return false;
-	}
-
 	Lock();
 	m_FileBar->Update(-m_FileBar->CurrentValue());	// Reset to 0.0
 	m_FileBar->SetMaxValue(statbuf.st_size);
 	m_FileBar->SetTrailingText(name);
 	Unlock();
 
-	while (true)
-	{
-		len = srcfile.Read(buf, statbuf.st_blksize);
-		if (len>0)
-		{
-			dstfile.Write(buf, len);
-			Lock();
-			m_FileBar->Update(len);
-			Unlock();
-		}
-		else if (len<0) // error
-		{
-			delete [] buf;
-			return false;
-		}
-		else	// No more bytes to copy, we are done...
-			break;
-	}
+	if (!FSUtils::CopyFileContents(&srcfile, &dstfile, statbuf.st_blksize, this, m_FileBar))
+		return false;
 
-	dstfile.SetPermissions(statbuf.st_mode);
-	dstfile.SetOwner(statbuf.st_uid);
-	dstfile.SetGroup(statbuf.st_gid);
-	dstfile.SetModificationTime(statbuf.st_mtime);
-	dstfile.SetCreationTime(statbuf.st_crtime);
-
-	delete [] buf;
-
-	// Copy attributes...
-	CopyAttr(filename, destname.String());
+	FSUtils::CopyStats(&statbuf, &dstfile);
+	FSUtils::CopyAttr(&srcfile, &dstfile);
 
 	return true;
 }
@@ -865,7 +836,7 @@ void GenesisCopyWindow::CopyDirectory(const char *dirname, const char *destinati
 	}
 
 	// Copy attributes...
-	CopyAttr(dirname, fulldestdir.String());
+	FSUtils::CopyAttr(dirname, fulldestdir.String());
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -928,48 +899,8 @@ bool GenesisCopyWindow::CopyLink(const char *linkname, const char *destination, 
 	m_FileBar->Update(1);
 	Unlock();
 
-	dstlink.SetPermissions(statbuf.st_mode);
-	dstlink.SetOwner(statbuf.st_uid);
-	dstlink.SetGroup(statbuf.st_gid);
-	dstlink.SetModificationTime(statbuf.st_mtime);
-	dstlink.SetCreationTime(statbuf.st_crtime);
-
-	// Copy attributes...
-	BString destlinkname;
-	destlinkname.SetTo("");
-	destlinkname << destination << "/" << name;
-	CopyAttr(linkname, destlinkname.String());
-
-	return true;
-}
-
-////////////////////////////////////////////////////////////////////////
-bool GenesisCopyWindow::CopyAttr(const char *srcfilename, const char *dstfilename)
-////////////////////////////////////////////////////////////////////////
-{
-	BNode srcnode(srcfilename);
-	BNode dstnode(dstfilename);
-	char attrname[B_ATTR_NAME_LENGTH];
-	attr_info attrinfo;
-	ssize_t len = 0;	// ennyit olvasott a ReadAttr()
-	unsigned char *buf;
-
-	while (srcnode.GetNextAttrName(attrname) == B_OK)
-	{
-		if (srcnode.GetAttrInfo(attrname, &attrinfo) != B_OK)
-			continue;	// skip current attr
-
-		buf = new unsigned char[attrinfo.size];
-		if (buf)
-		{
-			len = srcnode.ReadAttr(attrname, attrinfo.type, 0, buf, attrinfo.size);
-
-			if (len>0)
-				dstnode.WriteAttr(attrname, attrinfo.type, 0, buf, attrinfo.size);
-
-			delete [] buf;
-		}
-	}
+	FSUtils::CopyStats(&statbuf, &dstlink);
+	FSUtils::CopyAttr(&srclink, &dstlink);
 
 	return true;
 }
@@ -985,46 +916,6 @@ int32 GenesisCopyWindow::GetFirstSelection(void)
 		return m_CustomListView->IndexOf(item);
 	else
 		return 0;
-}
-
-////////////////////////////////////////////////////////////////////////
-bool GenesisCopyWindow::IsDirReadOnly(const char *destination)
-////////////////////////////////////////////////////////////////////////
-{
-	struct stat statbuf;
-	BDirectory dir(destination);
-	BVolume volume;
-
-	if (dir.InitCheck()!=B_OK)
-		return false;
-
-	if (dir.GetStatFor(destination, &statbuf)!=B_OK)
-		return false;
-
-	volume.SetTo(statbuf.st_dev);
-	if (volume.IsReadOnly())
-		return true;
-
-	return false;	// Not read only
-}
-
-////////////////////////////////////////////////////////////////////////
-bool GenesisCopyWindow::IsRecursiveCopy(const char *source, const char *destination)
-////////////////////////////////////////////////////////////////////////
-{
-	BEntry src(source);
-	BEntry dst(destination);
-
-	if (src == dst)
-		return true;
-
-	while ((dst.GetParent(&dst)) == B_OK)
-	{
-		if (src == dst)
-			return true;
-	}
-
-	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////
