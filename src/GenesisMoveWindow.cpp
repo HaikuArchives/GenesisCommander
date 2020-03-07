@@ -6,6 +6,7 @@
  *	2019-2020, Ondrej Čerman
  */
 
+#include "FSUtils.h"
 #include "GenesisMoveWindow.h"
 #include "GenesisPanelView.h"
 #include "GenesisWindow.h"
@@ -543,8 +544,11 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 	BDirectory destdir;
 	BString text;
 	BString destfullname;
+	node_ref destnode;
+	entry_ref sourceentry;
 	char name[B_FILE_NAME_LENGTH];
 	bool overwrite = false;
+	bool anothervol = false;
 
 	sourcefile.GetName(name);
 
@@ -599,6 +603,11 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 		{
 			overwrite = true;
 		}
+
+		destdir.SetTo(destination);
+		destdir.GetNodeRef(&destnode);
+		sourcefile.GetRef(&sourceentry);
+		anothervol = sourceentry.device == destnode.device;
 
 		dstfile.SetTo(destfullname.String());
 		if (dstfile.InitCheck()==B_OK && dstfile.Exists())
@@ -688,6 +697,12 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 							overwrite = true;
 							break;
 					}
+
+					if (anothervol)
+					{
+						if (dstfile.IsSymLink())
+							dstfile.Remove();
+					}
 				}
 				else
 				{
@@ -710,28 +725,36 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 			}
 		}
 
-		destdir.SetTo(destination);
-		if (sourcefile.MoveTo(&destdir, destfilename, overwrite)==B_OK)		// Move!!!
-			result = true;
-		else if (!m_SkipAllMoveError)
+		// we can move files when they are on same volume
+		if (anothervol)
 		{
-			text << "Cannot move '" << name << "' to \n\n" << destfullname << "\n\n";
-			text << "Notice that move function works only when the source and destination folder are on the same volume.\n";
-			switch (MoveSkipAlert(text.String()))
+			if (sourcefile.MoveTo(&destdir, destfilename, overwrite)==B_OK)		// Move!!!
+				result = true;
+			else if (!m_SkipAllMoveError)
 			{
-				case A_SKIP_ABORT:
-					Close();
-					kill_thread(m_MoveThread);
-					break;
-				case A_SKIP_ALL:
-					m_SkipAllMoveError = true;
-					break;
+				text << "Cannot move '" << name << "' to \n\n" << destfullname << "\n\n";
+				switch (MoveSkipAlert(text.String()))
+				{
+					case A_SKIP_ABORT:
+						Close();
+						kill_thread(m_MoveThread);
+						break;
+					case A_SKIP_ALL:
+						m_SkipAllMoveError = true;
+						break;
+				}
 			}
+
+			Lock();
+			m_FileBar->Update(1);
+			Unlock();
+
+		}
+		else // we have to copy & delete
+		{
+			return CopyAndDelete(&sourcefile, &dstfile, &destdir);
 		}
 
-		Lock();
-		m_FileBar->Update(1);
-		Unlock();
 	}
 	else if (!m_SkipAllMoveError)
 	{
@@ -750,6 +773,131 @@ bool GenesisMoveWindow::Move(const char *filename, const char *destination, cons
 
 	return result;
 }
+
+////////////////////////////////////////////////////////////////////////
+bool GenesisMoveWindow::CopyAndDelete(BEntry *sourceentry, BEntry *dstentry, BDirectory *dstdir)
+////////////////////////////////////////////////////////////////////////
+{
+	struct stat statbuf;
+	char name[B_FILE_NAME_LENGTH];
+
+	if (sourceentry->IsDirectory())
+	{
+		BDirectory dir, dest;
+		BEntry entry, childdst;
+		bool result = true;
+
+		dir.SetTo(sourceentry);
+		if (dir.InitCheck()!=B_OK)
+			return false;
+
+		dstentry->GetName(name);
+		if (dstdir->CreateDirectory(name, &dest)!=B_OK)
+			return false;
+
+		FSUtils::CopyAttr(&dir, &dest);
+
+		if (dir.GetEntry(&entry)==B_OK)
+		{
+			m_CurrentLevel++;
+			while (dir.GetNextEntry(&entry)==B_OK)
+			{
+				entry.GetName(name);
+				childdst.SetTo(&dest, name, false);
+
+				Lock();
+				m_FileBar->Update(-m_FileBar->CurrentValue());	// Reset to 0.0
+				m_FileBar->SetMaxValue(1);
+				m_FileBar->SetTrailingText(name);
+				Unlock();
+
+				if (!CopyAndDelete(&entry, &childdst, &dest))
+					result = false;
+			}
+			m_CurrentLevel--;
+		}
+
+		if (result && dir.CountEntries()!=0)
+			return false;
+		if (result && sourceentry->Remove()!=B_OK)
+			return false;
+
+		return result;
+	}
+
+	if (sourceentry->GetStat(&statbuf)!=B_OK)
+		return false;
+
+	if (sourceentry->IsFile())
+	{
+		BFile srcfile(sourceentry, B_READ_ONLY);
+		BFile dstfile(dstentry, B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE);
+
+		Lock();
+		m_FileBar->SetMaxValue(statbuf.st_size);
+		Unlock();
+
+		if (!FSUtils::CopyFileContents(&srcfile, &dstfile, statbuf.st_blksize, this, m_FileBar))
+			return false;
+
+		FSUtils::CopyStats(&statbuf, &dstfile);
+		FSUtils::CopyAttr(&srcfile, &dstfile);
+
+		if (sourceentry->Remove() != B_OK)
+			return false;
+
+		return true;
+	}
+
+	if (sourceentry->IsSymLink())
+	{
+		BEntry symlinkentry;
+		BPath LinkPath;
+		BSymLink sourcelnk, symlink;
+		entry_ref ref;
+		sourceentry->GetRef(&ref);
+		symlinkentry.SetTo(&ref, true);
+		symlinkentry.GetPath(&LinkPath);
+		dstentry->GetName(name);
+
+		if (dstdir->CreateSymLink(name, LinkPath.Path(), &symlink)!=B_OK)
+		{
+			if (!m_SkipSymLinkCreationError)
+			{
+				BString text;
+				text << "Cannot create '" << name << "' symbolic link '" << LinkPath.Path() << "'";
+				switch (MoveSkipAlert(text.String()))
+				{
+					case A_SKIP_ABORT:
+						Close();
+						kill_thread(m_MoveThread);
+						break;
+					case A_SKIP_ALL:
+						m_SkipSymLinkCreationError = true;
+						break;
+				}
+			}
+			return false;
+		}
+
+		Lock();
+		m_FileBar->Update(1);
+		Unlock();
+
+		sourcelnk.SetTo(sourceentry);
+
+		FSUtils::CopyStats(&statbuf, &symlink);
+		FSUtils::CopyAttr(&sourcelnk, &symlink);
+
+		if (sourceentry->Remove() != B_OK)
+			return false;
+
+		return true;
+	}
+
+	return false;
+}
+
 
 ////////////////////////////////////////////////////////////////////////
 int32 GenesisMoveWindow::GetFirstSelection(void)
