@@ -378,8 +378,8 @@ void GenesisDeleteWindow::DeleteError(const char *filename)
 	switch (myAlert->Go())
 	{
 		case 0:
-			kill_thread(m_DeleteThread);
 			Close();
+			kill_thread(m_DeleteThread);
 			break;
 		case 1:
 			m_SkipAllError = true;
@@ -400,8 +400,8 @@ void GenesisDeleteWindow::FolderNotEmpty(const char *dirname)
 	switch (myAlert->Go())
 	{
 		case 0:
-			kill_thread(m_DeleteThread);
 			Close();
+			kill_thread(m_DeleteThread);
 			break;
 		case 1:
 			m_DeleteAllNotEmpty = true;
