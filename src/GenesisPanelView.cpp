@@ -1889,13 +1889,13 @@ void PanelView::Delete(void)
 		if (item->m_Type==FT_PARENT) // Azon ritka esetek egyike amivel meg lehetett szivatni a programot...
 			item = m_CustomListView->GetSelectedEntry(1);
 
-		text.SetTo("Do you realy want to delete '");
+		text.SetTo("Do you really want to delete '");
 		text+=item->m_FileName;
 		text+="'?";
 	}
 	else
 	{
-		text.SetTo("Do you realy want to delete ");
+		text.SetTo("Do you really want to delete ");
 		text << n;
 		text+=" files?";
 	}
