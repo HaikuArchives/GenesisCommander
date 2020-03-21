@@ -93,9 +93,12 @@ GenesisWindow::GenesisWindow() :
 	menu->AddItem(new BMenuItem("Make dir...",	new BMessage(MENU_COMMANDS_MKDIR), 0));
 	menu->AddItem(new BMenuItem("Delete...",	new BMessage(MENU_COMMANDS_DELETE), 0));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem("Create link on Desktop..." , new BMessage(MENU_COMMANDS_CREATE_SYMLINK), 'L'));
+	menu->AddItem(new BMenuItem("Open dir in target panel" , new BMessage(MENU_COMMANDS_DIR_TARGET), '.'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem("Open terminal window", new BMessage(MENU_TERMINAL), 'T', B_OPTION_KEY));
+	menu->AddItem(new BMenuItem("Open current panel in Tracker", new BMessage(MENU_TRACKER), 0));
+	menu->AddItem(new BMenuItem("Open current panel in Terminal", new BMessage(MENU_TERMINAL), 'T', B_OPTION_KEY));
+	menu->AddSeparatorItem();
+	menu->AddItem(new BMenuItem("Create link on Desktop..." , new BMessage(MENU_COMMANDS_CREATE_SYMLINK), 'L'));
 	m_MenuBar->AddItem(menu);
 
 	menu = new BMenu("Panels");
@@ -234,6 +237,12 @@ void GenesisWindow::MessageReceived(BMessage* message)
 				system(tempstring.String());
 			}
 			break;
+		case MENU_TRACKER:
+			{
+				if (GetActivePanel())
+					OpenTracker(GetActivePanel()->m_PathExpanded);
+			}
+			break;
 		case MENU_SELECT_ALL:
 			if (GetActivePanel())
 				GetActivePanel()->SelectAll();
@@ -341,6 +350,13 @@ void GenesisWindow::MessageReceived(BMessage* message)
 				}
 			}
 			break;
+		case MENU_COMMANDS_DIR_TARGET:
+			{
+				BString sourcepath;
+				sourcepath.SetTo(GetActivePanel()->GetDirectory());
+				GetInactivePanel()->ChangePath(sourcepath.String());
+				break;
+			}
 		case MENU_COMMANDS_CREATE_SYMLINK:
 			if (GetActivePanel())
 				GetActivePanel()->CreateLinkOnDesktop();
@@ -371,6 +387,27 @@ void GenesisWindow::MessageReceived(BMessage* message)
 		default:
 			BWindow::MessageReceived(message);
 	}
+}
+
+
+////////////////////////////////////////////////////////////////////////
+void GenesisWindow::OpenTracker(const char* path)
+////////////////////////////////////////////////////////////////////////
+{
+	BEntry entry;
+	entry_ref entryref;
+
+	if (entry.SetTo(path, true) != B_OK)
+		return;
+	if (entry.GetRef(&entryref) != B_OK)
+		return;
+
+	BMessage	request(B_EXECUTE_PROPERTY);
+	BMessenger	trackermsng("application/x-vnd.Be-TRAK", -1);
+
+	request.AddRef("data", &entryref);
+	request.AddSpecifier("Folder");
+	trackermsng.SendMessage(&request);
 }
 
 ////////////////////////////////////////////////////////////////////////

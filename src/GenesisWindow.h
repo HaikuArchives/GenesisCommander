@@ -3,7 +3,7 @@
  * Distributed under the terms of the MIT license.
  *
  *	2002-2004, Zsolt Prievara
- *	2019, Ondrej Čerman
+ *	2019-2020, Ondrej Čerman
  */
 
 #ifndef _GENESISWINDOW_H_
@@ -39,6 +39,7 @@ const uint32 MENU_SELECT_GROUP 			= 'MSgp';
 const uint32 MENU_DESELECT_GROUP 		= 'MDgp';
 const uint32 MENU_SEEK					= 'MSek';
 const uint32 MENU_TERMINAL 				= 'MTRM';
+const uint32 MENU_TRACKER 				= 'MTRC';
 const uint32 MENU_RELOAD 				= 'MRLD';
 const uint32 MENU_SWAP_PANELS			= 'MSWP';
 const uint32 MENU_TARGET_SOURCE			= 'MTES';
@@ -52,6 +53,7 @@ const uint32 MENU_COMMANDS_RENAME		= 'MCRE';
 const uint32 MENU_COMMANDS_MKDIR		= 'MCMK';
 const uint32 MENU_COMMANDS_DELETE		= 'MCDE';
 const uint32 MENU_COMMANDS_CREATE_SYMLINK = 'MCCS';
+const uint32 MENU_COMMANDS_DIR_TARGET	= 'MCDT';
 const uint32 MENU_ABOUT					= 'MABO';
 
 const uint32 BUTTON_MSG_F3	= 'BF3';
@@ -99,6 +101,7 @@ class GenesisWindow : public BWindow
 		PanelView		*GetInactivePanel(void);
 		void 			UpdatePanels(void);
 		void 			UpdateCommandLinePath(void);
+		void			OpenTracker(const char* path);
 
 		void 			SetMousePointer(MousePointer mp);
 

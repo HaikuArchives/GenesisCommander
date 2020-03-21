@@ -2063,3 +2063,62 @@ void PanelView::DeselectGroup(void)
 	grpwindow = new GenesisSelectGroupWindow(m_CustomListView, Window(), false);
 	grpwindow->Show();
 }
+
+////////////////////////////////////////////////////////////////////////
+BString PanelView::GetDirectory(void)
+////////////////////////////////////////////////////////////////////////
+{
+	CustomListItem *selected = m_CustomListView->GetSelectedEntry(0);
+
+	// if selected item represents a directory, then return its path
+	if (selected != NULL)
+	{
+		if (selected->m_Type == FT_DIRECTORY ||
+			selected->m_Type == FT_SYMLINKDIR)
+		{
+			BString path;
+
+			path.SetTo(selected->m_FilePath.String());
+			if (!path.EndsWith("/"))
+				path << "/";
+			path << selected->m_FileName;
+
+			// resolve symlink if necessary
+			if (selected->m_Type == FT_SYMLINKDIR && !SETTINGS->GetSymlinkedPaths())
+			{
+				BEntry symlinkentry;
+				BEntry entry(path.String());
+
+				entry_ref ref;
+				entry.GetRef(&ref);
+
+				symlinkentry.SetTo(&ref, true);
+				if (symlinkentry.IsDirectory())
+				{
+					BPath symlinkpath;
+					symlinkentry.GetPath(&symlinkpath);
+					return symlinkpath.Path();
+				}
+			}
+			else
+			{
+				return path;
+			}
+		}
+		if (selected->m_Type == FT_PARENT)
+		{
+			BPath path((const char *)m_Path.String());
+			if (path.GetParent(&path)==B_OK)
+			{
+				return path.Path();
+			}
+		}
+		if (selected->m_Type == FT_DISKITEM)
+		{
+			return selected->m_DiskPath;
+		}
+	}
+
+	// else return current panel directory
+	return m_Path;
+}
