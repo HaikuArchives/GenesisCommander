@@ -151,6 +151,7 @@ class PanelView : public BView
 
 		void SelectPanel(void);
 
+		BString GetDirectory();
 		void SetPath(const char *path) { m_Path.SetTo(path); }
 
 		BString			m_Path;				// This is the path of the panel...
