@@ -492,7 +492,10 @@ bool DataFile::ToInt(BString text, int &result)
 	for (int i=0; i<n; i++)
 	{
 		x = text[n-i-1];
-		num = (x-0x30) * decimal;
+		if (x == '-')
+			num *= -1;
+		else
+			num += (x-0x30) * decimal;
 		decimal *= 10;
 	}
 
