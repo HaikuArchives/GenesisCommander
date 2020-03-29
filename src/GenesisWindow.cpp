@@ -36,8 +36,20 @@ GenesisWindow::GenesisWindow() :
 	m_MousePointerChanged = false;
 	m_MousePointer = CR_DEFAULT;
 
-	MoveTo(SETTINGS->GetWindowLeft(), SETTINGS->GetWindowTop());
 	ResizeTo(SETTINGS->GetWindowWidth(), SETTINGS->GetWindowHeight());
+
+	BScreen screen(m_MainWindow);
+	if (screen.IsValid())
+	{
+		MoveTo(SETTINGS->GetWindowLeft(), SETTINGS->GetWindowTop());
+
+		BRect frame = Frame();
+		frame.InsetBy(-4, -4);
+
+		// move to center when it's not visible
+		if (!frame.Intersects(screen.Frame()))
+			CenterIn(screen.Frame());
+	}
 
 	BMenu *menu;
 	BMenuItem *menuitem;
@@ -173,21 +185,22 @@ bool GenesisWindow::QuitRequested()
 	{
 		BAlert *myAlert = new BAlert("Genesis","Do you really want to quit?","No","Quit",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 		myAlert->SetShortcut(0, B_ESCAPE);
-		if (myAlert->Go()==1)
-		{
-			be_app->PostMessage(B_QUIT_REQUESTED);
-			return BWindow::QuitRequested();
-		}
-		else
+
+		if (myAlert->Go()!=1)
 		{
 			return 0;
 		}
 	}
-	else
-	{
-		be_app->PostMessage(B_QUIT_REQUESTED);
-		return BWindow::QuitRequested();
-	}
+
+	BRect frame = Frame();
+	SETTINGS->SetWindowLeft(frame.LeftTop().x);
+	SETTINGS->SetWindowTop(frame.LeftTop().y);
+	SETTINGS->SetWindowWidth(frame.Width());
+	SETTINGS->SetWindowHeight(frame.Height());
+	SETTINGS->SaveSettings();
+
+	be_app->PostMessage(B_QUIT_REQUESTED);
+	return BWindow::QuitRequested();
 }
 
 ////////////////////////////////////////////////////////////////////////
