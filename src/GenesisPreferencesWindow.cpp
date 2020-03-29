@@ -17,6 +17,9 @@
 #include <GroupLayout.h>
 #include <GroupLayoutBuilder.h>
 #include <LayoutBuilder.h>
+#include <MenuField.h>
+#include <Path.h>
+#include <Roster.h>
 #include <SeparatorView.h>
 
 ////////////////////////////////////////////////////////////////////////
@@ -35,6 +38,10 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 	m_SymlinkedPaths = new BCheckBox("followsymlinks", "Keep symlinked directory paths when navigating", new BMessage(PREFERENCES_CHANGED));
 	m_AskOnExit = new BCheckBox("askonexit", "Ask on exit", new BMessage(PREFERENCES_CHANGED));
 
+	m_EditorsMenu = new BMenu("choose ...",B_ITEMS_IN_COLUMN);
+	BMenuField *ChooseEditors = new BMenuField("",m_EditorsMenu);
+	ChooseEditors->SetDivider(0);
+
 	m_EditorApp = new BTextControl("editor", "F4 Editor application", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
 	m_TerminalWindowTitle = new BTextControl("terminaltitle", "Terminal window title", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
 	m_LeftPanelPath = new BTextControl("leftpath", "Initial path of left panel", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
@@ -51,6 +58,7 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 
 		.Add(m_EditorApp->CreateLabelLayoutItem(), 0, 1)
 		.Add(m_EditorApp->CreateTextViewLayoutItem(), 1, 1)
+		.Add(ChooseEditors, 2, 1)
 
 		.Add(m_LeftPanelPath->CreateLabelLayoutItem(), 0, 2)
 		.Add(m_LeftPanelPath->CreateTextViewLayoutItem(), 1, 2)
@@ -112,12 +120,48 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 	m_LeftPanelPath->SetModificationMessage(new BMessage(PREFERENCES_CHANGED));
 	m_RightPanelPath->SetModificationMessage(new BMessage(PREFERENCES_CHANGED));
 	m_EditorApp->SetModificationMessage(new BMessage(PREFERENCES_CHANGED));
+
+	FillEditors();
 }
 
 ////////////////////////////////////////////////////////////////////////
 GenesisPreferencesWindow::~GenesisPreferencesWindow()
 ////////////////////////////////////////////////////////////////////////
 {
+
+}
+
+////////////////////////////////////////////////////////////////////////
+void GenesisPreferencesWindow::FillEditors()
+////////////////////////////////////////////////////////////////////////
+{
+	BMenuItem *appitem;
+	BMessage supportingApps;
+	BMimeType mime("text/plain");
+	if (mime.GetSupportingApps(&supportingApps) != B_OK)
+		return;
+
+	BMessage *msg;
+	BRoster roster;
+	BEntry appentry;
+	BPath apppath;
+	entry_ref appref;
+	const char *appsig;
+
+	for (int i = 0; supportingApps.FindString("applications", i, &appsig) == B_OK; i++)
+	{
+		if (roster.FindApp(appsig, &appref) == B_OK)
+		{
+			appentry.SetTo(&appref);
+			appentry.GetPath(&apppath);
+
+			msg = new BMessage(MENU_MSG_SET_EDITOR);
+			msg->AddString("path", apppath.Path());
+
+			appitem = new BMenuItem(apppath.Leaf(), msg, 0);
+			m_EditorsMenu->AddItem(appitem);
+		}
+	}
 
 }
 
@@ -177,6 +221,13 @@ void GenesisPreferencesWindow::MessageReceived(BMessage* message)
 			if (m_Looper != NULL)
 				m_Looper->PostMessage(new BMessage(MSG_PREFERENCES_CHANGED), NULL);
 			break;
+		case MENU_MSG_SET_EDITOR:
+			{
+				BString app;
+				if (message->FindString("path", &app) == B_OK)
+					m_EditorApp->SetText(app);
+				break;
+			}
 		default:
 			BWindow::MessageReceived(message);
 	}
