@@ -54,6 +54,7 @@ void Settings::SetDefaults()
 	SetLeftPanelPath("/");
 	SetRightPanelPath("/");
 	SetTerminalWindow("Genesis Terminal");
+	SetEditorApp("StyledEdit");
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -85,6 +86,7 @@ bool Settings::LoadSettings()
 		GETINT("WINDOWWIDTH", WindowWidth);
 		GETINT("WINDOWHEIGHT", WindowHeight);
 		GETSTRING("TERMINALWINDOW", TerminalWindow);
+		GETSTRING("EDITORAPP", EditorApp);
 
 		GETSTRING("LEFTPANELPATH", LeftPanelPath);
 		GETSTRING("RIGHTPANELPATH", RightPanelPath);
@@ -116,6 +118,7 @@ bool Settings::SaveSettings()
 		settingsfile.WriteInteger(BString("WINDOWWIDTH"), GetWindowWidth());
 		settingsfile.WriteInteger(BString("WINDOWHEIGHT"), GetWindowHeight());
 		settingsfile.WriteString(BString("TERMINALWINDOW"), GetTerminalWindow());
+		settingsfile.WriteString(BString("EDITORAPP"), GetEditorApp());
 		settingsfile.WriteText(BString("\n"));
 		settingsfile.WriteText(BString("# Left panel\n"));
 		settingsfile.WriteString(BString("LEFTPANELPATH"), GetLeftPanelPath());

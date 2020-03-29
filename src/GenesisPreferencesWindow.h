@@ -39,6 +39,7 @@ class GenesisPreferencesWindow : public BWindow
 		BTextControl	*m_LeftPanelPath;
 		BTextControl	*m_RightPanelPath;
 		BTextControl	*m_TerminalWindowTitle;
+		BTextControl	*m_EditorApp;
 
 		virtual void	MessageReceived(BMessage* message);
 

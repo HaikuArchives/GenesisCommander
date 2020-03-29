@@ -35,6 +35,7 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 	m_SymlinkedPaths = new BCheckBox("followsymlinks", "Keep symlinked directory paths when navigating", new BMessage(PREFERENCES_CHANGED));
 	m_AskOnExit = new BCheckBox("askonexit", "Ask on exit", new BMessage(PREFERENCES_CHANGED));
 
+	m_EditorApp = new BTextControl("editor", "F4 Editor application", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
 	m_TerminalWindowTitle = new BTextControl("terminaltitle", "Terminal window title", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
 	m_LeftPanelPath = new BTextControl("leftpath", "Initial path of left panel", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
 	m_RightPanelPath = new BTextControl("rightpath", "Initial path of right panel", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
@@ -48,13 +49,16 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 		.Add(m_TerminalWindowTitle->CreateLabelLayoutItem(), 0, 0)
 		.Add(m_TerminalWindowTitle->CreateTextViewLayoutItem(), 1, 0)
 
-		.Add(m_LeftPanelPath->CreateLabelLayoutItem(), 0, 1)
-		.Add(m_LeftPanelPath->CreateTextViewLayoutItem(), 1, 1)
-		.Add(SetCurrLeftPathButton, 2, 1)
+		.Add(m_EditorApp->CreateLabelLayoutItem(), 0, 1)
+		.Add(m_EditorApp->CreateTextViewLayoutItem(), 1, 1)
 
-		.Add(m_RightPanelPath->CreateLabelLayoutItem(), 0, 2)
-		.Add(m_RightPanelPath->CreateTextViewLayoutItem(), 1, 2)
-		.Add(SetCurrRightPathButton, 2, 2);
+		.Add(m_LeftPanelPath->CreateLabelLayoutItem(), 0, 2)
+		.Add(m_LeftPanelPath->CreateTextViewLayoutItem(), 1, 2)
+		.Add(SetCurrLeftPathButton, 2, 2)
+
+		.Add(m_RightPanelPath->CreateLabelLayoutItem(), 0, 3)
+		.Add(m_RightPanelPath->CreateTextViewLayoutItem(), 1, 3)
+		.Add(SetCurrRightPathButton, 2, 3);
 
 	settingsgrid->SetMinColumnWidth(1, 200);
 
@@ -107,6 +111,7 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 	m_TerminalWindowTitle->SetModificationMessage(new BMessage(PREFERENCES_CHANGED));
 	m_LeftPanelPath->SetModificationMessage(new BMessage(PREFERENCES_CHANGED));
 	m_RightPanelPath->SetModificationMessage(new BMessage(PREFERENCES_CHANGED));
+	m_EditorApp->SetModificationMessage(new BMessage(PREFERENCES_CHANGED));
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -125,6 +130,7 @@ void GenesisPreferencesWindow::ReloadSettings()
 	m_SymlinkedPaths->SetValue(SETTINGS->GetSymlinkedPaths() ? B_CONTROL_ON: B_CONTROL_OFF);
 	m_AskOnExit->SetValue(SETTINGS->GetAskOnExit() ? B_CONTROL_ON: B_CONTROL_OFF);
 	m_TerminalWindowTitle->SetText(SETTINGS->GetTerminalWindow());
+	m_EditorApp->SetText(SETTINGS->GetEditorApp());
 	m_LeftPanelPath->SetText(SETTINGS->GetLeftPanelPath().String());
 	m_RightPanelPath->SetText(SETTINGS->GetRightPanelPath().String());
 	m_ApplyButton->SetEnabled(false);
@@ -139,6 +145,7 @@ void GenesisPreferencesWindow::ApplySettings()
 	SETTINGS->SetSymlinkedPaths(m_SymlinkedPaths->Value() == B_CONTROL_ON);
 	SETTINGS->SetAskOnExit(m_AskOnExit->Value() == B_CONTROL_ON);
 	SETTINGS->SetTerminalWindow(m_TerminalWindowTitle->Text());
+	SETTINGS->SetEditorApp(m_EditorApp->Text());
 	SETTINGS->SetLeftPanelPath(m_LeftPanelPath->Text());
 	SETTINGS->SetRightPanelPath(m_RightPanelPath->Text());
 }

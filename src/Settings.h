@@ -72,6 +72,7 @@ public:
 	SETTING_INT(WindowTop)
 	SETTING_INT(WindowWidth)
 	SETTING_INT(WindowHeight)
+	SETTING_STRING(EditorApp)
 	SETTING_STRING(TerminalWindow)
 
 	// LEFT PANEL SETTINGS
