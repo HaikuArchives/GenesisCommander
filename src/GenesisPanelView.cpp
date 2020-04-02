@@ -1816,7 +1816,7 @@ void PanelView::Edit(CustomListItem *item)
 			app = SETTINGS->GetEditorApp();
 			if (app.IsEmpty())
 			{
-				BAlert *alert = new BAlert("Genesis","You have to choose editor app in the Preferences screen","Okay","Open Preferences",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_STOP_ALERT);
+				BAlert *alert = new BAlert("Genesis","You have to select an editor application in the Genesis preferences","OK","Open preferences",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_STOP_ALERT);
 				alert->SetShortcut(0, B_ESCAPE);
 				if (alert->Go() == 1)
 				{
@@ -1831,7 +1831,7 @@ void PanelView::Edit(CustomListItem *item)
 			int32 ret = system(command.String());
 			if (ret != 0)
 			{
-				BAlert *alert = new BAlert("Genesis","Error while opening Editor application.\nYou can change editor app in the Preferences screen.","Okay","Open Preferences",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_STOP_ALERT);
+				BAlert *alert = new BAlert("Genesis","Error while opening the editor application.\nYou can change the editor app in the Genesis preferences.","OK","Open preferences",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_STOP_ALERT);
 				alert->SetShortcut(0, B_ESCAPE);
 				if (alert->Go() == 1)
 				{

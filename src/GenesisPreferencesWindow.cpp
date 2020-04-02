@@ -38,11 +38,11 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 	m_SymlinkedPaths = new BCheckBox("followsymlinks", "Keep symlinked directory paths when navigating", new BMessage(PREFERENCES_CHANGED));
 	m_AskOnExit = new BCheckBox("askonexit", "Ask on exit", new BMessage(PREFERENCES_CHANGED));
 
-	m_EditorsMenu = new BMenu("choose ...",B_ITEMS_IN_COLUMN);
+	m_EditorsMenu = new BMenu("Select ...",B_ITEMS_IN_COLUMN);
 	BMenuField *ChooseEditors = new BMenuField("",m_EditorsMenu);
 	ChooseEditors->SetDivider(0);
 
-	m_EditorApp = new BTextControl("editor", "F4 Editor application", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
+	m_EditorApp = new BTextControl("editor", "Editor application (F4)", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
 	m_TerminalWindowTitle = new BTextControl("terminaltitle", "Terminal window title", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
 	m_LeftPanelPath = new BTextControl("leftpath", "Initial path of left panel", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
 	m_RightPanelPath = new BTextControl("rightpath", "Initial path of right panel", "", NULL, B_WILL_DRAW|B_NAVIGABLE);
