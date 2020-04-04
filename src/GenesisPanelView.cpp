@@ -1811,17 +1811,34 @@ void PanelView::Edit(CustomListItem *item)
 	{
 		case FT_FILE:
 		case FT_SYMLINKFILE:
-			BString file;
-			file.SetTo(m_Path.String());
-			file+="/";
-			file+=item->m_FileName;
+			BString app, file, command;
 
-			BString tempstring;
-			tempstring.SetTo("StyledEdit \"");
-			tempstring << file.String();
-			tempstring << "\" &";
-			system(tempstring.String());
+			app = SETTINGS->GetEditorApp();
+			if (app.IsEmpty())
+			{
+				BAlert *alert = new BAlert("Genesis","You have to select an editor application in the Genesis preferences","OK","Open preferences",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_STOP_ALERT);
+				alert->SetShortcut(0, B_ESCAPE);
+				if (alert->Go() == 1)
+				{
+					Parent()->Looper()->PostMessage(new BMessage(MENU_PREFERENCES));
+				}
+				return;
+			}
 
+			file.SetToFormat("%s/%s", m_Path.String(), item->m_FileName.String());
+			command.SetToFormat("%s \"%s\"", app.String(), file.String());
+
+			int32 ret = system(command.String());
+			if (ret != 0)
+			{
+				BAlert *alert = new BAlert("Genesis","Error while opening the editor application.\nYou can change the editor app in the Genesis preferences.","OK","Open preferences",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_STOP_ALERT);
+				alert->SetShortcut(0, B_ESCAPE);
+				if (alert->Go() == 1)
+				{
+					Parent()->Looper()->PostMessage(new BMessage(MENU_PREFERENCES));
+				}
+				return;
+			}
 			break;
 	}
 }
