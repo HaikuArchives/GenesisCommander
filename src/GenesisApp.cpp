@@ -43,8 +43,9 @@ GenesisApp::GenesisApp()
 ////////////////////////////////////////////////////////////////////////
 	: BApplication(GENESIS_APP_SIG)
 {
-	m_MainWinCount = 0;
-	m_QuitConfirmed = false;
+	fMainWindowsList = new BObjectList<GenesisWindow>(5);
+	fQuitConfirmed = false;
+	fPrefWindow = NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -53,24 +54,41 @@ void GenesisApp::NewWindow()
 {
 	GenesisWindow* w;
 
-	m_MainWinCount++;
-
 	w = new GenesisWindow();
 	w->Show();
+
+	fMainWindowsList->AddItem(w);
+}
+
+////////////////////////////////////////////////////////////////////////
+void GenesisApp::OpenPreferences(GenesisWindow *w = NULL)
+////////////////////////////////////////////////////////////////////////
+{
+	if (fPrefWindow == NULL)
+	{
+		fPrefWindow = new GenesisPreferencesWindow();
+		fPrefWindow->Show();
+	}
+	fPrefWindow->Activate();
+
+	if (w != NULL)
+	{
+		fPrefWindow->CenterIn(w->Frame());
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
 int GenesisApp::GetMainWinCount()
 ////////////////////////////////////////////////////////////////////////
 {
-	return m_MainWinCount;
+	return fMainWindowsList->CountItems();
 }
 
 ////////////////////////////////////////////////////////////////////////
 bool GenesisApp::QuitConfirmed()
 ////////////////////////////////////////////////////////////////////////
 {
-	return m_QuitConfirmed;
+	return fQuitConfirmed;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -84,7 +102,7 @@ void GenesisApp::ReadyToRun()
 bool GenesisApp::QuitRequested()
 ////////////////////////////////////////////////////////////////////////
 {
-	if (m_MainWinCount > 0 && SETTINGS->GetAskOnExit())
+	if (fMainWindowsList->CountItems() > 0 && SETTINGS->GetAskOnExit())
 	{
 		BAlert *myAlert = new BAlert("Quit Genesis?","Do you really want to quit?","No","Quit",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
 		myAlert->SetShortcut(0, B_ESCAPE);
@@ -94,7 +112,7 @@ bool GenesisApp::QuitRequested()
 			return false;
 		}
 	}
-	m_QuitConfirmed = true;
+	fQuitConfirmed = true;
 
 	return BApplication::QuitRequested();
 }
@@ -108,8 +126,37 @@ void GenesisApp::MessageReceived(BMessage* message)
 		case B_SILENT_RELAUNCH:
 			NewWindow();
 			break;
+		case MSG_OPEN_PREFERENCES:
+			{
+				GenesisWindow* window;
+				if (message->FindPointer("window", (void**) &window) == B_OK)
+					OpenPreferences(window);
+				else
+					OpenPreferences();
+			}
+			break;
+		case MSG_PREFERENCES_CHANGED:
+			{
+				int i;
+				GenesisWindow* w;
+
+				for (i = 0; i < fMainWindowsList->CountItems(); i++)
+				{
+					w = fMainWindowsList->ItemAt(i);
+					if (w)
+						w->PostMessage(MSG_PREFERENCES_CHANGED);
+				}
+			}
+			break;
+		case MSG_PREFERENCES_CLOSED:
+			fPrefWindow = NULL;
+			break;
 		case MSG_MAINWIN_CLOSED:
-			m_MainWinCount--;
+			{
+				GenesisWindow* window;
+				if (message->FindPointer("window", (void**) &window) == B_OK)
+					fMainWindowsList->RemoveItem(window);
+			}
 			break;
 
 		default:

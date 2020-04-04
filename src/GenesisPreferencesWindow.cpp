@@ -9,6 +9,7 @@
 #include "GenesisWindow.h"
 #include "Settings.h"
 #include "GenesisPanelView.h"
+#include <Application.h>
 #include <View.h>
 #include <Window.h>
 #include <Button.h>
@@ -20,13 +21,11 @@
 #include <SeparatorView.h>
 
 ////////////////////////////////////////////////////////////////////////
-GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mainwindow) :
-	BWindow(BRect(0,0,400,200), "Genesis Preferences", B_TITLED_WINDOW,
+GenesisPreferencesWindow::GenesisPreferencesWindow() :
+	BWindow(BRect(100,100,400,200), "Genesis Preferences", B_TITLED_WINDOW,
 		B_NOT_MINIMIZABLE | B_NOT_RESIZABLE | B_NOT_ZOOMABLE | B_AUTO_UPDATE_SIZE_LIMITS)
 ////////////////////////////////////////////////////////////////////////
 {
-	m_Looper = looper;
-	AddToSubset(mainwindow);
 	BView *settingsview = new BView("settingscontainer", B_WILL_DRAW);
 
 	// Preferences
@@ -73,7 +72,7 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 	m_ApplyButton = new BButton("apply", "Apply", new BMessage(BUTTON_MSG_APPLY));
 	m_ApplyButton->SetEnabled(false);
 
-	BButton *CancelButton = new BButton("cancel", "Cancel", new BMessage(BUTTON_MSG_CANCEL));
+	BButton *CancelButton = new BButton("cancel", "Cancel", new BMessage(BUTTON_MSG_CANCEL_PREF));
 	BView *bottomciew = new BView("infobottomview", B_WILL_DRAW);
 	BLayoutBuilder::Group<>(bottomciew)
 		.AddGroup(B_HORIZONTAL, 20)
@@ -90,17 +89,7 @@ GenesisPreferencesWindow::GenesisPreferencesWindow(BLooper* looper, BWindow *mai
 		.Add(bottomciew);
 
 	SetDefaultButton(m_ApplyButton);
-	AddCommonFilter(new EscapeFilter(this, new BMessage(BUTTON_MSG_CANCEL)));
-
-	// If there is a given window, let's align our window to its center...
-	if (mainwindow)
-	{
-		BRect myrect = Bounds();
-		BRect rect = mainwindow->Frame();
-		float w = rect.right - rect.left;
-		float h = rect.bottom - rect.top;
-		MoveTo(rect.left + w/2 - (myrect.right-myrect.left)/2, rect.top + h/2 - (myrect.bottom-myrect.top)/2);
-	}
+	AddCommonFilter(new EscapeFilter(this, new BMessage(BUTTON_MSG_CANCEL_PREF)));
 
 	ReloadSettings();
 
@@ -114,6 +103,14 @@ GenesisPreferencesWindow::~GenesisPreferencesWindow()
 ////////////////////////////////////////////////////////////////////////
 {
 
+}
+
+////////////////////////////////////////////////////////////////////////
+void GenesisPreferencesWindow::Close()
+////////////////////////////////////////////////////////////////////////
+{
+	be_app->PostMessage(MSG_PREFERENCES_CLOSED);
+	BWindow::Close();
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -160,15 +157,14 @@ void GenesisPreferencesWindow::MessageReceived(BMessage* message)
 		case PREFERENCES_CHANGED:
 			m_ApplyButton->SetEnabled(true);
 			break;
-		case BUTTON_MSG_CANCEL:
+		case BUTTON_MSG_CANCEL_PREF:
 			Close();
 			break;
 		case BUTTON_MSG_APPLY:
 			ApplySettings();
 			SETTINGS->SaveSettings();
 			m_ApplyButton->SetEnabled(false);
-			if (m_Looper != NULL)
-				m_Looper->PostMessage(new BMessage(MSG_PREFERENCES_CHANGED), NULL);
+			be_app->PostMessage(new BMessage(MSG_PREFERENCES_CHANGED), NULL);
 			break;
 		default:
 			BWindow::MessageReceived(message);

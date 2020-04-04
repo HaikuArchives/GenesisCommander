@@ -71,7 +71,8 @@ const uint32 MSG_UPDATECOMMANDLINE_PATH = 'UCLP';
 const uint32 MSG_ACTIVATE_COMMAND_LINE  = 'MACL';
 const uint32 MSG_COMMAND_LINE_ESC		= 'CESC';
 const uint32 MSG_COMMAND_LINE_ENTER		= 'CENT';
-const uint32 MSG_PREFERENCES_CHANGED	= 'PCHN';
+const uint32 MSG_PREFERENCES_CHANGED	= 'MPCH';
+const uint32 MSG_PREFERENCES_CLOSED		= 'MPRC';
 
 class BButton;
 class Language;

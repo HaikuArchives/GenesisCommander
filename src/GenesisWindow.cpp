@@ -198,7 +198,9 @@ bool GenesisWindow::QuitRequested()
 	SETTINGS->SetWindowHeight(frame.Height());
 	SETTINGS->SaveSettings();
 
-	be_app->PostMessage(MSG_MAINWIN_CLOSED);
+	BMessage msg(MSG_MAINWIN_CLOSED);
+	msg.AddPointer("window", this);
+	be_app->PostMessage(&msg);
 
 	return BWindow::QuitRequested();
 }
@@ -307,9 +309,11 @@ void GenesisWindow::MessageReceived(BMessage* message)
 				GetActivePanel()->GetInfo();
 			break;
 		case MENU_PREFERENCES:
-			GenesisPreferencesWindow *prefwindow;
-			prefwindow = new GenesisPreferencesWindow(Looper(), m_MainWindow);
-			prefwindow->Show();
+			{
+				BMessage msg(MSG_OPEN_PREFERENCES);
+				msg.AddPointer("window", this);
+				be_app->PostMessage(&msg);
+			}
 			break;
 		case MENU_COMMANDS_VIEW:
 		case BUTTON_MSG_F3:
