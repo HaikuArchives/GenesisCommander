@@ -18,7 +18,7 @@
 #include <Menu.h>
 
 const uint32 BUTTON_MSG_APPLY				= 'BPAP';
-const uint32 BUTTON_MSG_CANCEL				= 'BPCA';
+const uint32 BUTTON_MSG_CANCEL_PREF			= 'BPCA';
 const uint32 PREFERENCES_CHANGED			= 'PPCH';
 const uint32 BUTTON_MSG_SET_CURR_PATH_L		= 'BPPL';
 const uint32 BUTTON_MSG_SET_CURR_PATH_R		= 'BPPR';
@@ -27,11 +27,8 @@ const uint32 MENU_MSG_SET_EDITOR			= 'MSSE';
 class GenesisPreferencesWindow : public BWindow
 {
 	public:
-		GenesisPreferencesWindow(BLooper* looper, BWindow *mainwindow);
+		GenesisPreferencesWindow();
 		~GenesisPreferencesWindow();
-
-
-		BLooper			*m_Looper;
 
 		BButton			*m_ApplyButton;
 		BCheckBox		*m_ShowFunctionKeys;
@@ -44,6 +41,7 @@ class GenesisPreferencesWindow : public BWindow
 		BTextControl	*m_EditorApp;
 		BMenu			*m_EditorsMenu;
 
+		virtual void	Close();
 		virtual void	MessageReceived(BMessage* message);
 
 	private:
