@@ -181,14 +181,13 @@ GenesisWindow::~GenesisWindow()
 bool GenesisWindow::QuitRequested()
 ////////////////////////////////////////////////////////////////////////
 {
-	if (SETTINGS->GetAskOnExit())
+	GenesisApp *app = (GenesisApp*)be_app;
+	if (app->GetMainWinCount() == 1)
 	{
-		BAlert *myAlert = new BAlert("Genesis","Do you really want to quit?","No","Quit",NULL,B_WIDTH_AS_USUAL,B_OFFSET_SPACING,B_WARNING_ALERT);
-		myAlert->SetShortcut(0, B_ESCAPE);
-
-		if (myAlert->Go()!=1)
+		if (!app->QuitConfirmed())
 		{
-			return 0;
+			be_app->PostMessage(B_QUIT_REQUESTED);
+			return false;
 		}
 	}
 
@@ -199,7 +198,8 @@ bool GenesisWindow::QuitRequested()
 	SETTINGS->SetWindowHeight(frame.Height());
 	SETTINGS->SaveSettings();
 
-	be_app->PostMessage(B_QUIT_REQUESTED);
+	be_app->PostMessage(MSG_MAINWIN_CLOSED);
+
 	return BWindow::QuitRequested();
 }
 
@@ -380,10 +380,8 @@ void GenesisWindow::MessageReceived(BMessage* message)
 			break;
 		case BUTTON_MSG_F10:
 		case MENU_EXIT:
-			{
-				be_app->PostMessage(B_QUIT_REQUESTED);
-				break;
-			}
+			be_app->PostMessage(B_QUIT_REQUESTED);
+			break;
 		case MENU_ABOUT:
 			{
 				BString text;
@@ -401,7 +399,6 @@ void GenesisWindow::MessageReceived(BMessage* message)
 			BWindow::MessageReceived(message);
 	}
 }
-
 
 ////////////////////////////////////////////////////////////////////////
 void GenesisWindow::OpenTracker(const char* path)
